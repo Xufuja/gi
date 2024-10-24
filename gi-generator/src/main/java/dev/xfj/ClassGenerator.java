@@ -1,21 +1,19 @@
 package dev.xfj;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.codemodel.JCodeModel;
 import org.jsonschema2pojo.*;
 import org.jsonschema2pojo.rules.RuleFactory;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,38 +27,79 @@ public class ClassGenerator {
         this.outputDirectory = outputDirectory;
     }
 
-    public void createClasses() throws IOException {
-        Set<String> set = getAllFiles();
-        for (String item : set) {
-            JsonReader jsonReader = new JsonReader(new FileReader(dataDirectory + item));
-            JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
+    public String prepare(String path) throws IOException {
+        File file = new File(path);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(file);
+        ObjectNode result = objectMapper.createObjectNode();
 
-            if (!jsonObject.entrySet().isEmpty()) {
-                JsonArray array = findObject(jsonObject);
-                Files.createDirectories(Paths.get(outputDirectory));
-                createClass(array.toString(), new File(outputDirectory), "dev.xfj.jsonschema2pojo." + item.replace(".json", "").toLowerCase(), item);
+        switch (jsonNode.getNodeType()) {
+            case OBJECT -> mergeJsonNodes(result, (ObjectNode) jsonNode);
+            case ARRAY -> {
+                for (JsonNode node : jsonNode) {
+                    if (node.isObject()) {
+                        mergeJsonNodes(result, (ObjectNode) node);
+                    }
+                }
+            }
+            default -> throw new RuntimeException("Unhandled Node Type!");
+        }
+
+        return result.toPrettyString();
+    }
+
+    private static void mergeJsonNodes(ObjectNode target, ObjectNode source) {
+        Iterator<String> fieldNames = source.fieldNames();
+
+        while (fieldNames.hasNext()) {
+            String fieldName = fieldNames.next();
+            JsonNode sourceValue = source.get(fieldName);
+
+            if (target.has(fieldName)) {
+                JsonNode targetValue = target.get(fieldName);
+
+                if (targetValue.isObject() && sourceValue.isObject()) {
+                    mergeJsonNodes((ObjectNode) targetValue, (ObjectNode) sourceValue);
+                } else if (targetValue.isArray() && sourceValue.isArray()) {
+                    mergeArrayNodes((ArrayNode) targetValue, (ArrayNode) sourceValue);
+                } else {
+                    target.set(fieldName, sourceValue);
+                }
+            } else {
+                target.set(fieldName, sourceValue);
             }
         }
     }
 
-    private JsonArray findObject(JsonObject jsonObject) {
-        JsonArray jsonArray = new JsonArray();
-        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-            jsonArray.add(entry.getValue());
+    private static void mergeArrayNodes(ArrayNode targetArray, ArrayNode sourceArray) {
+        int maxSize = Math.max(targetArray.size(), sourceArray.size());
 
-            boolean allNumeric = false;
-            //Generally, when all keys are numeric, it looks like it should be an array with the name being an index
-            for (var key : jsonArray.get(0).getAsJsonObject().keySet()) {
-                allNumeric = key.chars().allMatch(Character::isDigit);
-            }
+        for (int i = 0; i < maxSize; i++) {
+            JsonNode targetElement = i < targetArray.size() ? targetArray.get(i) : null;
+            JsonNode sourceElement = i < sourceArray.size() ? sourceArray.get(i) : null;
 
-            if (allNumeric) {
-                jsonArray = findObject(jsonArray.get(0).getAsJsonObject());
+            if (targetElement != null && sourceElement != null) {
+                if (targetElement.isObject() && sourceElement.isObject()) {
+                    mergeJsonNodes((ObjectNode) targetElement, (ObjectNode) sourceElement);
+                } else if (targetElement.isArray() && sourceElement.isArray()) {
+                    mergeArrayNodes((ArrayNode) targetElement, (ArrayNode) sourceElement);
+                } else {
+                    targetArray.set(i, sourceElement);
+                }
+            } else if (sourceElement != null) {
+                targetArray.add(sourceElement);
             }
-            //Only fetch the first entry
-            break;
         }
-        return jsonArray;
+    }
+
+    public void createClasses() throws IOException {
+        Set<String> set = getAllFiles();
+        for (String item : set) {
+            System.out.println("Generating for: " + item);
+            String json = prepare(dataDirectory + item);
+            System.out.println("Input JSON for generator:\r\n" + json);
+            createClass(json, new File(outputDirectory), "dev.xfj.jsonschema2pojo." + item.replace(".json", "").toLowerCase(), item);
+        }
     }
 
     private void createClass(String jsonString, File outputDirectory, String packageName, String className)
