@@ -27,22 +27,16 @@ public class ClassGenerator {
         this.outputDirectory = outputDirectory;
     }
 
-    public String prepare(String path) throws IOException {
+    private String prepare(String path) throws IOException {
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(file);
         ObjectNode result = objectMapper.createObjectNode();
 
-        switch (jsonNode.getNodeType()) {
-            case OBJECT -> mergeJsonNodes(result, (ObjectNode) jsonNode);
-            case ARRAY -> {
-                for (JsonNode node : jsonNode) {
-                    if (node.isObject()) {
-                        mergeJsonNodes(result, (ObjectNode) node);
-                    }
-                }
+        for (JsonNode node : jsonNode) {
+            if (node.isObject()) {
+                mergeJsonNodes(result, (ObjectNode) node);
             }
-            default -> throw new RuntimeException("Unhandled Node Type!");
         }
 
         return result.toPrettyString();
