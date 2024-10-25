@@ -25,14 +25,10 @@ public class Loader {
     public static <T> List<T> loadJSON(Class<T> clazz, String baseDirectory, String file) throws FileNotFoundException {
         JsonReader jsonReader = new JsonReader(new FileReader(baseDirectory + file));
         JsonArray jsonArray = JsonParser.parseReader(jsonReader).getAsJsonArray();
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .create();
-
         Type type = TypeToken.getParameterized(List.class, clazz).getType();
 
-        List<T> result = gson.fromJson(jsonArray, type);
-        System.out.printf("Loaded: %1$7d entries from %2$s%n", result.size(), file);
-        return result;
+        System.out.printf("Loaded: %1$7d entries from %2$s%n", jsonArray.size(), file);
+
+        return  new Gson().fromJson(jsonArray, type);
     }
 }
