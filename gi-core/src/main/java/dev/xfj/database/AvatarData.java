@@ -15,7 +15,7 @@ public class AvatarData {
     }
 
     public static void init() throws FileNotFoundException {
-        avatarConfig = Loader.loadJSON(AvatarExcelConfigDataJson.class);
+        avatarConfig = Loader.loadJSONArray(AvatarExcelConfigDataJson.class);
     }
 
     public static Map<Integer, Character> loadCharacters() throws FileNotFoundException {

@@ -12,7 +12,16 @@ public class Database {
     }
 
     public static void init() throws FileNotFoundException {
+        TextMapData.init();
         characters = AvatarData.loadCharacters();
+    }
+
+    public static void setLanguage(String language) throws FileNotFoundException {
+        TextMapData.setLanguage(language);
+    }
+
+    public static String getTranslation(long key) {
+        return TextMapData.getTranslation(key);
     }
 
     public static Map<Integer, Character> getCharacters() {
