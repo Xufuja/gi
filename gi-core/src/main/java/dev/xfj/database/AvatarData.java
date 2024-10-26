@@ -18,7 +18,10 @@ public class AvatarData {
         avatarConfig = Loader.loadJSON(AvatarExcelConfigDataJson.class);
     }
 
-    public static Map<Integer, Character> loadCharacters() {
+    public static Map<Integer, Character> loadCharacters() throws FileNotFoundException {
+        if (avatarConfig == null) {
+            init();
+        }
         return avatarConfig.stream().collect(Collectors.toMap(AvatarExcelConfigDataJson::getId, Character::new));
     }
 }

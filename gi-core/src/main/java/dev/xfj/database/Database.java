@@ -12,7 +12,6 @@ public class Database {
     }
 
     public static void init() throws FileNotFoundException {
-        AvatarData.init();
         characters = AvatarData.loadCharacters();
     }
 
