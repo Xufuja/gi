@@ -11,14 +11,18 @@ import java.io.FileReader;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import static dev.xfj.constants.Global.DATA_PATH;
+
 public class Loader {
+    private static final String EXCEL_BIN_PATH = DATA_PATH + "\\ExcelBinOutput\\";
+
     public static <T> List<T> loadJSONArray(Class<T> clazz) throws FileNotFoundException {
         String file = clazz.getSimpleName().replace("Json", ".json");
-        return loadJSONArray(clazz, "C:\\Dev\\AnimeGameData\\ExcelBinOutput\\", file);
+        return loadJSONArray(clazz, EXCEL_BIN_PATH, file);
     }
 
     public static <T> List<T> loadJSONArray(Class<T> clazz, String file) throws FileNotFoundException {
-        return loadJSONArray(clazz, "C:\\Dev\\AnimeGameData\\ExcelBinOutput\\", file);
+        return loadJSONArray(clazz, EXCEL_BIN_PATH, file);
     }
 
     public static <T> List<T> loadJSONArray(Class<T> clazz, String baseDirectory, String file) throws FileNotFoundException {

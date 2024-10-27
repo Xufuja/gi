@@ -11,6 +11,8 @@ import java.io.FileReader;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import static dev.xfj.constants.Global.DATA_PATH;
+
 public class TextMapData {
     private static Map<Long, String> languageMap;
 
@@ -26,7 +28,7 @@ public class TextMapData {
     }
 
     private static Map<Long, String> loadLanguage(String language) throws FileNotFoundException {
-        String baseDirectory = "C:\\Dev\\AnimeGameData\\TextMap\\";
+        String baseDirectory = DATA_PATH + "\\TextMap\\";
         String file = String.format("TextMap%1$s.json", language);
 
         JsonReader jsonReader = new JsonReader(new FileReader(baseDirectory + file));
