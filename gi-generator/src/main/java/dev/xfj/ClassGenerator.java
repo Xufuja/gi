@@ -3,6 +3,7 @@ package dev.xfj;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.codemodel.JCodeModel;
 import org.jsonschema2pojo.*;
@@ -47,7 +48,7 @@ public class ClassGenerator {
 
         while (fieldNames.hasNext()) {
             String fieldName = fieldNames.next();
-            JsonNode sourceValue = source.get(fieldName);
+            JsonNode sourceValue = applyOverride(fieldName, source.get(fieldName));
 
             if (target.has(fieldName)) {
                 JsonNode targetValue = target.get(fieldName);
@@ -63,6 +64,14 @@ public class ClassGenerator {
                 target.set(fieldName, sourceValue);
             }
         }
+    }
+
+    private static JsonNode applyOverride(String fieldName, JsonNode node) {
+        return switch (fieldName) {
+            //Since it merges all array items, the last item overrides these 3 as integers while prior ones are floats
+            case "hpBase", "attackBase", "defenseBase" -> new FloatNode(1.1f);
+            default -> node;
+        };
     }
 
     private static void mergeArrayNodes(ArrayNode targetArray, ArrayNode sourceArray) {
