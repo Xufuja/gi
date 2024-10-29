@@ -38,6 +38,10 @@ public class Character {
         return WeaponType.valueOf(avatar.getWeaponType());
     }
 
+    public boolean isRanged() {
+        return avatar.isIsRangeAttack();
+    }
+
     public int getStartingWeaponId() {
         return avatar.getInitialWeapon();
     }
