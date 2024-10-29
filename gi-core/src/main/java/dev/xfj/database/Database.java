@@ -20,7 +20,7 @@ public class Database {
         TextMapData.setLanguage(language);
     }
 
-    public static String getTranslation(long key) {
+    public static String getTranslation(String key) {
         return TextMapData.getTranslation(key);
     }
 

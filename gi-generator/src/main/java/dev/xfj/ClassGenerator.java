@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.sun.codemodel.JCodeModel;
 import org.jsonschema2pojo.*;
 import org.jsonschema2pojo.rules.RuleFactory;
@@ -67,11 +68,14 @@ public class ClassGenerator {
     }
 
     private static JsonNode applyOverride(String fieldName, JsonNode node) {
-        return switch (fieldName) {
-            //Since it merges all array items, the last item overrides these 3 as integers while prior ones are floats
-            case "hpBase", "attackBase", "defenseBase" -> new FloatNode(1.1f);
-            default -> node;
-        };
+        //Since it merges all array items, the last item overrides these 3 as integers while prior ones are floats
+        if (fieldName.equals("hpBase") || fieldName.equals("attackBase") || fieldName.equals("defenseBase")) {
+            return new FloatNode(1.1f);
+        } else if (fieldName.endsWith("Hash")) { //Seems it originally uses numeric strings that look like longs
+            return new TextNode("a");
+        }
+
+        return node;
     }
 
     private static void mergeArrayNodes(ArrayNode targetArray, ArrayNode sourceArray) {
@@ -97,11 +101,17 @@ public class ClassGenerator {
 
     public void createClasses() throws IOException {
         Set<String> set = getAllFiles();
+
         for (String item : set) {
             System.out.println("Generating for: " + item);
             String json = prepare(dataDirectory + item);
             System.out.println("Input JSON for generator:\r\n" + json);
-            createClass(json, new File(outputDirectory), "dev.xfj.jsonschema2pojo." + item.replace(".json", "").toLowerCase(), item);
+            createClass(
+                    json,
+                    new File(outputDirectory),
+                    "dev.xfj.jsonschema2pojo." + item.replace(".json", "").toLowerCase(),
+                    item
+            );
         }
     }
 
@@ -126,7 +136,11 @@ public class ClassGenerator {
             }
         };
 
-        SchemaMapper mapper = new SchemaMapper(new RuleFactory(config, new GsonAnnotator(config), new SchemaStore()), new SchemaGenerator());
+        SchemaMapper mapper = new SchemaMapper(
+                new RuleFactory(config, new GsonAnnotator(config), new SchemaStore()),
+                new SchemaGenerator()
+        );
+
         mapper.generate(jCodeModel, className, packageName, jsonString);
 
         jCodeModel.build(outputDirectory);
