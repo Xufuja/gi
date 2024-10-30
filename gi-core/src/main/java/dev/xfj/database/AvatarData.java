@@ -22,6 +22,7 @@ public class AvatarData {
         if (avatarConfig == null) {
             init();
         }
+
         return avatarConfig.stream().collect(Collectors.toMap(AvatarExcelConfigDataJson::getId, Character::new));
     }
 }

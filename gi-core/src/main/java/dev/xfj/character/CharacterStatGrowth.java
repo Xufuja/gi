@@ -1,9 +1,9 @@
 package dev.xfj.character;
 
 import dev.xfj.constants.CharacterStatGrowthCurve;
-import dev.xfj.constants.CharacterStatGrowthType;
+import dev.xfj.constants.StatGrowthType;
 
 public record CharacterStatGrowth(
-        CharacterStatGrowthType statGrowthType,
+        StatGrowthType statGrowthType,
         CharacterStatGrowthCurve statGrowthCurve
 ) { }

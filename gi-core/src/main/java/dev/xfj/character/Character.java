@@ -8,113 +8,113 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Character {
-    private final AvatarExcelConfigDataJson avatar;
+    private final AvatarExcelConfigDataJson data;
 
-    public Character(AvatarExcelConfigDataJson avatar) {
-        this.avatar = avatar;
+    public Character(AvatarExcelConfigDataJson data) {
+        this.data = data;
     }
 
     public int getId() {
-        return avatar.getId();
+        return data.getId();
     }
 
     public String getName() {
-        return Database.getTranslation(avatar.getNameTextMapHash());
+        return Database.getTranslation(data.getNameTextMapHash());
     }
 
     public String getDescription() {
-        return Database.getTranslation(avatar.getDescTextMapHash());
+        return Database.getTranslation(data.getDescTextMapHash());
     }
 
     public int getRarity() {
-        return CharacterRarity.valueOf(avatar.getQualityType()).getStarValue();
+        return CharacterRarity.valueOf(data.getQualityType()).getStarValue();
     }
 
     public CharacterBodyType getBodyType() {
-        return CharacterBodyType.valueOf(avatar.getBodyType());
+        return CharacterBodyType.valueOf(data.getBodyType());
     }
 
     public WeaponType getWeaponType() {
-        return WeaponType.valueOf(avatar.getWeaponType());
+        return WeaponType.valueOf(data.getWeaponType());
     }
 
     public boolean isRanged() {
-        return avatar.isIsRangeAttack();
+        return data.isIsRangeAttack();
     }
 
     public int getStartingWeaponId() {
-        return avatar.getInitialWeapon();
+        return data.getInitialWeapon();
     }
 
     public int getDefaultSkillTreeId() {
-        return avatar.getSkillDepotId();
+        return data.getSkillDepotId();
     }
 
     public List<Integer> getAlternateSkillTreeIds() {
-        return avatar.getCandSkillDepotIds();
+        return data.getCandSkillDepotIds();
     }
 
     public int getAscensionId() {
-        return avatar.getAvatarPromoteId();
+        return data.getAvatarPromoteId();
     }
 
     public List<Integer> getAscensionRewardLevels() {
-        return avatar.getAvatarPromoteRewardLevelList();
+        return data.getAvatarPromoteRewardLevelList();
     }
 
     public List<Integer> getAscensionRewardIds() {
-        return avatar.getAvatarPromoteRewardIdList();
+        return data.getAvatarPromoteRewardIdList();
     }
 
     public int getStaminaRecoverySpeed() {
-        return avatar.getStaminaRecoverSpeed();
+        return data.getStaminaRecoverSpeed();
     }
 
-    public int getBaseEnergyRechargeMultiplier() {
-        return avatar.getChargeEfficiency();
+    public int getBaseEnergyRechargeRate() {
+        return data.getChargeEfficiency();
     }
 
     public double getBaseHealth() {
-        return avatar.getHpBase();
+        return data.getHpBase();
     }
 
     public double getBaseAttack() {
-        return avatar.getAttackBase();
+        return data.getAttackBase();
     }
 
     public double getBaseDefense() {
-        return avatar.getDefenseBase();
+        return data.getDefenseBase();
     }
 
     public double getBaseCritRate() {
-        return avatar.getCritical();
+        return data.getCritical();
     }
 
     public double getBaseCritDamage() {
-        return avatar.getCriticalHurt();
+        return data.getCriticalHurt();
     }
 
     public List<CharacterStatGrowth> getStatGrowth() {
-        return avatar.getPropGrowCurves().stream().map(stat -> new CharacterStatGrowth(CharacterStatGrowthType.valueOf(stat.getType()), CharacterStatGrowthCurve.valueOf(stat.getGrowCurve()))).collect(Collectors.toList());
+        return data.getPropGrowCurves().stream().map(stat -> new CharacterStatGrowth(StatGrowthType.valueOf(stat.getType()), CharacterStatGrowthCurve.valueOf(stat.getGrowCurve()))).collect(Collectors.toList());
     }
 
     public String getIconName() {
-        return avatar.getIconName();
+        return data.getIconName();
     }
 
     public String getSideViewIconName() {
-        return avatar.getSideIconName();
+        return data.getSideIconName();
     }
 
     public String getSplashImageName() {
-        return avatar.getImageName();
+        return data.getImageName();
     }
 
     public CharacterUsageType getUsageType() {
-        return avatar.getUseType() != null ? CharacterUsageType.valueOf(avatar.getUseType()) : CharacterUsageType.NONE;
+        return data.getUseType() != null ? CharacterUsageType.valueOf(data.getUseType()) : CharacterUsageType.NONE;
     }
 
     public CharacterIdentityType getIdentityType() {
-        return CharacterIdentityType.valueOf(avatar.getAvatarIdentityType());
+        return CharacterIdentityType.valueOf(data.getAvatarIdentityType());
     }
 }
