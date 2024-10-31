@@ -9,20 +9,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AvatarData {
+    private static AvatarData instance;
     private static List<AvatarExcelConfigDataJson> avatarConfig;
 
-    private AvatarData() {
-    }
-
-    public static void init() throws FileNotFoundException {
+    private AvatarData() throws FileNotFoundException {
         avatarConfig = Loader.loadJSONArray(AvatarExcelConfigDataJson.class);
     }
 
-    public static Map<Integer, Character> loadCharacters() throws FileNotFoundException {
-        if (avatarConfig == null) {
-            init();
+    public static AvatarData getInstance() throws FileNotFoundException {
+        if (instance == null) {
+            instance = new AvatarData();
         }
 
+        return instance;
+    }
+
+    public Map<Integer, Character> loadCharacters() {
         return avatarConfig.stream().collect(Collectors.toMap(AvatarExcelConfigDataJson::getId, Character::new));
     }
 }

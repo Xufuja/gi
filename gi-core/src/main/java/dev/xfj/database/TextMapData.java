@@ -14,20 +14,34 @@ import java.util.Map;
 import static dev.xfj.constants.Global.DATA_PATH;
 
 public class TextMapData {
+    private static TextMapData instance;
     private static Map<String, String> languageMap;
 
-    private TextMapData() {
-    }
-
-    public static void init() throws FileNotFoundException {
+    private TextMapData() throws FileNotFoundException {
         languageMap = loadLanguage("EN");
     }
 
-    protected static void setLanguage(String language) throws FileNotFoundException {
-        languageMap = loadLanguage(language);
+    public static TextMapData getInstance() {
+        if (instance == null) {
+            try {
+                instance = new TextMapData();
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+
+        return instance;
     }
 
-    private static Map<String, String> loadLanguage(String language) throws FileNotFoundException {
+    protected void setLanguage(String language) {
+        try {
+            languageMap = loadLanguage(language);
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private Map<String, String> loadLanguage(String language) throws FileNotFoundException {
         String baseDirectory = DATA_PATH + "\\TextMap\\";
         String file = String.format("TextMap%1$s.json", language);
 
@@ -41,7 +55,7 @@ public class TextMapData {
         return result;
     }
 
-    protected static String getTranslation(String key) {
+    protected String getTranslation(String key) {
         return languageMap.get(key);
     }
 }

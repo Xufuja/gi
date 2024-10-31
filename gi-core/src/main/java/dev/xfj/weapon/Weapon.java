@@ -21,11 +21,11 @@ public class Weapon {
     }
 
     public String getName() {
-        return Database.getTranslation(data.getNameTextMapHash());
+        return Database.getInstance().getTranslation(data.getNameTextMapHash());
     }
 
     public String getDescription() {
-        return Database.getTranslation(data.getDescTextMapHash());
+        return Database.getInstance().getTranslation(data.getDescTextMapHash());
     }
 
     public WeaponType getWeaponType() {

@@ -9,20 +9,26 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WeaponData {
+    private static WeaponData instance;
     private static List<WeaponExcelConfigDataJson> weaponConfig;
 
-    private WeaponData() {
-    }
-
-    public static void init() throws FileNotFoundException {
+    private WeaponData() throws FileNotFoundException {
         weaponConfig = Loader.loadJSONArray(WeaponExcelConfigDataJson.class);
     }
 
-    public static Map<Integer, Weapon> loadWeapons() throws FileNotFoundException {
-        if (weaponConfig == null) {
-            init();
+    public static WeaponData getInstance() {
+        if (instance == null) {
+            try {
+            instance = new WeaponData();
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
         }
 
+        return instance;
+    }
+
+    public  Map<Integer, Weapon> loadWeapons() {
         return weaponConfig.stream().collect(Collectors.toMap(WeaponExcelConfigDataJson::getId, Weapon::new));
     }
 }
