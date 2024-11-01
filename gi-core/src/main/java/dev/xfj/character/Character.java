@@ -3,6 +3,7 @@ package dev.xfj.character;
 import dev.xfj.constants.*;
 import dev.xfj.database.Database;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
+import dev.xfj.weapon.Weapon;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,8 +43,8 @@ public class Character {
         return data.isIsRangeAttack();
     }
 
-    public int getStartingWeaponId() {
-        return data.getInitialWeapon();
+    public Weapon getStartingWeapon() {
+        return Database.getInstance().getWeapon(data.getInitialWeapon());
     }
 
     public int getDefaultSkillTreeId() {
@@ -116,5 +117,10 @@ public class Character {
 
     public CharacterIdentityType getIdentityType() {
         return CharacterIdentityType.valueOf(data.getAvatarIdentityType());
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

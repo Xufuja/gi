@@ -28,12 +28,12 @@ public class Weapon {
         return Database.getInstance().getTranslation(data.getDescTextMapHash());
     }
 
-    public WeaponType getWeaponType() {
-        return WeaponType.valueOf(data.getWeaponType());
-    }
-
     public int getRarity() {
         return data.getRank();
+    }
+
+    public WeaponType getWeaponType() {
+        return WeaponType.valueOf(data.getWeaponType());
     }
 
     public int getBaseRequiredExp() {
@@ -46,5 +46,34 @@ public class Weapon {
 
     public List<WeaponStatGrowth> getStatGrowth() {
         return data.getWeaponProp().stream().map(stat -> new WeaponStatGrowth(stat.getPropType() != null ? StatGrowthType.valueOf(stat.getPropType()) : StatGrowthType.NONE, stat.getInitValue(), WeaponStatGrowthCurve.valueOf(stat.getType()))).collect(Collectors.toList());
+    }
+
+    public List<Integer> getRefinementCost() {
+        return data.getAwakenCosts();
+    }
+
+    public boolean isInitiallyLocked() {
+        return data.getInitialLockState() == 2;
+    }
+
+    public SalvageReturnItems getSalvagedItems() {
+        //There is never more than 1 item in either array
+        return new SalvageReturnItems(
+                data.getDestroyReturnMaterial().get(0),
+                data.getDestroyReturnMaterialCount().get(0)
+        );
+    }
+
+    public String getIconName() {
+        return data.getIcon();
+    }
+
+    public String getRefinedIconName() {
+        return data.getAwakenIcon();
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

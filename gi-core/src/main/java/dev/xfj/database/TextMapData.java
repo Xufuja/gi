@@ -42,10 +42,9 @@ public class TextMapData {
     }
 
     private Map<String, String> loadLanguage(String language) throws FileNotFoundException {
-        String baseDirectory = DATA_PATH + "\\TextMap\\";
         String file = String.format("TextMap%1$s.json", language);
 
-        JsonReader jsonReader = new JsonReader(new FileReader(baseDirectory + file));
+        JsonReader jsonReader = new JsonReader(new FileReader(DATA_PATH + "\\TextMap\\" + file));
         JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
         Type type = TypeToken.getParameterized(Map.class, String.class, String.class).getType();
 

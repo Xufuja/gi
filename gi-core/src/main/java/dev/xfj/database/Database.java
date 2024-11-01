@@ -43,4 +43,8 @@ public class Database {
     public Map<Integer, Weapon> getWeapons() {
         return weapons;
     }
+
+    public Weapon getWeapon(int id) {
+        return weapons.get(id);
+    }
 }
