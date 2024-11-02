@@ -6,20 +6,19 @@ import dev.xfj.weapon.Weapon;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-public class WeaponData {
+public class WeaponData implements Data {
     private static WeaponData instance;
-    private static List<WeaponExcelConfigDataJson> weaponConfig;
+    private final List<WeaponExcelConfigDataJson> weaponConfig;
 
     private WeaponData() throws FileNotFoundException {
-        weaponConfig = Loader.loadJSONArray(WeaponExcelConfigDataJson.class);
+        weaponConfig = loadJSONArray(WeaponExcelConfigDataJson.class);
     }
 
     public static WeaponData getInstance() {
         if (instance == null) {
             try {
-            instance = new WeaponData();
+                instance = new WeaponData();
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -28,7 +27,7 @@ public class WeaponData {
         return instance;
     }
 
-    public  Map<Integer, Weapon> loadWeapons() {
-        return weaponConfig.stream().collect(Collectors.toMap(WeaponExcelConfigDataJson::getId, Weapon::new));
+    public Map<Integer, Weapon> loadWeapons() {
+        return loadDataWithId(Weapon.class, weaponConfig);
     }
 }

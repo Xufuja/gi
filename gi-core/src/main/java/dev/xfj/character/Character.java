@@ -47,11 +47,11 @@ public class Character {
         return Database.getInstance().getWeapon(data.getInitialWeapon());
     }
 
-    public int getDefaultSkillTreeId() {
+    public int getDefaultTalentTreeId() {
         return data.getSkillDepotId();
     }
 
-    public List<Integer> getAlternateSkillTreeIds() {
+    public List<Integer> getAlternateTalentTreeIds() {
         return data.getCandSkillDepotIds();
     }
 

@@ -11,11 +11,9 @@ import java.io.FileReader;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import static dev.xfj.constants.Global.DATA_PATH;
-
-public class TextMapData {
+public class TextMapData implements Data {
     private static TextMapData instance;
-    private static Map<String, String> languageMap;
+    private Map<String, String> languageMap;
 
     private TextMapData() throws FileNotFoundException {
         languageMap = loadLanguage("EN");
@@ -44,7 +42,7 @@ public class TextMapData {
     private Map<String, String> loadLanguage(String language) throws FileNotFoundException {
         String file = String.format("TextMap%1$s.json", language);
 
-        JsonReader jsonReader = new JsonReader(new FileReader(DATA_PATH + "\\TextMap\\" + file));
+        JsonReader jsonReader = new JsonReader(new FileReader(TEXT_MAP_PATH + file));
         JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
         Type type = TypeToken.getParameterized(Map.class, String.class, String.class).getType();
 
