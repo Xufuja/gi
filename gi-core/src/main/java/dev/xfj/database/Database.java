@@ -2,6 +2,7 @@ package dev.xfj.database;
 
 import dev.xfj.character.Character;
 import dev.xfj.character.Talent;
+import dev.xfj.character.TalentTree;
 import dev.xfj.weapon.Weapon;
 
 import java.io.FileNotFoundException;
@@ -12,11 +13,13 @@ public class Database {
     private final Map<Integer, Character> characters;
     private final Map<Integer, Weapon> weapons;
     private final Map<Integer, Talent> talents;
+    private final Map<Integer, TalentTree> talentTrees;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
         weapons = WeaponData.getInstance().loadWeapons();
         talents = AvatarData.getInstance().loadTalents();
+        talentTrees = AvatarData.getInstance().loadTalentTrees();;
     }
 
     public static Database getInstance() {
@@ -43,12 +46,16 @@ public class Database {
         return characters;
     }
 
-    public Map<Integer, Weapon> getWeapons() {
-        return weapons;
-    }
-
     public Map<Integer, Talent> getTalents() {
         return talents;
+    }
+
+    public Map<Integer, TalentTree> getTalentTrees() {
+        return talentTrees;
+    }
+
+    public Map<Integer, Weapon> getWeapons() {
+        return weapons;
     }
 
     public Weapon getWeapon(int id) {

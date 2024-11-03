@@ -21,23 +21,23 @@ public interface Data {
     String EXCEL_BIN_PATH = DATA_PATH + "\\ExcelBinOutput\\";
     String TEXT_MAP_PATH = DATA_PATH + "\\TextMap\\";
 
-    default  <T> List<T> loadJSONArray(Class<T> clazz) throws FileNotFoundException {
+    default <T> List<T> loadJSONArray(Class<T> clazz) throws FileNotFoundException {
         String file = clazz.getSimpleName().replace("Json", ".json");
         return loadJSONArray(clazz, EXCEL_BIN_PATH, file);
     }
 
-    default  <T> List<T> loadJSONArray(Class<T> clazz, String file) throws FileNotFoundException {
+    default <T> List<T> loadJSONArray(Class<T> clazz, String file) throws FileNotFoundException {
         return loadJSONArray(clazz, EXCEL_BIN_PATH, file);
     }
 
-    default  <T> List<T> loadJSONArray(Class<T> clazz, String baseDirectory, String file) throws FileNotFoundException {
+    default <T> List<T> loadJSONArray(Class<T> clazz, String baseDirectory, String file) throws FileNotFoundException {
         JsonReader jsonReader = new JsonReader(new FileReader(baseDirectory + file));
         JsonArray jsonArray = JsonParser.parseReader(jsonReader).getAsJsonArray();
         Type type = TypeToken.getParameterized(List.class, clazz).getType();
 
         System.out.printf("Loaded: %1$7d entries from %2$s%n", jsonArray.size(), file);
 
-        return  new Gson().fromJson(jsonArray, type);
+        return new Gson().fromJson(jsonArray, type);
     }
 
     default <T, U> Map<Integer, T> loadDataWithId(Class<T> returnType, List<U> inputList) {
@@ -54,7 +54,7 @@ public interface Data {
         }
     }
 
-    default  <T> T constructInstance(Class<T> returnType, Object argument) {
+    default <T> T constructInstance(Class<T> returnType, Object argument) {
         try {
             Constructor<T> constructor = returnType.getConstructor(argument.getClass());
             return constructor.newInstance(argument);

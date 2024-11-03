@@ -2,6 +2,7 @@ package dev.xfj.database;
 
 import dev.xfj.character.Character;
 import dev.xfj.character.Talent;
+import dev.xfj.character.TalentTree;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
@@ -38,5 +39,7 @@ public class AvatarData implements Data {
         return loadDataWithId(Talent.class, skillConfig);
     }
 
-
+    public Map<Integer, TalentTree> loadTalentTrees() {
+        return loadDataWithId(TalentTree.class, skillDepotConfig);
+    }
 }

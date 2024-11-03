@@ -6,8 +6,8 @@ public class Main {
     public static void main(String[] args) {
         try {
             Database.getInstance().getCharacters().forEach((key, value) -> {
-                System.out.printf("Key: %s, Name: %s, Desc: %s, Body Type: %s, Star: %s, Starting Weapon: %s, Weapon: %s, ID: %s, Use: %s, Growth: %s\n",
-                        key, value.getName(), value.getDescription(), value.getBodyType(), value.getRarity(), value.getStartingWeapon(), value.getWeaponType(), value.getId(), value.getUsageType(), value.getStatGrowth());
+                System.out.printf("Key: %s, Name: %s, Desc: %s, Body Type: %s, Star: %s, Starting Weapon: %s, Weapon: %s, ID: %s, Use: %s, Growth: %s, Tree: %s\n",
+                        key, value.getName(), value.getDescription(), value.getBodyType(), value.getRarity(), value.getStartingWeapon(), value.getWeaponType(), value.getId(), value.getUsageType(), value.getStatGrowth(), value.getDefaultTalentTreeId());
             });
 
             Database.getInstance().getWeapons().forEach((key, value) -> {
@@ -16,6 +16,10 @@ public class Main {
 
             Database.getInstance().getTalents().forEach((key, value) -> {
                 System.out.printf("Key: %s, Name: %s, Desc: %s\n", value.getId(), value.getName(), value.getDescription());
+            });
+
+            Database.getInstance().getTalentTrees().forEach((key, value) -> {
+                System.out.printf("Key: %s, Arkhe: %s\n", value.getId(), value.getArkhe());
             });
         } catch (Exception e) {
             e.printStackTrace();
