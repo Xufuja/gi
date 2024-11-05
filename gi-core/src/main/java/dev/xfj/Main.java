@@ -19,7 +19,7 @@ public class Main {
             });
 
             Database.getInstance().getTalentTrees().forEach((key, value) -> {
-                System.out.printf("Key: %s, Arkhe: %s\n", value.getId(), value.getArkhe());
+                System.out.printf("Key: %s, Arkhe: %s, Passives: %s\n", value.getId(), value.getArkhe(), value.getPassives());
             });
         } catch (Exception e) {
             e.printStackTrace();
