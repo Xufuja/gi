@@ -21,6 +21,10 @@ public class Main {
             Database.getInstance().getTalentTrees().forEach((key, value) -> {
                 System.out.printf("Key: %s, Arkhe: %s, Passives: %s\n", value.getId(), value.getArkhe(), value.getPassives());
             });
+
+            Database.getInstance().getItems().forEach((key, value) -> {
+                System.out.printf("Key: %s, Name: %s, Desc: %s, Type: %s\n", value.getId(), value.getName(), value.getDescription(), value.getItemType());
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
