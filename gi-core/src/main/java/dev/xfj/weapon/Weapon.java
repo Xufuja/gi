@@ -1,5 +1,6 @@
 package dev.xfj.weapon;
 
+import dev.xfj.constants.ItemType;
 import dev.xfj.constants.StatGrowthType;
 import dev.xfj.constants.WeaponStatGrowthCurve;
 import dev.xfj.constants.WeaponType;
@@ -34,6 +35,10 @@ public class Weapon {
 
     public WeaponType getWeaponType() {
         return WeaponType.valueOf(data.getWeaponType());
+    }
+
+    public ItemType getItemType() {
+        return ItemType.valueOf(data.getItemType());
     }
 
     public int getBaseRequiredExp() {

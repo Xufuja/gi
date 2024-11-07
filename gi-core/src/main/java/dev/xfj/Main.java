@@ -23,7 +23,7 @@ public class Main {
             });
 
             Database.getInstance().getItems().forEach((key, value) -> {
-                System.out.printf("Key: %s, Name: %s, Desc: %s, Type: %s\n", value.getId(), value.getName(), value.getDescription(), value.getItemType());
+                System.out.printf("Key: %s, Name: %s, Desc: %s, ItemType: %s, Material: %s, Parameters: %s\n", value.getId(), value.getName(), value.getDescription(), value.getItemType(), value.getMaterialType(), value.getUsageParameters());
             });
         } catch (Exception e) {
             e.printStackTrace();
