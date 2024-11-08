@@ -1,48 +1,27 @@
 package dev.xfj.item;
 
-import dev.xfj.constants.ItemOperation;
 import dev.xfj.constants.ItemType;
-import dev.xfj.constants.MaterialType;
-import dev.xfj.database.Database;
-import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
+import dev.xfj.constants.SalvageType;
+import dev.xfj.weapon.SalvageReturnItems;
 
-import java.util.List;
-import java.util.stream.Collectors;
+public interface Item {
+    int getId();
 
-public class Item {
-    private final MaterialExcelConfigDataJson data;
+    String getName();
 
-    public Item(MaterialExcelConfigDataJson data) {
-        this.data = data;
-    }
+    String getDescription();
 
-    public int getId() {
-        return data.getId();
-    }
+    ItemType getItemType();
 
-    public String getName() {
-        return Database.getInstance().getTranslation(data.getNameTextMapHash());
-    }
+    SalvageType getSalvageType();
 
-    public String getDescription() {
-        return Database.getInstance().getTranslation(data.getDescTextMapHash());
-    }
+    SalvageReturnItems getSalvagedItems();
 
-    public ItemType getItemType() {
-        return ItemType.valueOf(data.getItemType());
-    }
+    String getIconName();
 
-    public MaterialType getMaterialType() {
-        return data.getMaterialType() != null ? MaterialType.valueOf(data.getMaterialType()) : MaterialType.NONE;
-    }
+    Integer getWeight();
 
-    public List<ItemUsageDetail> getUsageParameters() {
-        return data.getItemUse()
-                .stream()
-                .map(parameter -> new ItemUsageDetail(
-                        parameter.getUseOp() != null ?
-                                ItemOperation.valueOf(parameter.getUseOp()) :
-                                ItemOperation.NONE, parameter.getUseParam()))
-                .collect(Collectors.toList());
-    }
+    Integer getRank();
+
+    Integer getGadgetId();
 }

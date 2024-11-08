@@ -1,6 +1,6 @@
 package dev.xfj.database;
 
-import dev.xfj.item.Item;
+import dev.xfj.item.Material;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 
 import java.io.FileNotFoundException;
@@ -23,7 +23,7 @@ public class ItemData implements Data {
         return instance;
     }
 
-    public Map<Integer, Item> loadItems() {
-        return loadDataWithId(Item.class, materialConfig);
+    public Map<Integer, Material> loadItems() {
+        return loadDataWithId(Material.class, materialConfig);
     }
 }

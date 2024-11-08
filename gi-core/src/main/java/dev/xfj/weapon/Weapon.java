@@ -1,30 +1,31 @@
 package dev.xfj.weapon;
 
-import dev.xfj.constants.ItemType;
-import dev.xfj.constants.StatGrowthType;
-import dev.xfj.constants.WeaponStatGrowthCurve;
-import dev.xfj.constants.WeaponType;
+import dev.xfj.constants.*;
 import dev.xfj.database.Database;
+import dev.xfj.item.Item;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Weapon {
+public class Weapon implements Item {
     private final WeaponExcelConfigDataJson data;
 
     public Weapon(WeaponExcelConfigDataJson data) {
         this.data = data;
     }
 
+    @Override
     public int getId() {
         return data.getId();
     }
 
+    @Override
     public String getName() {
         return Database.getInstance().getTranslation(data.getNameTextMapHash());
     }
 
+    @Override
     public String getDescription() {
         return Database.getInstance().getTranslation(data.getDescTextMapHash());
     }
@@ -37,6 +38,7 @@ public class Weapon {
         return WeaponType.valueOf(data.getWeaponType());
     }
 
+    @Override
     public ItemType getItemType() {
         return ItemType.valueOf(data.getItemType());
     }
@@ -61,6 +63,12 @@ public class Weapon {
         return data.getInitialLockState() == 2;
     }
 
+    @Override
+    public SalvageType getSalvageType() {
+        return SalvageType.valueOf(data.getDestroyRule());
+    }
+
+    @Override
     public SalvageReturnItems getSalvagedItems() {
         //There is never more than 1 item in either array
         return new SalvageReturnItems(
@@ -69,12 +77,28 @@ public class Weapon {
         );
     }
 
+    @Override
     public String getIconName() {
         return data.getIcon();
     }
 
     public String getRefinedIconName() {
         return data.getAwakenIcon();
+    }
+
+    @Override
+    public Integer getWeight() {
+        return data.getWeight();
+    }
+
+    @Override
+    public Integer getRank() {
+        return data.getRank();
+    }
+
+    @Override
+    public Integer getGadgetId() {
+        return data.getGadgetId();
     }
 
     @Override
