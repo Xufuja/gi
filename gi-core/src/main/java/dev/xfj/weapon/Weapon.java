@@ -30,8 +30,9 @@ public class Weapon implements Item {
         return Database.getInstance().getTranslation(data.getDescTextMapHash());
     }
 
+    @Override
     public int getRarity() {
-        return data.getRank();
+        return data.getRankLevel();
     }
 
     public WeaponType getWeaponType() {

@@ -30,6 +30,11 @@ public class Material implements Item {
         return Database.getInstance().getTranslation(data.getDescTextMapHash());
     }
 
+    @Override
+    public int getRarity() {
+        return data.getRankLevel();
+    }
+
     public String getEffectName() {
         return data.getEffectName();
     }

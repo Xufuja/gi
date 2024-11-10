@@ -11,6 +11,8 @@ public interface Item {
 
     String getDescription();
 
+    int getRarity();
+
     ItemType getItemType();
 
     SalvageType getSalvageType();

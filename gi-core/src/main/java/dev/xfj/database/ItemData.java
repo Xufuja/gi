@@ -11,7 +11,7 @@ public class ItemData implements Data {
     private static ItemData instance;
     private final List<MaterialExcelConfigDataJson> materialConfig;
 
-    public ItemData() throws FileNotFoundException {
+    private ItemData() throws FileNotFoundException {
         this.materialConfig = loadJSONArray(MaterialExcelConfigDataJson.class);
     }
 

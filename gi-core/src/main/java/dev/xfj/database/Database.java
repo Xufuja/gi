@@ -1,5 +1,6 @@
 package dev.xfj.database;
 
+import dev.xfj.artifact.Artifact;
 import dev.xfj.character.Character;
 import dev.xfj.character.Talent;
 import dev.xfj.character.TalentTree;
@@ -16,6 +17,7 @@ public class Database {
     private final Map<Integer, Talent> talents;
     private final Map<Integer, TalentTree> talentTrees;
     private final Map<Integer, Material> items;
+    private final Map<Integer, Artifact> artifacts;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
@@ -23,6 +25,7 @@ public class Database {
         talents = AvatarData.getInstance().loadTalents();
         talentTrees = AvatarData.getInstance().loadTalentTrees();;
         items = ItemData.getInstance().loadItems();
+        artifacts = ReliquaryData.getInstance().loadArtifacts();
     }
 
     public static Database getInstance() {
@@ -67,5 +70,9 @@ public class Database {
 
     public Map<Integer, Material> getItems() {
         return items;
+    }
+
+    public Map<Integer, Artifact> getArtifacts() {
+        return artifacts;
     }
 }
