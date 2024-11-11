@@ -2,28 +2,74 @@ package dev.xfj.item;
 
 import dev.xfj.constants.ItemType;
 import dev.xfj.constants.SalvageType;
+import dev.xfj.database.Database;
 import dev.xfj.weapon.SalvageReturnItems;
 
-public interface Item {
-    int getId();
+import java.util.List;
 
-    String getName();
+public interface Item<T> {
+    T data();
 
-    String getDescription();
+    default Integer getId() {
+        return invoke(Integer.class, "getId");
+    }
 
-    int getRarity();
+    default String getName() {
+        return Database.getInstance().getTranslation(invoke(String.class, "getNameTextMapHash"));
+    }
 
-    ItemType getItemType();
+    default String getDescription() {
+        return Database.getInstance().getTranslation(invoke(String.class, "getDescTextMapHash"));
+    }
 
-    SalvageType getSalvageType();
+    default Integer getRarity() {
+        return invoke(Integer.class, "getRankLevel");
+    }
 
-    SalvageReturnItems getSalvagedItems();
+    default ItemType getItemType() {
+        return ItemType.valueOf(invoke(String.class, "getItemType"));
+    }
 
-    String getIconName();
+    default SalvageType getSalvageType() {
+        String rule = invoke(String.class, "getDestroyRule");
 
-    Integer getWeight();
+        return rule != null ? SalvageType.valueOf(rule) : SalvageType.NONE;
+    }
 
-    Integer getRank();
+    default SalvageReturnItems getSalvagedItems() {
+        List<Integer> count = invoke(List.class, "getDestroyReturnMaterialCount");
+        //There is never more than 1 item in either array
+        return count.size() > 0 ?
+                new SalvageReturnItems(
+                        (Integer) invoke(List.class, "getDestroyReturnMaterial").get(0),
+                        count.get(0)
+                ) :
+                null;
+    }
 
-    Integer getGadgetId();
+    default String getIconName() {
+        return invoke(String.class, "getIcon");
+    }
+
+    default Integer getWeight() {
+        return invoke(Integer.class, "getWeight");
+    }
+
+    default Integer getRank() {
+        return invoke(Integer.class, "getRank");
+    }
+
+    default Integer getGadgetId() {
+        return invoke(Integer.class, "getGadgetId");
+    }
+
+    default <R> R invoke(Class<R> returnType, String name) {
+        Object data = data();
+
+        try {
+            return returnType.cast(data.getClass().getMethod(name).invoke(data));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 }

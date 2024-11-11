@@ -27,7 +27,7 @@ public class Main {
             });
 
             Database.getInstance().getArtifacts().forEach((key, value) -> {
-                System.out.printf("Key: %s, Name: %s, Desc: %s, Rarity: %s, Type: %s\n", value.getId(), value.getName(), value.getDescription(), value.getRarity(), value.getArtifactType());
+                System.out.printf("Key: %s, Name: %s, Desc: %s, Rarity: %s, Type: %s, Salvage: %s\n", value.getId(), value.getName(), value.getDescription(), value.getRarity(), value.getArtifactType(), value.getSalvagedItems());
             });
         } catch (Exception e) {
             e.printStackTrace();
