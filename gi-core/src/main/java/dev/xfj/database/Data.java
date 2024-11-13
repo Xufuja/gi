@@ -41,13 +41,17 @@ public interface Data {
     }
 
     default <T, U> Map<Integer, T> loadDataWithId(Class<T> returnType, List<U> inputList) {
-        return inputList.stream()
-                .collect(Collectors.toMap(this::getId, jsonData -> constructInstance(returnType, jsonData)));
+        return loadDataWithId(returnType, inputList, "getId");
     }
 
-    default Integer getId(Object input) {
+    default <T, U> Map<Integer, T> loadDataWithId(Class<T> returnType, List<U> inputList, String idMethod) {
+        return inputList.stream()
+                .collect(Collectors.toMap(input -> getId(input, idMethod), jsonData -> constructInstance(returnType, jsonData)));
+    }
+
+    default Integer getId(Object input, String idMethod) {
         try {
-            Method method = input.getClass().getMethod("getId");
+            Method method = input.getClass().getMethod(idMethod);
             return (Integer) method.invoke(input);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
