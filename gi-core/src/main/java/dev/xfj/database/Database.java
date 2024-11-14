@@ -3,6 +3,7 @@ package dev.xfj.database;
 import dev.xfj.artifact.Artifact;
 import dev.xfj.artifact.ArtifactSet;
 import dev.xfj.character.Character;
+import dev.xfj.character.LevelRequirement;
 import dev.xfj.character.Talent;
 import dev.xfj.character.TalentTree;
 import dev.xfj.item.Material;
@@ -20,6 +21,7 @@ public class Database {
     private final Map<Integer, Material> items;
     private final Map<Integer, Artifact> artifacts;
     private final Map<Integer, ArtifactSet> artifactSets;
+    private final Map<Integer, LevelRequirement> levelRequirements;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
@@ -29,6 +31,7 @@ public class Database {
         items = ItemData.getInstance().loadItems();
         artifacts = ReliquaryData.getInstance().loadArtifacts();
         artifactSets = ReliquarySetData.getInstance().loadArtifactSets();
+        levelRequirements = AvatarData.getInstance().loadLevelRequirements();
     }
 
     public static Database getInstance() {
@@ -81,5 +84,9 @@ public class Database {
 
     public Map<Integer, ArtifactSet> getArtifactSets() {
         return artifactSets;
+    }
+
+    public Map<Integer, LevelRequirement> getLevelRequirements() {
+        return levelRequirements;
     }
 }
