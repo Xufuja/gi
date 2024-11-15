@@ -3,7 +3,6 @@ package dev.xfj.item;
 import dev.xfj.constants.ItemType;
 import dev.xfj.constants.SalvageType;
 import dev.xfj.database.Database;
-import dev.xfj.weapon.SalvageReturnItems;
 
 import java.util.List;
 
@@ -36,11 +35,11 @@ public interface Item<T> {
         return rule != null ? SalvageType.valueOf(rule) : SalvageType.NONE;
     }
 
-    default SalvageReturnItems getSalvagedItems() {
+    default ItemPair getSalvagedItems() {
         List<Integer> count = invoke(List.class, "getDestroyReturnMaterialCount");
         //There is never more than 1 item in either array
         return count.size() > 0 ?
-                new SalvageReturnItems(
+                new ItemPair(
                         (Integer) invoke(List.class, "getDestroyReturnMaterial").get(0),
                         count.get(0)
                 ) :

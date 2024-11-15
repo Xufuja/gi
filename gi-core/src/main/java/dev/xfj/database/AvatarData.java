@@ -1,17 +1,18 @@
 package dev.xfj.database;
 
+import dev.xfj.character.*;
 import dev.xfj.character.Character;
-import dev.xfj.character.LevelRequirement;
-import dev.xfj.character.Talent;
-import dev.xfj.character.TalentTree;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AvatarData implements Data {
     private static AvatarData instance;
@@ -19,12 +20,14 @@ public class AvatarData implements Data {
     private final List<AvatarSkillExcelConfigDataJson> skillConfig;
     private final List<AvatarSkillDepotExcelConfigDataJson> skillDepotConfig;
     private final List<AvatarLevelExcelConfigDataJson> levelConfig;
+    private final List<AvatarPromoteExcelConfigDataJson> avatarPromoteConfig;
 
     private AvatarData() throws FileNotFoundException {
         avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
         skillConfig = loadJSONArray(AvatarSkillExcelConfigDataJson.class);
         skillDepotConfig = loadJSONArray(AvatarSkillDepotExcelConfigDataJson.class);
         levelConfig = loadJSONArray(AvatarLevelExcelConfigDataJson.class);
+        avatarPromoteConfig = loadJSONArray(AvatarPromoteExcelConfigDataJson.class);
     }
 
     public static AvatarData getInstance() throws FileNotFoundException {
@@ -49,5 +52,19 @@ public class AvatarData implements Data {
 
     public Map<Integer, LevelRequirement> loadLevelRequirements() {
         return loadDataWithId(LevelRequirement.class, levelConfig, "getLevel");
+    }
+
+    public Map<Integer, Map<Integer, CharacterAscension>> loadCharacterAscensions() {
+        return avatarPromoteConfig.stream()
+                .collect(Collectors.groupingBy(
+                        AvatarPromoteExcelConfigDataJson::getAvatarPromoteId,
+                        Collectors.mapping(
+                                CharacterAscension::new,
+                                Collectors.toMap(
+                                        CharacterAscension::getAscension,
+                                        ascension -> ascension
+                                )
+                        )
+                ));
     }
 }

@@ -49,6 +49,11 @@ public interface Data {
                 .collect(Collectors.toMap(input -> getId(input, idMethod), jsonData -> constructInstance(returnType, jsonData)));
     }
 
+    default <T, U> Map<Integer, T> loadDataWithId2(Class<T> returnType, List<U> inputList, String idMethod) {
+        return inputList.stream()
+                .collect(Collectors.toMap(input -> getId(input, idMethod), jsonData -> constructInstance(returnType, jsonData)));
+    }
+
     default Integer getId(Object input, String idMethod) {
         try {
             Method method = input.getClass().getMethod(idMethod);

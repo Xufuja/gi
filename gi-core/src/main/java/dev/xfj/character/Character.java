@@ -96,7 +96,7 @@ public class Character {
     }
 
     public List<CharacterStatGrowth> getStatGrowth() {
-        return data.getPropGrowCurves().stream().map(stat -> new CharacterStatGrowth(StatGrowthType.valueOf(stat.getType()), CharacterStatGrowthCurve.valueOf(stat.getGrowCurve()))).collect(Collectors.toList());
+        return data.getPropGrowCurves().stream().map(stat -> new CharacterStatGrowth(StatType.valueOf(stat.getType()), CharacterStatGrowthCurve.valueOf(stat.getGrowCurve()))).collect(Collectors.toList());
     }
 
     public String getIconName() {

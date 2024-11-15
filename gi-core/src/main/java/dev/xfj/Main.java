@@ -1,5 +1,6 @@
 package dev.xfj;
 
+import dev.xfj.character.Character;
 import dev.xfj.database.Database;
 
 public class Main {
@@ -36,6 +37,11 @@ public class Main {
 
             Database.getInstance().getLevelRequirements().forEach((key, value) -> {
                 System.out.printf("Level: %s, Required Exp: %s\n", value.getLevel(), value.getRequiredExp());
+            });
+
+            Database.getInstance().getCharacterAscensions().forEach((key, value) -> {
+                Character selected = Database.getInstance().getCharacters().values().stream().filter(character -> character.getAscensionId() == key).findFirst().get();
+                value.values().forEach(current -> System.out.printf("Character: %s, Ascension: %s, Max Level: %s, Stat Growth: %s\n", selected.getName(), current.getAscension(), current.getMaxLevel(), current.getAscensionStatGrowth()));
             });
         } catch (Exception e) {
             e.printStackTrace();
