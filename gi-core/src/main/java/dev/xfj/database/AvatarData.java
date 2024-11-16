@@ -1,7 +1,7 @@
 package dev.xfj.database;
 
-import dev.xfj.character.*;
 import dev.xfj.character.Character;
+import dev.xfj.character.*;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
@@ -9,10 +9,8 @@ import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotE
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AvatarData implements Data {
     private static AvatarData instance;
@@ -55,16 +53,10 @@ public class AvatarData implements Data {
     }
 
     public Map<Integer, Map<Integer, CharacterAscension>> loadCharacterAscensions() {
-        return avatarPromoteConfig.stream()
-                .collect(Collectors.groupingBy(
-                        AvatarPromoteExcelConfigDataJson::getAvatarPromoteId,
-                        Collectors.mapping(
-                                CharacterAscension::new,
-                                Collectors.toMap(
-                                        CharacterAscension::getAscension,
-                                        ascension -> ascension
-                                )
-                        )
-                ));
+        return loadNestedDataWithIds(
+                CharacterAscension.class,
+                avatarPromoteConfig,
+                "getAvatarPromoteId",
+                "getAscension");
     }
 }

@@ -46,12 +46,27 @@ public interface Data {
 
     default <T, U> Map<Integer, T> loadDataWithId(Class<T> returnType, List<U> inputList, String idMethod) {
         return inputList.stream()
-                .collect(Collectors.toMap(input -> getId(input, idMethod), jsonData -> constructInstance(returnType, jsonData)));
+                .collect(Collectors.toMap(
+                        input -> getId(input, idMethod),
+                        unwrappedData -> constructInstance(returnType, unwrappedData))
+                );
     }
 
-    default <T, U> Map<Integer, T> loadDataWithId2(Class<T> returnType, List<U> inputList, String idMethod) {
-        return inputList.stream()
-                .collect(Collectors.toMap(input -> getId(input, idMethod), jsonData -> constructInstance(returnType, jsonData)));
+    default <T, U> Map<Integer, Map<Integer, T>> loadNestedDataWithIds(
+            Class<T> returnType,
+            List<U> inputList,
+            String firstIdMethod,
+            String secondIdMethod
+    ) {
+        return inputList
+                .stream()
+                .collect(Collectors.groupingBy(
+                        input -> getId(input, firstIdMethod),
+                        Collectors.mapping(
+                                unwrappedData -> constructInstance(returnType, unwrappedData),
+                                Collectors.toMap(wrappedData -> getId(wrappedData, secondIdMethod), data -> data)
+                        )
+                ));
     }
 
     default Integer getId(Object input, String idMethod) {
