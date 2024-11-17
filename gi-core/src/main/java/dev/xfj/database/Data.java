@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static dev.xfj.constants.Global.DATA_PATH;
 
-public interface Data {
+interface Data {
     String EXCEL_BIN_PATH = DATA_PATH + "\\ExcelBinOutput\\";
     String TEXT_MAP_PATH = DATA_PATH + "\\TextMap\\";
 

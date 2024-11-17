@@ -2,7 +2,7 @@ package dev.xfj.character;
 
 import dev.xfj.constants.StatType;
 
-public record CharacterAscensionStatGrowth(
+public record AscensionStatGrowth(
         StatType statType,
         Double value
 ) { }

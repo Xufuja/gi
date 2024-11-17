@@ -15,6 +15,10 @@ public class ArtifactSet {
         return data.getSetId();
     }
 
+    public int getSetDetailsId() {
+        return data.getEquipAffixId();
+    }
+
     public List<Integer> getSetBonusRequirements() {
         return data.getSetNeedNum();
     }

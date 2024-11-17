@@ -2,6 +2,9 @@ package dev.xfj;
 
 import dev.xfj.character.Character;
 import dev.xfj.database.Database;
+import dev.xfj.weapon.Weapon;
+
+import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
@@ -42,6 +45,15 @@ public class Main {
             Database.getInstance().getCharacterAscensions().forEach((key, value) -> {
                 Character selected = Database.getInstance().getCharacters().values().stream().filter(character -> character.getAscensionId() == key).findFirst().get();
                 value.values().forEach(current -> System.out.printf("Character: %s, Ascension: %s, Max Level: %s, Stat Growth: %s\n", selected.getName(), current.getAscension(), current.getMaxLevel(), current.getAscensionStatGrowth()));
+            });
+
+            Database.getInstance().getWeaponAscensions().forEach((key, value) -> {
+                Optional<Weapon> selected = Database.getInstance().getWeapons().values().stream().filter(weapon -> weapon.getAscensionId() == key).findFirst();
+                if (selected.isPresent()) {
+                    value.values().forEach(current -> System.out.printf("Weapon: %s (%s Star), Ascension: %s, Max Level: %s, Stat Growth: %s\n", selected.get().getName(), selected.get().getRarity(), current.getAscension(), current.getMaxLevel(), current.getAscensionStatGrowth()));
+                } else {
+                    value.values().forEach(current -> System.out.printf("Weapon: Not present in configuration for ascensionId: %s, Ascension: %s, Max Level: %s, Stat Growth: %s\n", key, current.getAscension(), current.getMaxLevel(), current.getAscensionStatGrowth()));
+                }
             });
         } catch (Exception e) {
             e.printStackTrace();

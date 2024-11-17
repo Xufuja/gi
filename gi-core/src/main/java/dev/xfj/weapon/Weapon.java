@@ -21,6 +21,10 @@ public record Weapon(WeaponExcelConfigDataJson data) implements Item<WeaponExcel
         return data.getSkillAffix();
     }
 
+    public int getAscensionId() {
+        return data.getWeaponPromoteId();
+    }
+
     public List<WeaponStatGrowth> getStatGrowth() {
         return data.getWeaponProp().stream().map(stat -> new WeaponStatGrowth(stat.getPropType() != null ? StatType.valueOf(stat.getPropType()) : StatType.NONE, stat.getInitValue(), WeaponStatGrowthCurve.valueOf(stat.getType()))).collect(Collectors.toList());
     }
