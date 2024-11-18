@@ -1,5 +1,7 @@
 package dev.xfj;
 
+import dev.xfj.artifact.ArtifactSet;
+import dev.xfj.artifact.ArtifactSetDetails;
 import dev.xfj.character.Character;
 import dev.xfj.database.Database;
 import dev.xfj.weapon.Weapon;
@@ -54,6 +56,16 @@ public class Main {
                 } else {
                     value.values().forEach(current -> System.out.printf("Weapon: Not present in configuration for ascensionId: %s, Ascension: %s, Max Level: %s, Stat Growth: %s\n", key, current.getAscension(), current.getMaxLevel(), current.getAscensionStatGrowth()));
                 }
+            });
+
+            Database.getInstance().getArtifactSetDetails().forEach((key, value) -> {
+                Optional<ArtifactSet> selected = Database.getInstance().getArtifactSets().values().stream().filter(artifactSet -> artifactSet.getSetDetailsId() == key).findFirst();
+                if (selected.isPresent()) {
+                    value.values().forEach(current -> System.out.printf("Set ID: %s, Set Name: %s, Desc: %s\n", selected.get().getId(), current.getName(), current.getDescription()));
+                } else {
+                    value.values().forEach(current -> System.out.printf("Artifact Set: Not present in configuration for setDetailsId: %s, Set Bonus ID: %s\n", key, current.getSetBonusId()));
+                }
+
             });
         } catch (Exception e) {
             e.printStackTrace();
