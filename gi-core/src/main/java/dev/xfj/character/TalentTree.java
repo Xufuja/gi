@@ -45,6 +45,6 @@ public class TalentTree {
     }
 
     public ArkheType getArkhe() {
-        return data.getLenbicofdeo() != null ? ArkheType.valueOf(data.getLenbicofdeo().toUpperCase()) : ArkheType.NONE;
+        return data.getPadakafjeol() != null ? ArkheType.valueOf(data.getPadakafjeol().toUpperCase()) : ArkheType.NONE;
     }
 }

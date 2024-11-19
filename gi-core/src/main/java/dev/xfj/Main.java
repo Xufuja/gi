@@ -1,7 +1,6 @@
 package dev.xfj;
 
 import dev.xfj.artifact.ArtifactSet;
-import dev.xfj.artifact.ArtifactSetDetails;
 import dev.xfj.character.Character;
 import dev.xfj.database.Database;
 import dev.xfj.weapon.Weapon;
