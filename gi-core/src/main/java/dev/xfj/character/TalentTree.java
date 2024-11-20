@@ -29,6 +29,10 @@ public class TalentTree {
         return data.getSubSkills();
     }
 
+    public List<Integer> getConstellationIds() {
+        return data.getTalents();
+    }
+
     public List<TalentPassive> getPassives() {
         return data.getInherentProudSkillOpens()
                 .stream()

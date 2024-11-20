@@ -7,6 +7,7 @@ import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfig
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -19,6 +20,7 @@ public class AvatarData implements Data {
     private final List<AvatarSkillDepotExcelConfigDataJson> skillDepotConfig;
     private final List<AvatarLevelExcelConfigDataJson> levelConfig;
     private final List<AvatarPromoteExcelConfigDataJson> avatarPromoteConfig;
+    private final List<AvatarTalentExcelConfigDataJson> avatarTalentConfig;
 
     private AvatarData() throws FileNotFoundException {
         avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
@@ -26,6 +28,7 @@ public class AvatarData implements Data {
         skillDepotConfig = loadJSONArray(AvatarSkillDepotExcelConfigDataJson.class);
         levelConfig = loadJSONArray(AvatarLevelExcelConfigDataJson.class);
         avatarPromoteConfig = loadJSONArray(AvatarPromoteExcelConfigDataJson.class);
+        avatarTalentConfig = loadJSONArray(AvatarTalentExcelConfigDataJson.class);
     }
 
     public static AvatarData getInstance() throws FileNotFoundException {
@@ -58,5 +61,9 @@ public class AvatarData implements Data {
                 avatarPromoteConfig,
                 "getAvatarPromoteId",
                 "getAscension");
+    }
+
+    public Map<Integer, Constellation> loadConstellations() {
+        return loadDataWithId(Constellation.class, avatarTalentConfig, "getTalentId");
     }
 }

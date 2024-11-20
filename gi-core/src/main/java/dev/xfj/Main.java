@@ -64,7 +64,10 @@ public class Main {
                 } else {
                     value.values().forEach(current -> System.out.printf("Artifact Set: Not present in configuration for setDetailsId: %s, Set Bonus ID: %s\n", key, current.getSetBonusId()));
                 }
+            });
 
+            Database.getInstance().getConstellations().forEach((key, value) -> {
+                System.out.printf("Key: %s, Name: %s, Desv: %s\n", value.getId(), value.getName(), value.getDescription());
             });
         } catch (Exception e) {
             e.printStackTrace();
