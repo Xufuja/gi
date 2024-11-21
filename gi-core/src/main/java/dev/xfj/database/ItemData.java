@@ -24,6 +24,6 @@ public class ItemData implements Data {
     }
 
     public Map<Integer, Material> loadItems() {
-        return loadDataWithId(Material.class, materialConfig);
+        return loadDataWithIntegerId(Material.class, materialConfig);
     }
 }

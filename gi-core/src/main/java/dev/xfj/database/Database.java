@@ -26,6 +26,7 @@ public class Database {
     private final Map<Integer, Map<Integer, WeaponAscension>> weaponAscensions;
     private final Map<Integer, Map<Integer, ArtifactSetDetails>> artifactSetDetails;
     private final Map<Integer, Constellation> constellations;
+    private final Map<String, InternalCooldown> internalCooldowns;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
@@ -40,6 +41,7 @@ public class Database {
         weaponAscensions = WeaponData.getInstance().loadWeaponAscensions();
         artifactSetDetails = ReliquarySetData.getInstance().loadArtifactSetDetails();
         constellations = AvatarData.getInstance().loadConstellations();
+        internalCooldowns = AvatarData.getInstance().loadInternalCooldown();
     }
 
     public static Database getInstance() {
@@ -112,5 +114,9 @@ public class Database {
 
     public Map<Integer, Constellation> getConstellations() {
         return constellations;
+    }
+
+    public Map<String, InternalCooldown> getInternalCooldowns() {
+        return internalCooldowns;
     }
 }

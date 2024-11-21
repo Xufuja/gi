@@ -1,6 +1,5 @@
 package dev.xfj.database;
 
-import dev.xfj.character.CharacterAscension;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
 import dev.xfj.weapon.Weapon;
@@ -33,7 +32,7 @@ public class WeaponData implements Data {
     }
 
     public Map<Integer, Weapon> loadWeapons() {
-        return loadDataWithId(Weapon.class, weaponConfig);
+        return loadDataWithIntegerId(Weapon.class, weaponConfig);
     }
 
     public Map<Integer, Map<Integer, WeaponAscension>> loadWeaponAscensions() {

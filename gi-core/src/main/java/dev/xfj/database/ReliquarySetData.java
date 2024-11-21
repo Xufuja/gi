@@ -28,7 +28,7 @@ public class ReliquarySetData implements Data {
     }
 
     public Map<Integer, ArtifactSet> loadArtifactSets() {
-        return loadDataWithId(ArtifactSet.class, reliquarySetConfig, "getSetId");
+        return loadDataWithIntegerId(ArtifactSet.class, reliquarySetConfig, "getSetId");
     }
 
     public Map<Integer, Map<Integer, ArtifactSetDetails>> loadArtifactSetDetails() {

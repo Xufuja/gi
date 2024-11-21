@@ -67,7 +67,11 @@ public class Main {
             });
 
             Database.getInstance().getConstellations().forEach((key, value) -> {
-                System.out.printf("Key: %s, Name: %s, Desv: %s\n", value.getId(), value.getName(), value.getDescription());
+                System.out.printf("Key: %s, Name: %s, Desc: %s\n", value.getId(), value.getName(), value.getDescription());
+            });
+
+            Database.getInstance().getInternalCooldowns().forEach((key, value) -> {
+                System.out.printf("ID: %s, ICD: %s, Gauge: %s\n", value.getId(), value.getResetInterval(), value.getGaugeSequence());
             });
         } catch (Exception e) {
             e.printStackTrace();

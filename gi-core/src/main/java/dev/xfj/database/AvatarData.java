@@ -2,6 +2,7 @@ package dev.xfj.database;
 
 import dev.xfj.character.Character;
 import dev.xfj.character.*;
+import dev.xfj.jsonschema2pojo.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
@@ -21,6 +22,7 @@ public class AvatarData implements Data {
     private final List<AvatarLevelExcelConfigDataJson> levelConfig;
     private final List<AvatarPromoteExcelConfigDataJson> avatarPromoteConfig;
     private final List<AvatarTalentExcelConfigDataJson> avatarTalentConfig;
+    private final List<AttackAttenuationExcelConfigDataJson> attackAttenuationConfig;
 
     private AvatarData() throws FileNotFoundException {
         avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
@@ -29,6 +31,7 @@ public class AvatarData implements Data {
         levelConfig = loadJSONArray(AvatarLevelExcelConfigDataJson.class);
         avatarPromoteConfig = loadJSONArray(AvatarPromoteExcelConfigDataJson.class);
         avatarTalentConfig = loadJSONArray(AvatarTalentExcelConfigDataJson.class);
+        attackAttenuationConfig = loadJSONArray(AttackAttenuationExcelConfigDataJson.class);
     }
 
     public static AvatarData getInstance() throws FileNotFoundException {
@@ -40,19 +43,19 @@ public class AvatarData implements Data {
     }
 
     public Map<Integer, Character> loadCharacters() {
-        return loadDataWithId(Character.class, avatarConfig);
+        return loadDataWithIntegerId(Character.class, avatarConfig);
     }
 
     public Map<Integer, Talent> loadTalents() {
-        return loadDataWithId(Talent.class, skillConfig);
+        return loadDataWithIntegerId(Talent.class, skillConfig);
     }
 
     public Map<Integer, TalentTree> loadTalentTrees() {
-        return loadDataWithId(TalentTree.class, skillDepotConfig);
+        return loadDataWithIntegerId(TalentTree.class, skillDepotConfig);
     }
 
     public Map<Integer, LevelRequirement> loadLevelRequirements() {
-        return loadDataWithId(LevelRequirement.class, levelConfig, "getLevel");
+        return loadDataWithIntegerId(LevelRequirement.class, levelConfig, "getLevel");
     }
 
     public Map<Integer, Map<Integer, CharacterAscension>> loadCharacterAscensions() {
@@ -64,6 +67,10 @@ public class AvatarData implements Data {
     }
 
     public Map<Integer, Constellation> loadConstellations() {
-        return loadDataWithId(Constellation.class, avatarTalentConfig, "getTalentId");
+        return loadDataWithIntegerId(Constellation.class, avatarTalentConfig, "getTalentId");
+    }
+
+    public Map<String, InternalCooldown> loadInternalCooldown() {
+        return loadDataWithStringId(InternalCooldown.class, attackAttenuationConfig, "getGroup");
     }
 }

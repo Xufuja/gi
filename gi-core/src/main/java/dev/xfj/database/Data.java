@@ -40,14 +40,30 @@ interface Data {
         return new Gson().fromJson(jsonArray, type);
     }
 
-    default <T, U> Map<Integer, T> loadDataWithId(Class<T> returnType, List<U> inputList) {
-        return loadDataWithId(returnType, inputList, "getId");
+    default <T, U> Map<Integer, T> loadDataWithIntegerId(Class<T> returnType, List<U> inputList) {
+        return loadDataWithId(Integer.class, returnType, inputList);
     }
 
-    default <T, U> Map<Integer, T> loadDataWithId(Class<T> returnType, List<U> inputList, String idMethod) {
+    default <T, U> Map<Integer, T> loadDataWithIntegerId(Class<T> returnType, List<U> inputList, String idMethod) {
+        return loadDataWithId(Integer.class, returnType, inputList, idMethod);
+    }
+
+    default <T, U> Map<String, T> loadDataWithStringId(Class<T> returnType, List<U> inputList) {
+        return loadDataWithId(String.class, returnType, inputList);
+    }
+
+    default <T, U> Map<String, T> loadDataWithStringId(Class<T> returnType, List<U> inputList, String idMethod) {
+        return loadDataWithId(String.class, returnType, inputList, idMethod);
+    }
+
+    default <T, U, V> Map<T, U> loadDataWithId(Class<T> identifierType, Class<U> returnType, List<V> inputList) {
+        return loadDataWithId(identifierType, returnType, inputList, "getId");
+    }
+
+    default <T, U, V> Map<T, U> loadDataWithId(Class<T> identifierType, Class<U> returnType, List<V> inputList, String idMethod) {
         return inputList.stream()
                 .collect(Collectors.toMap(
-                        input -> getId(input, idMethod),
+                        input -> getId(identifierType, input, idMethod),
                         unwrappedData -> constructInstance(returnType, unwrappedData))
                 );
     }
@@ -61,18 +77,18 @@ interface Data {
         return inputList
                 .stream()
                 .collect(Collectors.groupingBy(
-                        input -> getId(input, firstIdMethod),
+                        input -> getId(Integer.class, input, firstIdMethod),
                         Collectors.mapping(
                                 unwrappedData -> constructInstance(returnType, unwrappedData),
-                                Collectors.toMap(wrappedData -> getId(wrappedData, secondIdMethod), data -> data)
+                                Collectors.toMap(wrappedData -> getId(Integer.class, wrappedData, secondIdMethod), data -> data)
                         )
                 ));
     }
 
-    default Integer getId(Object input, String idMethod) {
+    default <T> T getId(Class<T> returnType, Object input, String idMethod) {
         try {
             Method method = input.getClass().getMethod(idMethod);
-            return (Integer) method.invoke(input);
+            return returnType.cast(method.invoke(input));
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
