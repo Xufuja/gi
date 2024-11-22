@@ -73,6 +73,11 @@ public class Main {
             Database.getInstance().getInternalCooldowns().forEach((key, value) -> {
                 System.out.printf("ID: %s, ICD: %s, Gauge: %s\n", value.getId(), value.getResetInterval(), value.getGaugeSequence());
             });
+
+            Database.getInstance().getGliders().forEach((key, value) -> {
+                System.out.printf("Key: %s, Name: %s, Desc: %s, Hidden: %s\n", value.getId(), value.getName(), value.getDescription(), value.isHidden());
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }

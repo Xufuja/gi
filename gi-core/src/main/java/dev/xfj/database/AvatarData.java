@@ -4,6 +4,7 @@ import dev.xfj.character.Character;
 import dev.xfj.character.*;
 import dev.xfj.jsonschema2pojo.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatarflycloakexcelconfigdata.AvatarFlycloakExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
@@ -23,6 +24,7 @@ public class AvatarData implements Data {
     private final List<AvatarPromoteExcelConfigDataJson> avatarPromoteConfig;
     private final List<AvatarTalentExcelConfigDataJson> avatarTalentConfig;
     private final List<AttackAttenuationExcelConfigDataJson> attackAttenuationConfig;
+    private final List<AvatarFlycloakExcelConfigDataJson> avatarFlycloakConfig;
 
     private AvatarData() throws FileNotFoundException {
         avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
@@ -32,6 +34,7 @@ public class AvatarData implements Data {
         avatarPromoteConfig = loadJSONArray(AvatarPromoteExcelConfigDataJson.class);
         avatarTalentConfig = loadJSONArray(AvatarTalentExcelConfigDataJson.class);
         attackAttenuationConfig = loadJSONArray(AttackAttenuationExcelConfigDataJson.class);
+        avatarFlycloakConfig = loadJSONArray(AvatarFlycloakExcelConfigDataJson.class);
     }
 
     public static AvatarData getInstance() throws FileNotFoundException {
@@ -72,5 +75,9 @@ public class AvatarData implements Data {
 
     public Map<String, InternalCooldown> loadInternalCooldown() {
         return loadDataWithStringId(InternalCooldown.class, attackAttenuationConfig, "getGroup");
+    }
+
+    public Map<Integer, Glider> loadGliders() {
+        return loadDataWithIntegerId(Glider.class, avatarFlycloakConfig, "getFlycloakId");
     }
 }
