@@ -82,6 +82,10 @@ public class Main {
                 System.out.printf("Key: %s, Name: %s, Tree ID: %s, Stat: %s\n", value.getId(), value.getName(), value.getMainStatTreeId(), value.getStat());
             });
 
+            Database.getInstance().getSubStats().forEach((key, value) -> {
+                System.out.printf("Key: %s, Value: %s, Tree ID: %s, Stat: %s\n", value.getId(), value.getValue(), value.getSubStatTreeId(), value.getStat());
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }

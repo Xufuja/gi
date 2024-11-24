@@ -1,9 +1,6 @@
 package dev.xfj.database;
 
-import dev.xfj.artifact.Artifact;
-import dev.xfj.artifact.ArtifactSet;
-import dev.xfj.artifact.ArtifactSetDetails;
-import dev.xfj.artifact.MainStat;
+import dev.xfj.artifact.*;
 import dev.xfj.character.*;
 import dev.xfj.character.Character;
 import dev.xfj.item.Material;
@@ -30,6 +27,7 @@ public class Database {
     private final Map<String, InternalCooldown> internalCooldowns;
     private final Map<Integer, Glider> gliders;
     private final Map<Integer, MainStat> mainStats;
+    private final Map<Integer, SubStat> subStats;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
@@ -47,6 +45,7 @@ public class Database {
         internalCooldowns = AvatarData.getInstance().loadInternalCooldown();
         gliders = AvatarData.getInstance().loadGliders();
         mainStats = ReliquaryData.getInstance().loadMainStats();
+        subStats = ReliquaryData.getInstance().loadSubStats();
     }
 
     public static Database getInstance() {
@@ -131,5 +130,9 @@ public class Database {
 
     public Map<Integer, MainStat> getMainStats() {
         return mainStats;
+    }
+
+    public Map<Integer, SubStat> getSubStats() {
+        return subStats;
     }
 }
