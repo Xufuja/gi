@@ -30,11 +30,11 @@ public interface Ascension<T> {
         return invoke(Integer.class, "getUnlockMaxLevel");
     }
 
-    default List<AscensionStatGrowth> getAscensionStatGrowth() {
-        return (List<AscensionStatGrowth>) invoke(List.class, "getAddProps")
+    default List<StatProperty> getAscensionStatGrowth() {
+        return (List<StatProperty>) invoke(List.class, "getAddProps")
                 .stream()
                 .map(stat ->
-                        new AscensionStatGrowth(StatType.valueOf(getObject(String.class, stat, "getPropType")), getObject(Double.class, stat, "getValue")))
+                        new StatProperty(StatType.valueOf(getObject(String.class, stat, "getPropType")), getObject(Double.class, stat, "getValue")))
                 .collect(Collectors.toList());
     }
 

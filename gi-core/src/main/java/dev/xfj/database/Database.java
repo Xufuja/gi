@@ -19,7 +19,7 @@ public class Database {
     private final Map<Integer, Material> items;
     private final Map<Integer, Artifact> artifacts;
     private final Map<Integer, ArtifactSet> artifactSets;
-    private final Map<Integer, LevelRequirement> levelRequirements;
+    private final Map<Integer, CharacterLevel> characterLevels;
     private final Map<Integer, Map<Integer, CharacterAscension>> characterAscensions;
     private final Map<Integer, Map<Integer, WeaponAscension>> weaponAscensions;
     private final Map<Integer, Map<Integer, ArtifactSetDetails>> artifactSetDetails;
@@ -28,6 +28,7 @@ public class Database {
     private final Map<Integer, Glider> gliders;
     private final Map<Integer, MainStat> mainStats;
     private final Map<Integer, SubStat> subStats;
+    private final Map<Integer, Map<Integer, ArtifactLevel>> artifactLevels;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
@@ -37,7 +38,7 @@ public class Database {
         items = ItemData.getInstance().loadItems();
         artifacts = ReliquaryData.getInstance().loadArtifacts();
         artifactSets = ReliquarySetData.getInstance().loadArtifactSets();
-        levelRequirements = AvatarData.getInstance().loadLevelRequirements();
+        characterLevels = AvatarData.getInstance().loadLevelRequirements();
         characterAscensions = AvatarData.getInstance().loadCharacterAscensions();
         weaponAscensions = WeaponData.getInstance().loadWeaponAscensions();
         artifactSetDetails = ReliquarySetData.getInstance().loadArtifactSetDetails();
@@ -46,6 +47,7 @@ public class Database {
         gliders = AvatarData.getInstance().loadGliders();
         mainStats = ReliquaryData.getInstance().loadMainStats();
         subStats = ReliquaryData.getInstance().loadSubStats();
+        artifactLevels = ReliquaryData.getInstance().loadLevelRequirements();
     }
 
     public static Database getInstance() {
@@ -100,8 +102,8 @@ public class Database {
         return artifactSets;
     }
 
-    public Map<Integer, LevelRequirement> getLevelRequirements() {
-        return levelRequirements;
+    public Map<Integer, CharacterLevel> getCharacterLevels() {
+        return characterLevels;
     }
 
     public Map<Integer, Map<Integer, CharacterAscension>> getCharacterAscensions() {
@@ -134,5 +136,9 @@ public class Database {
 
     public Map<Integer, SubStat> getSubStats() {
         return subStats;
+    }
+
+    public Map<Integer, Map<Integer, ArtifactLevel>> getArtifactLevels() {
+        return artifactLevels;
     }
 }

@@ -39,7 +39,7 @@ public class Main {
                 System.out.printf("Key: %s, Bonus: %s\n", value.getId(), value.getSetBonusRequirements());
             });
 
-            Database.getInstance().getLevelRequirements().forEach((key, value) -> {
+            Database.getInstance().getCharacterLevels().forEach((key, value) -> {
                 System.out.printf("Level: %s, Required Exp: %s\n", value.getLevel(), value.getRequiredExp());
             });
 
@@ -84,6 +84,10 @@ public class Main {
 
             Database.getInstance().getSubStats().forEach((key, value) -> {
                 System.out.printf("Key: %s, Value: %s, Tree ID: %s, Stat: %s\n", value.getId(), value.getValue(), value.getSubStatTreeId(), value.getStat());
+            });
+
+            Database.getInstance().getArtifactLevels().forEach((key, value) -> {
+                value.values().forEach(level -> System.out.printf("Rank: %s, Level: %s, Required: %s\n", key, level.getLevel(), level.getRequiredExp()));
             });
 
         } catch (Exception e) {

@@ -57,8 +57,8 @@ public class AvatarData implements Data {
         return loadDataWithIntegerId(TalentTree.class, skillDepotConfig);
     }
 
-    public Map<Integer, LevelRequirement> loadLevelRequirements() {
-        return loadDataWithIntegerId(LevelRequirement.class, levelConfig, "getLevel");
+    public Map<Integer, CharacterLevel> loadLevelRequirements() {
+        return loadDataWithIntegerId(CharacterLevel.class, levelConfig, "getLevel");
     }
 
     public Map<Integer, Map<Integer, CharacterAscension>> loadCharacterAscensions() {

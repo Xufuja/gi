@@ -2,10 +2,10 @@ package dev.xfj.character;
 
 import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
 
-public class LevelRequirement {
+public class CharacterLevel {
     private final AvatarLevelExcelConfigDataJson data;
 
-    public LevelRequirement(AvatarLevelExcelConfigDataJson data) {
+    public CharacterLevel(AvatarLevelExcelConfigDataJson data) {
         this.data = data;
     }
 

@@ -1,10 +1,9 @@
 package dev.xfj.artifact;
 
-import dev.xfj.character.AscensionStatGrowth;
+import dev.xfj.character.StatProperty;
 import dev.xfj.constants.StatType;
 import dev.xfj.database.Database;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,11 +35,11 @@ public class ArtifactSetDetails {
         return data.getOpenConfig();
     }
 
-    public List<AscensionStatGrowth> getSetBonusStatGrowth() {
+    public List<StatProperty> getSetBonusStatGrowth() {
         return data.getAddProps()
                 .stream()
                 .map(stat ->
-                        new AscensionStatGrowth(StatType.valueOf(stat.getPropType()), stat.getValue()))
+                        new StatProperty(StatType.valueOf(stat.getPropType()), stat.getValue()))
                 .collect(Collectors.toList());
     }
 
