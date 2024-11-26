@@ -6,6 +6,7 @@ import dev.xfj.character.Character;
 import dev.xfj.item.Material;
 import dev.xfj.weapon.Weapon;
 import dev.xfj.weapon.WeaponAscension;
+import dev.xfj.weapon.WeaponLevel;
 
 import java.io.FileNotFoundException;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class Database {
     private final Map<Integer, MainStat> mainStats;
     private final Map<Integer, SubStat> subStats;
     private final Map<Integer, Map<Integer, ArtifactLevel>> artifactLevels;
+    private final Map<Integer, Map<Integer, WeaponLevel>> weaponLevels;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
@@ -48,6 +50,7 @@ public class Database {
         mainStats = ReliquaryData.getInstance().loadMainStats();
         subStats = ReliquaryData.getInstance().loadSubStats();
         artifactLevels = ReliquaryData.getInstance().loadLevelRequirements();
+        weaponLevels = WeaponData.getInstance().loadLevelRequirements();
     }
 
     public static Database getInstance() {
@@ -140,5 +143,9 @@ public class Database {
 
     public Map<Integer, Map<Integer, ArtifactLevel>> getArtifactLevels() {
         return artifactLevels;
+    }
+
+    public Map<Integer, Map<Integer, WeaponLevel>> getWeaponLevels() {
+        return weaponLevels;
     }
 }

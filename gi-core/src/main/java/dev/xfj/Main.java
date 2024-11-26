@@ -90,6 +90,10 @@ public class Main {
                 value.values().forEach(level -> System.out.printf("Rank: %s, Level: %s, Required: %s\n", key, level.getLevel(), level.getRequiredExp()));
             });
 
+            Database.getInstance().getWeaponLevels().forEach((key, value) -> {
+                value.values().forEach(level -> System.out.printf("Rank: %s, Level: %s, Required: %s\n", key, level.getLevel(), level.getRequiredExp()));
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
