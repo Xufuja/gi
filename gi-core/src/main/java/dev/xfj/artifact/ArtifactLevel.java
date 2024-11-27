@@ -7,7 +7,7 @@ import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcel
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ArtifactLevel {
+public class ArtifactLevel implements Level {
     private final ReliquaryLevelExcelConfigDataJson data;
 
     public ArtifactLevel(ReliquaryLevelExcelConfigDataJson data) {
@@ -18,10 +18,12 @@ public class ArtifactLevel {
         return data.getRank();
     }
 
+    @Override
     public int getLevel() {
         return data.getLevel();
     }
 
+    @Override
     public int getRequiredExp() {
         return data.getExp();
     }

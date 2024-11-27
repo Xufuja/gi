@@ -1,8 +1,9 @@
 package dev.xfj.weapon;
 
+import dev.xfj.artifact.Level;
 import dev.xfj.jsonschema2pojo.weaponlevelexcelconfigdata.WeaponLevelExcelConfigDataJson;
 
-public class WeaponLevel {
+public class WeaponLevel implements Level {
     private final WeaponLevelExcelConfigDataJson data;
     private final int rank;
 
@@ -15,10 +16,12 @@ public class WeaponLevel {
         return rank + 1;
     }
 
+    @Override
     public int getLevel() {
         return data.getLevel();
     }
 
+    @Override
     public int getRequiredExp() {
         return data.getRequiredExps().get(rank);
     }
