@@ -3,6 +3,7 @@ package dev.xfj.database;
 import dev.xfj.character.Character;
 import dev.xfj.character.*;
 import dev.xfj.jsonschema2pojo.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarflycloakexcelconfigdata.AvatarFlycloakExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
@@ -25,6 +26,7 @@ public class AvatarData implements Data {
     private final List<AvatarTalentExcelConfigDataJson> avatarTalentConfig;
     private final List<AttackAttenuationExcelConfigDataJson> attackAttenuationConfig;
     private final List<AvatarFlycloakExcelConfigDataJson> avatarFlycloakConfig;
+    private final List<AvatarCostumeExcelConfigDataJson> avatarCostumeConfig;
 
     private AvatarData() throws FileNotFoundException {
         avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
@@ -35,6 +37,7 @@ public class AvatarData implements Data {
         avatarTalentConfig = loadJSONArray(AvatarTalentExcelConfigDataJson.class);
         attackAttenuationConfig = loadJSONArray(AttackAttenuationExcelConfigDataJson.class);
         avatarFlycloakConfig = loadJSONArray(AvatarFlycloakExcelConfigDataJson.class);
+        avatarCostumeConfig = loadJSONArray(AvatarCostumeExcelConfigDataJson.class);
     }
 
     public static AvatarData getInstance() throws FileNotFoundException {
@@ -79,5 +82,9 @@ public class AvatarData implements Data {
 
     public Map<Integer, Glider> loadGliders() {
         return loadDataWithIntegerId(Glider.class, avatarFlycloakConfig, "getFlycloakId");
+    }
+
+    public Map<Integer, CharacterSkin> loadSkins() {
+        return loadDataWithIntegerId(CharacterSkin.class, avatarCostumeConfig, "getSkinId");
     }
 }

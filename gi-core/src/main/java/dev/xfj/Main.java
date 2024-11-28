@@ -94,6 +94,10 @@ public class Main {
                 value.values().forEach(level -> System.out.printf("Rank: %s, Level: %s, Required: %s\n", key, level.getLevel(), level.getRequiredExp()));
             });
 
+            Database.getInstance().getSkins().forEach((key, value) -> {
+                System.out.printf("Key: %s, Default: %s, Name: %s, Desc: %s\n", value.getId(), value.isDefaultSkin(), value.getName(), value.getDescription());
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }

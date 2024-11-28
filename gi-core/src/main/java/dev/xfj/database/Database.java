@@ -31,6 +31,7 @@ public class Database {
     private final Map<Integer, SubStat> subStats;
     private final Map<Integer, Map<Integer, ArtifactLevel>> artifactLevels;
     private final Map<Integer, Map<Integer, WeaponLevel>> weaponLevels;
+    private final Map<Integer, CharacterSkin> skins;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
@@ -51,6 +52,7 @@ public class Database {
         subStats = ReliquaryData.getInstance().loadSubStats();
         artifactLevels = ReliquaryData.getInstance().loadLevelRequirements();
         weaponLevels = WeaponData.getInstance().loadLevelRequirements();
+        skins = AvatarData.getInstance().loadSkins();
     }
 
     public static Database getInstance() {
@@ -147,5 +149,9 @@ public class Database {
 
     public Map<Integer, Map<Integer, WeaponLevel>> getWeaponLevels() {
         return weaponLevels;
+    }
+
+    public Map<Integer, CharacterSkin> getSkins() {
+        return skins;
     }
 }
