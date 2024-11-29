@@ -98,6 +98,10 @@ public class Main {
                 System.out.printf("Key: %s, Default: %s, Name: %s, Desc: %s\n", value.getId(), value.isDefaultSkin(), value.getName(), value.getDescription());
             });
 
+            Database.getInstance().getLevelCurves().forEach((key, value) -> {
+                System.out.printf("Level: %s, Curves: %s\n", value.getLevel(), value.getStatCurves());
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
