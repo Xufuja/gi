@@ -33,6 +33,7 @@ public class Database {
     private final Map<Integer, Map<Integer, WeaponLevel>> weaponLevels;
     private final Map<Integer, CharacterSkin> skins;
     private final Map<Integer, CharacterLevelCurve> levelCurves;
+    private final Map<Integer, CharacterFriendshipLevel> characterFriendshipLevels;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
@@ -55,6 +56,7 @@ public class Database {
         weaponLevels = WeaponData.getInstance().loadLevelRequirements();
         skins = AvatarData.getInstance().loadSkins();
         levelCurves = AvatarData.getInstance().loadLevelCurves();
+        characterFriendshipLevels = AvatarData.getInstance().loadFriendshipLevelRequirements();
     }
 
     public static Database getInstance() {
@@ -159,5 +161,9 @@ public class Database {
 
     public Map<Integer, CharacterLevelCurve> getLevelCurves() {
         return levelCurves;
+    }
+
+    public Map<Integer, CharacterFriendshipLevel> getCharacterFriendshipLevels() {
+        return characterFriendshipLevels;
     }
 }

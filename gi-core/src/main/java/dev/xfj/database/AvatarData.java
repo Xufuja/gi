@@ -6,6 +6,7 @@ import dev.xfj.jsonschema2pojo.attackattenuationexcelconfigdata.AttackAttenuatio
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.AvatarCurveExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatarfetterslevelexcelconfigdata.AvatarFettersLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarflycloakexcelconfigdata.AvatarFlycloakExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
@@ -29,6 +30,7 @@ public class AvatarData implements Data {
     private final List<AvatarFlycloakExcelConfigDataJson> avatarFlycloakConfig;
     private final List<AvatarCostumeExcelConfigDataJson> avatarCostumeConfig;
     private final List<AvatarCurveExcelConfigDataJson> avatarCurveConfig;
+    private final List<AvatarFettersLevelExcelConfigDataJson> avatarFettersLevelConfig;
 
     private AvatarData() throws FileNotFoundException {
         avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
@@ -41,6 +43,7 @@ public class AvatarData implements Data {
         avatarFlycloakConfig = loadJSONArray(AvatarFlycloakExcelConfigDataJson.class);
         avatarCostumeConfig = loadJSONArray(AvatarCostumeExcelConfigDataJson.class);
         avatarCurveConfig = loadJSONArray(AvatarCurveExcelConfigDataJson.class);
+        avatarFettersLevelConfig = loadJSONArray(AvatarFettersLevelExcelConfigDataJson.class);
     }
 
     public static AvatarData getInstance() throws FileNotFoundException {
@@ -93,5 +96,9 @@ public class AvatarData implements Data {
 
     public Map<Integer, CharacterLevelCurve> loadLevelCurves() {
         return loadDataWithIntegerId(CharacterLevelCurve.class, avatarCurveConfig, "getLevel");
+    }
+
+    public Map<Integer, CharacterFriendshipLevel> loadFriendshipLevelRequirements() {
+        return loadDataWithIntegerId(CharacterFriendshipLevel.class, avatarFettersLevelConfig, "getFetterLevel");
     }
 }

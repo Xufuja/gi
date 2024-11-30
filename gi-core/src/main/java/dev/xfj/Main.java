@@ -102,6 +102,10 @@ public class Main {
                 System.out.printf("Level: %s, Curves: %s\n", value.getLevel(), value.getStatCurves());
             });
 
+            Database.getInstance().getCharacterFriendshipLevels().forEach((key, value) -> {
+                System.out.printf("Level: %s, Required Exp: %s\n", value.getLevel(), value.getRequiredExp());
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
