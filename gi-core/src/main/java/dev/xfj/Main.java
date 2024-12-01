@@ -106,6 +106,10 @@ public class Main {
                 System.out.printf("Level: %s, Required Exp: %s\n", value.getLevel(), value.getRequiredExp());
             });
 
+            Database.getInstance().getDomains().forEach((key, value) -> {
+                System.out.printf("ID: %s, Display: %s, Name: %s, Desc Exp: %s\n", value.getId(), value.getDisplayName(), value.getName(), value.getDescription());
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -3,6 +3,7 @@ package dev.xfj.database;
 import dev.xfj.artifact.*;
 import dev.xfj.character.*;
 import dev.xfj.character.Character;
+import dev.xfj.domain.Domain;
 import dev.xfj.item.Material;
 import dev.xfj.weapon.Weapon;
 import dev.xfj.weapon.WeaponAscension;
@@ -34,6 +35,7 @@ public class Database {
     private final Map<Integer, CharacterSkin> skins;
     private final Map<Integer, CharacterLevelCurve> levelCurves;
     private final Map<Integer, CharacterFriendshipLevel> characterFriendshipLevels;
+    private final Map<Integer, Domain> domains;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
@@ -57,6 +59,7 @@ public class Database {
         skins = AvatarData.getInstance().loadSkins();
         levelCurves = AvatarData.getInstance().loadLevelCurves();
         characterFriendshipLevels = AvatarData.getInstance().loadFriendshipLevelRequirements();
+        domains = DungeonData.getInstance().loadDomains();
     }
 
     public static Database getInstance() {
@@ -165,5 +168,9 @@ public class Database {
 
     public Map<Integer, CharacterFriendshipLevel> getCharacterFriendshipLevels() {
         return characterFriendshipLevels;
+    }
+
+    public Map<Integer, Domain> getDomains() {
+        return domains;
     }
 }
