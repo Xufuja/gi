@@ -25,4 +25,6 @@ public class Domain {
     public String getDescription() {
         return Database.getInstance().getTranslation(data.getDescTextMapHash());
     }
+
+
 }
