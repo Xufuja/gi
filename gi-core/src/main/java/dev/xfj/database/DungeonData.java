@@ -25,8 +25,6 @@ public class DungeonData implements Data {
     }
 
     public Map<Integer, Domain> loadDomains() {
-        System.out.println(dungeonConfig.stream().map(DungeonExcelConfigDataJson::getMgggicjglhn).distinct().collect(Collectors.joining(",\n")));
-        //System.out.println(dungeonConfig.stream().map(DungeonExcelConfigDataJson::getSettleShows).flatMap(List::stream).distinct().collect(Collectors.joining(",\n")));
         return loadDataWithIntegerId(Domain.class, dungeonConfig);
     }
 }

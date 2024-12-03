@@ -107,7 +107,7 @@ public class Main {
             });
 
             Database.getInstance().getDomains().forEach((key, value) -> {
-                System.out.printf("ID: %s, Display: %s, Name: %s, Desc Exp: %s\n", value.getId(), value.getDisplayName(), value.getName(), value.getDescription());
+                System.out.printf("ID: %s, Display: %s, Name: %s, Desc: %s, Type: %s\n", value.getId(), value.getDisplayName(), value.getName(), value.getDescription(), value.getType());
             });
 
         } catch (Exception e) {
