@@ -117,5 +117,4 @@ public class Domain {
     public String getIconName() {
         return data.getEntryPicPath();
     }
-
 }

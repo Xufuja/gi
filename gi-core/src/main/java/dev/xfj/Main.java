@@ -110,6 +110,10 @@ public class Main {
                 System.out.printf("ID: %s, Display: %s, Name: %s, Desc: %s, Type: %s\n", value.getId(), value.getDisplayName(), value.getName(), value.getDescription(), value.getType());
             });
 
+            Database.getInstance().getDomainEntries().forEach((key, value) -> {
+                System.out.printf("ID: %s, Desc: %s, Type: %s, Default: %s, Conditions: %s\n", value.getId(), value.getDescription(), value.getType(), value.isAvailableByDefault(), value.getEntryConditions());
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
