@@ -114,6 +114,10 @@ public class Main {
                 System.out.printf("ID: %s, Desc: %s, Type: %s, Default: %s, Conditions: %s\n", value.getId(), value.getDescription(), value.getType(), value.isAvailableByDefault(), value.getEntryConditions());
             });
 
+            Database.getInstance().getManualTextMappings().forEach((key, value) -> {
+                System.out.printf("ID: %s, Hash: %s, Parameters: %s\n", value.getId(), value.getHash(), value.getParameters());
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }

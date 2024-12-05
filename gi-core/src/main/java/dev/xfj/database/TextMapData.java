@@ -5,18 +5,24 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import dev.xfj.jsonschema2pojo.manualtextmapconfigdata.ManualTextMapConfigDataJson;
+import dev.xfj.text.ManualTextMap;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TextMapData implements Data {
     private static TextMapData instance;
     private Map<String, String> languageMap;
+    private final List<ManualTextMapConfigDataJson> manualTextMapConfig;
 
     private TextMapData() throws FileNotFoundException {
         languageMap = loadLanguage("EN");
+        manualTextMapConfig = loadJSONArray(ManualTextMapConfigDataJson.class);
     }
 
     public static TextMapData getInstance() {
@@ -54,5 +60,9 @@ public class TextMapData implements Data {
 
     protected String getTranslation(String key) {
         return languageMap.get(key);
+    }
+
+    public Map<String, ManualTextMap> loadManualTextMappings() {
+        return loadDataWithStringId(ManualTextMap.class, manualTextMapConfig, "getTextMapId");
     }
 }

@@ -6,6 +6,7 @@ import dev.xfj.character.Character;
 import dev.xfj.domain.Domain;
 import dev.xfj.domain.DomainEntry;
 import dev.xfj.item.Material;
+import dev.xfj.text.ManualTextMap;
 import dev.xfj.weapon.Weapon;
 import dev.xfj.weapon.WeaponAscension;
 import dev.xfj.weapon.WeaponLevel;
@@ -38,6 +39,7 @@ public class Database {
     private final Map<Integer, CharacterFriendshipLevel> characterFriendshipLevels;
     private final Map<Integer, Domain> domains;
     private final Map<Integer, DomainEntry> domainEntries;
+    private final Map<String, ManualTextMap> manualTextMappings;
 
     private Database() throws FileNotFoundException {
         characters = AvatarData.getInstance().loadCharacters();
@@ -63,6 +65,7 @@ public class Database {
         characterFriendshipLevels = AvatarData.getInstance().loadFriendshipLevelRequirements();
         domains = DungeonData.getInstance().loadDomains();
         domainEntries = DungeonData.getInstance().loadDomainEntries();
+        manualTextMappings = TextMapData.getInstance().loadManualTextMappings();
     }
 
     public static Database getInstance() {
@@ -179,5 +182,9 @@ public class Database {
 
     public Map<Integer, DomainEntry> getDomainEntries() {
         return domainEntries;
+    }
+
+    public Map<String, ManualTextMap> getManualTextMappings() {
+        return manualTextMappings;
     }
 }
