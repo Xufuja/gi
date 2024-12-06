@@ -13,6 +13,7 @@ import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelCo
 import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -20,33 +21,39 @@ import java.util.Map;
 
 public class AvatarData implements Data {
     private static AvatarData instance;
-    private final List<AvatarExcelConfigDataJson> avatarConfig;
+    public final List<AvatarExcelConfigDataJson> avatarConfig;
     private final List<AvatarSkillExcelConfigDataJson> skillConfig;
     private final List<AvatarSkillDepotExcelConfigDataJson> skillDepotConfig;
     private final List<AvatarLevelExcelConfigDataJson> levelConfig;
-    private final List<AvatarPromoteExcelConfigDataJson> avatarPromoteConfig;
+    public final List<AvatarPromoteExcelConfigDataJson> avatarPromoteConfig;
     private final List<AvatarTalentExcelConfigDataJson> avatarTalentConfig;
     private final List<AttackAttenuationExcelConfigDataJson> attackAttenuationConfig;
     private final List<AvatarFlycloakExcelConfigDataJson> avatarFlycloakConfig;
     private final List<AvatarCostumeExcelConfigDataJson> avatarCostumeConfig;
-    private final List<AvatarCurveExcelConfigDataJson> avatarCurveConfig;
+    public final List<AvatarCurveExcelConfigDataJson> avatarCurveConfig;
     private final List<AvatarFettersLevelExcelConfigDataJson> avatarFettersLevelConfig;
+    public final List<FetterInfoExcelConfigDataJson> fetterInfoConfig;
 
-    private AvatarData() throws FileNotFoundException {
-        avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
-        skillConfig = loadJSONArray(AvatarSkillExcelConfigDataJson.class);
-        skillDepotConfig = loadJSONArray(AvatarSkillDepotExcelConfigDataJson.class);
-        levelConfig = loadJSONArray(AvatarLevelExcelConfigDataJson.class);
-        avatarPromoteConfig = loadJSONArray(AvatarPromoteExcelConfigDataJson.class);
-        avatarTalentConfig = loadJSONArray(AvatarTalentExcelConfigDataJson.class);
-        attackAttenuationConfig = loadJSONArray(AttackAttenuationExcelConfigDataJson.class);
-        avatarFlycloakConfig = loadJSONArray(AvatarFlycloakExcelConfigDataJson.class);
-        avatarCostumeConfig = loadJSONArray(AvatarCostumeExcelConfigDataJson.class);
-        avatarCurveConfig = loadJSONArray(AvatarCurveExcelConfigDataJson.class);
-        avatarFettersLevelConfig = loadJSONArray(AvatarFettersLevelExcelConfigDataJson.class);
+    private AvatarData() {
+        try {
+            avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
+            skillConfig = loadJSONArray(AvatarSkillExcelConfigDataJson.class);
+            skillDepotConfig = loadJSONArray(AvatarSkillDepotExcelConfigDataJson.class);
+            levelConfig = loadJSONArray(AvatarLevelExcelConfigDataJson.class);
+            avatarPromoteConfig = loadJSONArray(AvatarPromoteExcelConfigDataJson.class);
+            avatarTalentConfig = loadJSONArray(AvatarTalentExcelConfigDataJson.class);
+            attackAttenuationConfig = loadJSONArray(AttackAttenuationExcelConfigDataJson.class);
+            avatarFlycloakConfig = loadJSONArray(AvatarFlycloakExcelConfigDataJson.class);
+            avatarCostumeConfig = loadJSONArray(AvatarCostumeExcelConfigDataJson.class);
+            avatarCurveConfig = loadJSONArray(AvatarCurveExcelConfigDataJson.class);
+            avatarFettersLevelConfig = loadJSONArray(AvatarFettersLevelExcelConfigDataJson.class);
+            fetterInfoConfig = loadJSONArray(FetterInfoExcelConfigDataJson.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
-    public static AvatarData getInstance() throws FileNotFoundException {
+    public static AvatarData getInstance() {
         if (instance == null) {
             instance = new AvatarData();
         }

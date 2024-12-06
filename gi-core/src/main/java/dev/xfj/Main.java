@@ -2,6 +2,7 @@ package dev.xfj;
 
 import dev.xfj.artifact.ArtifactSet;
 import dev.xfj.character.Character;
+import dev.xfj.container.CharacterContainer;
 import dev.xfj.database.Database;
 import dev.xfj.weapon.Weapon;
 
@@ -10,7 +11,7 @@ import java.util.Optional;
 public class Main {
     public static void main(String[] args) {
         try {
-            Database.getInstance().getCharacters().forEach((key, value) -> {
+            /*Database.getInstance().getCharacters().forEach((key, value) -> {
                 System.out.printf("Key: %s, Name: %s, Desc: %s, Body Type: %s, Star: %s, Starting Weapon: %s, Weapon: %s, ID: %s, Use: %s, Growth: %s, Tree: %s\n",
                         key, value.getName(), value.getDescription(), value.getBodyType(), value.getRarity(), value.getStartingWeapon(), value.getWeaponType(), value.getId(), value.getUsageType(), value.getStatGrowth(), value.getDefaultTalentTreeId());
             });
@@ -116,7 +117,15 @@ public class Main {
 
             Database.getInstance().getManualTextMappings().forEach((key, value) -> {
                 System.out.printf("ID: %s, Hash: %s, Parameters: %s\n", value.getId(), value.getHash(), value.getParameters());
-            });
+            });*/
+
+            CharacterContainer character = new CharacterContainer(10000094, 90, 0, 6);
+            System.out.printf("ID: %s\nName: %s\nTitle: %s\nRarity: %s\n",
+                    character.getId(), character.getName(), character.getTitle(), character.getRarity());
+
+            System.out.println(character.getBaseHealth());
+            System.out.println(character.getBaseAttack());
+            System.out.println(character.getBaseDefense());
 
         } catch (Exception e) {
             e.printStackTrace();
