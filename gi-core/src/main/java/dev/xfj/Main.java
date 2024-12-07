@@ -119,13 +119,27 @@ public class Main {
                 System.out.printf("ID: %s, Hash: %s, Parameters: %s\n", value.getId(), value.getHash(), value.getParameters());
             });*/
 
-            CharacterContainer character = new CharacterContainer(10000094, 90, 0, 6);
+            //CharacterContainer character = new CharacterContainer(10000094);
+            CharacterContainer character = new CharacterContainer(10000094, 80, 0, 5);
+            //Database.getInstance().setLanguage("JP");
             System.out.printf("ID: %s\nName: %s\nTitle: %s\nRarity: %s\n",
                     character.getId(), character.getName(), character.getTitle(), character.getRarity());
-
             System.out.println(character.getBaseHealth());
             System.out.println(character.getBaseAttack());
             System.out.println(character.getBaseDefense());
+            System.out.println(character.getAscensionStat());
+            System.out.println(character.getAscensionItems());
+            System.out.println(character.getAscensionCost());
+            System.out.println(character.getElement());
+            System.out.println(character.getWeaponType());
+            System.out.println(character.getConstellation());
+            System.out.println(character.getAffiliation());
+            System.out.println(character.getBirthday());
+            System.out.println(character.getVA("EN"));
+            System.out.println(character.getVA("CHS"));
+            System.out.println(character.getVA("JP"));
+            System.out.println(character.getVA("KR"));
+            System.out.println(character.getDescription());
 
         } catch (Exception e) {
             e.printStackTrace();

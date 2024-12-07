@@ -5,20 +5,26 @@ import dev.xfj.database.AvatarData;
 import dev.xfj.database.Database;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.PropGrowcurve;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AddProp;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.CostItem;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CharacterContainer {
+    private static final String BASE_HP = "FIGHT_PROP_BASE_HP";
+    private static final String BASE_DEF = "FIGHT_PROP_BASE_DEFENSE";
+    private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
     private int id;
     private int currentLevel;
     private int currentExperience;
     private int currentAscension;
+
+    public CharacterContainer(int id) {
+        this(id, 1, 0, 0);
+    }
 
     public CharacterContainer(int id, int currentLevel, int currentExperience, int currentAscension) {
         this.id = id;
@@ -44,23 +50,103 @@ public class CharacterContainer {
     }
 
     public double getBaseHealth() {
-        return getBaseStat(getAvatar().getHpBase(), "FIGHT_PROP_BASE_HP");
+        return getBaseStat(getAvatar().getHpBase(), BASE_HP);
     }
 
     public double getBaseAttack() {
-        return getBaseStat(getAvatar().getAttackBase(), "FIGHT_PROP_BASE_ATTACK");
+        return getBaseStat(getAvatar().getAttackBase(), BASE_ATK);
     }
 
     public double getBaseDefense() {
-        return getBaseStat(getAvatar().getDefenseBase(), "FIGHT_PROP_BASE_DEFENSE");
+        return getBaseStat(getAvatar().getDefenseBase(), BASE_DEF);
+    }
+
+    public double getBaseCritRate() {
+        return getAvatar().getCritical();
+    }
+
+    public double getBaseCritDamage() {
+        return getAvatar().getCriticalHurt();
+    }
+
+    public Map<String, Double> getAscensionStat() {
+        return getAscensions(getAvatar().getAvatarPromoteId()).values()
+                .stream()
+                .filter(ascension -> ascension.getPromoteLevel() == currentAscension)
+                .flatMap(promotions -> promotions.getAddProps().stream())
+                .filter(prop ->
+                        !prop.getPropType().equals(BASE_HP) &&
+                        !prop.getPropType().equals(BASE_DEF) &&
+                        !prop.getPropType().equals(BASE_ATK)
+                )
+                .collect(Collectors.toMap(
+                        AddProp::getPropType,
+                        AddProp::getValue
+                ));
+    }
+
+    public Map<Integer, Integer> getAscensionItems() {
+        return getAscensions(getAvatar().getAvatarPromoteId()).values()
+                .stream()
+                .filter(ascension -> ascension.getPromoteLevel() == currentAscension)
+                .flatMap(promotions -> promotions.getCostItems().stream())
+                .distinct()
+                .collect(Collectors.toMap(
+                        CostItem::getId,
+                        CostItem::getCount
+                ));
+    }
+
+    public Integer getAscensionCost() {
+        return getAscensions(getAvatar().getAvatarPromoteId()).values()
+                .stream()
+                .filter(ascension -> ascension.getPromoteLevel() == currentAscension)
+                .mapToInt(AvatarPromoteExcelConfigDataJson::getScoinCost)
+                .findFirst()
+                .orElse(-1);
+    }
+
+    public String getElement() {
+        return Database.getInstance().getTranslation(getFetter().getAvatarVisionBeforTextMapHash());
+    }
+
+    public String getWeaponType() {
+        return getAvatar().getWeaponType();
+    }
+
+    public String getConstellation() {
+        return Database.getInstance().getTranslation(getFetter().getAvatarConstellationBeforTextMapHash());
+    }
+
+    public String getAffiliation() {
+        return Database.getInstance().getTranslation(getFetter().getAvatarNativeTextMapHash());
+    }
+
+    public String getBirthday() {
+        return String.format("%1$2s/%2$2s",
+                getFetter().getInfoBirthMonth(), getFetter().getInfoBirthDay()).replace(' ', '0');
+    }
+
+    public String getVA(String language) {
+        return switch (language) {
+            case "EN" -> Database.getInstance().getTranslation(getFetter().getCvEnglishTextMapHash());
+            case "JP" -> Database.getInstance().getTranslation(getFetter().getCvJapaneseTextMapHash());
+            case "CHS" -> Database.getInstance().getTranslation(getFetter().getCvChineseTextMapHash());
+            case "KR" -> Database.getInstance().getTranslation(getFetter().getCvKoreanTextMapHash());
+            default -> "No VA available";
+        };
+    }
+
+    public String getDescription() {
+        return Database.getInstance().getTranslation(getFetter().getAvatarDetailTextMapHash());
     }
 
     private double getBaseStat(double baseValue, String statType) {
-        return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(getAvatar().getAvatarPromoteId(), statType);
+        return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
 
-    private double getExtraBaseStats(int promoteId, String selected) {
-        return getAscensions(promoteId).values()
+    private double getExtraBaseStats(String selected) {
+        return getAscensions(getAvatar().getAvatarPromoteId()).values()
                 .stream()
                 .filter(ascension -> ascension.getPromoteLevel() == currentAscension)
                 .flatMap(promotions -> promotions.getAddProps().stream())
@@ -91,11 +177,19 @@ public class CharacterContainer {
     }
 
     private AvatarExcelConfigDataJson getAvatar() {
-        return AvatarData.getInstance().avatarConfig.stream().filter(character -> character.getId() == id).findFirst().orElse(null);
+        return AvatarData.getInstance().avatarConfig
+                .stream()
+                .filter(character -> character.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     private FetterInfoExcelConfigDataJson getFetter() {
-        return AvatarData.getInstance().fetterInfoConfig.stream().filter(character -> character.getAvatarId() == id).findFirst().orElse(null);
+        return AvatarData.getInstance().fetterInfoConfig
+                .stream()
+                .filter(character -> character.getAvatarId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     private Map<Integer, AvatarPromoteExcelConfigDataJson> getAscensions(int promoteId) {
@@ -106,5 +200,33 @@ public class CharacterContainer {
                         AvatarPromoteExcelConfigDataJson::getPromoteLevel,
                         data -> data
                 ));
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void setCurrentLevel(int currentLevel) {
+        this.currentLevel = currentLevel;
+    }
+
+    public int getCurrentExperience() {
+        return currentExperience;
+    }
+
+    public void setCurrentExperience(int currentExperience) {
+        this.currentExperience = currentExperience;
+    }
+
+    public int getCurrentAscension() {
+        return currentAscension;
+    }
+
+    public void setCurrentAscension(int currentAscension) {
+        this.currentAscension = currentAscension;
     }
 }
