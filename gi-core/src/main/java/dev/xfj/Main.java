@@ -1,12 +1,6 @@
 package dev.xfj;
 
-import dev.xfj.artifact.ArtifactSet;
-import dev.xfj.character.Character;
 import dev.xfj.container.CharacterContainer;
-import dev.xfj.database.Database;
-import dev.xfj.weapon.Weapon;
-
-import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
@@ -130,16 +124,19 @@ public class Main {
             System.out.println(character.getAscensionStat());
             System.out.println(character.getAscensionItems());
             System.out.println(character.getAscensionCost());
-            System.out.println(character.getElement());
+            System.out.println(character.getVision());
             System.out.println(character.getWeaponType());
             System.out.println(character.getConstellation());
-            System.out.println(character.getAffiliation());
+            System.out.println(character.getNative());
             System.out.println(character.getBirthday());
             System.out.println(character.getVA("EN"));
             System.out.println(character.getVA("CHS"));
             System.out.println(character.getVA("JP"));
             System.out.println(character.getVA("KR"));
             System.out.println(character.getDescription());
+            var talents = character.getTalents();
+            var passives = character.getPassives();
+            System.out.println();
 
         } catch (Exception e) {
             e.printStackTrace();

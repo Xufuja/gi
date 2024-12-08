@@ -14,6 +14,7 @@ import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotE
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -22,8 +23,8 @@ import java.util.Map;
 public class AvatarData implements Data {
     private static AvatarData instance;
     public final List<AvatarExcelConfigDataJson> avatarConfig;
-    private final List<AvatarSkillExcelConfigDataJson> skillConfig;
-    private final List<AvatarSkillDepotExcelConfigDataJson> skillDepotConfig;
+    public final List<AvatarSkillExcelConfigDataJson> skillConfig;
+    public final List<AvatarSkillDepotExcelConfigDataJson> skillDepotConfig;
     private final List<AvatarLevelExcelConfigDataJson> levelConfig;
     public final List<AvatarPromoteExcelConfigDataJson> avatarPromoteConfig;
     private final List<AvatarTalentExcelConfigDataJson> avatarTalentConfig;
@@ -33,6 +34,7 @@ public class AvatarData implements Data {
     public final List<AvatarCurveExcelConfigDataJson> avatarCurveConfig;
     private final List<AvatarFettersLevelExcelConfigDataJson> avatarFettersLevelConfig;
     public final List<FetterInfoExcelConfigDataJson> fetterInfoConfig;
+    public final List<ProudSkillExcelConfigDataJson> proudSkillConfig;
 
     private AvatarData() {
         try {
@@ -48,6 +50,7 @@ public class AvatarData implements Data {
             avatarCurveConfig = loadJSONArray(AvatarCurveExcelConfigDataJson.class);
             avatarFettersLevelConfig = loadJSONArray(AvatarFettersLevelExcelConfigDataJson.class);
             fetterInfoConfig = loadJSONArray(FetterInfoExcelConfigDataJson.class);
+            proudSkillConfig = loadJSONArray(ProudSkillExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

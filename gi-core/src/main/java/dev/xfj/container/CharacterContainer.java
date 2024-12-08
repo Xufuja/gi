@@ -8,9 +8,14 @@ import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AddProp;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.CostItem;
+import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CharacterContainer {
@@ -76,8 +81,8 @@ public class CharacterContainer {
                 .flatMap(promotions -> promotions.getAddProps().stream())
                 .filter(prop ->
                         !prop.getPropType().equals(BASE_HP) &&
-                        !prop.getPropType().equals(BASE_DEF) &&
-                        !prop.getPropType().equals(BASE_ATK)
+                                !prop.getPropType().equals(BASE_DEF) &&
+                                !prop.getPropType().equals(BASE_ATK)
                 )
                 .collect(Collectors.toMap(
                         AddProp::getPropType,
@@ -106,7 +111,7 @@ public class CharacterContainer {
                 .orElse(-1);
     }
 
-    public String getElement() {
+    public String getVision() {
         return Database.getInstance().getTranslation(getFetter().getAvatarVisionBeforTextMapHash());
     }
 
@@ -118,7 +123,7 @@ public class CharacterContainer {
         return Database.getInstance().getTranslation(getFetter().getAvatarConstellationBeforTextMapHash());
     }
 
-    public String getAffiliation() {
+    public String getNative() {
         return Database.getInstance().getTranslation(getFetter().getAvatarNativeTextMapHash());
     }
 
@@ -139,6 +144,33 @@ public class CharacterContainer {
 
     public String getDescription() {
         return Database.getInstance().getTranslation(getFetter().getAvatarDetailTextMapHash());
+    }
+
+    public Map<AvatarSkillExcelConfigDataJson, Map<Integer, ProudSkillExcelConfigDataJson>> getTalents() {
+        Map<AvatarSkillExcelConfigDataJson, Map<Integer, ProudSkillExcelConfigDataJson>> talents =
+                getSkillDepot().getSkills()
+                        .stream()
+                        .filter(id -> id != 0)
+                        .map(this::getSkill)
+                        .collect(Collectors.toMap(
+                                data -> data,
+                                data -> getTalentLevels(data.getProudSkillGroupId())
+                        ));
+
+        talents.put(
+                getSkill(getSkillDepot().getEnergySkill()),
+                getTalentLevels(getSkill(getSkillDepot().getEnergySkill()).getProudSkillGroupId())
+        );
+        return talents;
+    }
+
+    public List<ProudSkillExcelConfigDataJson> getPassives() {
+        return getSkillDepot().getInherentProudSkillOpens()
+                .stream()
+                .filter(ascension -> ascension.getNeedAvatarPromoteLevel() <= currentAscension)
+                .map(passive -> getPassive(passive.getProudSkillGroupId()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     private double getBaseStat(double baseValue, String statType) {
@@ -198,6 +230,40 @@ public class CharacterContainer {
                 .filter(ascension -> ascension.getAvatarPromoteId() == promoteId)
                 .collect(Collectors.toMap(
                         AvatarPromoteExcelConfigDataJson::getPromoteLevel,
+                        data -> data
+                ));
+    }
+
+    private AvatarSkillDepotExcelConfigDataJson getSkillDepot() {
+        return AvatarData.getInstance().skillDepotConfig
+                .stream()
+                .filter(depot -> depot.getId() == getAvatar().getSkillDepotId())
+                .findFirst()
+                .orElse(null);
+    }
+
+    private AvatarSkillExcelConfigDataJson getSkill(int id) {
+        return AvatarData.getInstance().skillConfig
+                .stream()
+                .filter(skill -> skill.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private ProudSkillExcelConfigDataJson getPassive(int id) {
+        return AvatarData.getInstance().proudSkillConfig
+                .stream()
+                .filter(passive -> passive.getProudSkillGroupId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Map<Integer, ProudSkillExcelConfigDataJson> getTalentLevels(int proudSkillGroupId) {
+        return AvatarData.getInstance().proudSkillConfig
+                .stream()
+                .filter(talent -> talent.getProudSkillGroupId() == proudSkillGroupId)
+                .collect(Collectors.toMap(
+                        ProudSkillExcelConfigDataJson::getLevel,
                         data -> data
                 ));
     }
