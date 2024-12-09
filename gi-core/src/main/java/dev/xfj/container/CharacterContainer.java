@@ -12,11 +12,14 @@ import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotE
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
+import dev.xfj.utils.Interpolator;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 public class CharacterContainer {
     private static final String BASE_HP = "FIGHT_PROP_BASE_HP";
@@ -26,6 +29,7 @@ public class CharacterContainer {
     private int currentLevel;
     private int currentExperience;
     private int currentAscension;
+    private Map<Integer, Integer> currentTalentLevels;
 
     public CharacterContainer(int id) {
         this(id, 1, 0, 0);
@@ -36,6 +40,13 @@ public class CharacterContainer {
         this.currentLevel = currentLevel;
         this.currentExperience = currentExperience;
         this.currentAscension = currentAscension;
+        this.currentTalentLevels = getTalents().keySet()
+                .stream()
+                .map(AvatarSkillExcelConfigDataJson::getId)
+                .collect(Collectors.toMap(
+                        skillId -> skillId,
+                        level -> 1
+                ));
     }
 
     public int getId() {
@@ -128,7 +139,7 @@ public class CharacterContainer {
     }
 
     public String getBirthday() {
-        return String.format("%1$2s/%2$2s",
+        return format("%1$2s/%2$2s",
                 getFetter().getInfoBirthMonth(), getFetter().getInfoBirthDay()).replace(' ', '0');
     }
 
@@ -171,6 +182,36 @@ public class CharacterContainer {
                 .map(passive -> getPassive(passive.getProudSkillGroupId()))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    public String getSkillDetails() {
+        StringBuilder stringBuilder = new StringBuilder();
+        getLevelableSkills()
+                .forEach(skill -> {
+                    int level = currentTalentLevels.get(skill);
+                    AvatarSkillExcelConfigDataJson skillDetails = getSkill(skill);
+                    ProudSkillExcelConfigDataJson levelDetails = getTalentLevels(skillDetails.getProudSkillGroupId())
+                            .get(level);
+                    Interpolator interpolator = new Interpolator();
+
+                    stringBuilder
+                            .append(Database.getInstance().getTranslation(skillDetails.getNameTextMapHash()))
+                            .append("\n")
+                            .append(Database.getInstance().getTranslation(skillDetails.getDescTextMapHash()))
+                            .append("\n")
+                            .append(format("Level: %s\n", level));
+
+                    levelDetails.getParamDescList()
+                            .forEach(parameter -> {
+                                String value = Database.getInstance().getTranslation(parameter);
+                                if (value != null) {
+                                    stringBuilder
+                                            .append(interpolator.interpolate(value, levelDetails.getParamList()))
+                                            .append("\n");
+                                }
+                            });
+                });
+        return stringBuilder.toString();
     }
 
     private double getBaseStat(double baseValue, String statType) {
@@ -268,6 +309,13 @@ public class CharacterContainer {
                 ));
     }
 
+    private List<Integer> getLevelableSkills() {
+        return getTalents().keySet()
+                .stream()
+                .map(AvatarSkillExcelConfigDataJson::getId)
+                .collect(Collectors.toList());
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -294,5 +342,17 @@ public class CharacterContainer {
 
     public void setCurrentAscension(int currentAscension) {
         this.currentAscension = currentAscension;
+    }
+
+    public Map<Integer, Integer> getCurrentTalentLevels() {
+        return currentTalentLevels;
+    }
+
+    public void setCurrentTalentLevels(Map<Integer, Integer> currentTalentLevels) {
+        this.currentTalentLevels = currentTalentLevels;
+    }
+
+    public void setCurrentTalentLevel(int skillIndex, int skillLevel) {
+        currentTalentLevels.put(getLevelableSkills().get(skillIndex), skillLevel);
     }
 }
