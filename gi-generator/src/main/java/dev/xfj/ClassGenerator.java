@@ -68,11 +68,18 @@ public class ClassGenerator {
     }
 
     private static JsonNode applyOverride(String fieldName, JsonNode node) {
+        ObjectMapper mapper = new ObjectMapper();
         //Since it merges all array items, the last item overrides these 3 as integers while prior ones are floats
         if (fieldName.equals("hpBase") || fieldName.equals("attackBase") || fieldName.equals("defenseBase")) {
             return new FloatNode(1.1f);
         } else if (fieldName.endsWith("Hash")) { //Seems it originally uses numeric strings that look like longs
             return new TextNode("a");
+        } else if (fieldName.equals("paramDescList")) {
+            ArrayNode arrayNode = mapper.createArrayNode();
+            return arrayNode.add("a");
+        } else if (fieldName.equals("paramList")) {
+            ArrayNode arrayNode = mapper.createArrayNode();
+            return arrayNode.add(1.1f);
         }
 
         return node;

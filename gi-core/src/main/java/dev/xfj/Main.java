@@ -1,6 +1,11 @@
 package dev.xfj;
 
 import dev.xfj.container.CharacterContainer;
+import dev.xfj.database.Database;
+import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
+import dev.xfj.utils.Interpolator;
+
+import java.util.Objects;
 
 public class Main {
     public static void main(String[] args) {
@@ -136,7 +141,20 @@ public class Main {
             System.out.println(character.getDescription());
             var talents = character.getTalents();
             var passives = character.getPassives();
-            System.out.println();
+            Interpolator interpolator = new Interpolator();
+            talents.values()
+                    .stream()
+                    .flatMap(skills -> skills.values().stream())
+                    .forEach(skill -> {
+                        var values = skill.getParamList();
+                        skill.getParamDescList()
+                                .forEach(parameter -> {
+                                    String value = Database.getInstance().getTranslation(parameter);
+                                    if (value != null) {
+                                        System.out.println(interpolator.interpolate(value, values));
+                                    }
+                                });
+                    });
 
         } catch (Exception e) {
             e.printStackTrace();

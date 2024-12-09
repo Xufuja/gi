@@ -43,7 +43,7 @@ public class ArtifactSetDetails {
                 .collect(Collectors.toList());
     }
 
-    public List<Integer> getSetBonusParameters() {
+    public List<Double> getSetBonusParameters() {
         return data.getParamList();
     }
 }
