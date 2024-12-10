@@ -184,33 +184,46 @@ public class CharacterContainer {
                 .collect(Collectors.toList());
     }
 
+    private List<Integer> getLevelableSkills() {
+        //Fragile, assumes talent IDs are in ascending order for normal, skill and burst
+        return getTalents().keySet()
+                .stream()
+                .map(AvatarSkillExcelConfigDataJson::getId)
+                .collect(Collectors.toList());
+    }
+
     public String getSkillDetails() {
         StringBuilder stringBuilder = new StringBuilder();
-        getLevelableSkills()
-                .forEach(skill -> {
-                    int level = currentTalentLevels.get(skill);
-                    AvatarSkillExcelConfigDataJson skillDetails = getSkill(skill);
-                    ProudSkillExcelConfigDataJson levelDetails = getTalentLevels(skillDetails.getProudSkillGroupId())
-                            .get(level);
-                    Interpolator interpolator = new Interpolator();
+        getLevelableSkills().forEach(skill -> stringBuilder.append(getSkillDetail(skill)));
+        return stringBuilder.toString();
+    }
 
-                    stringBuilder
-                            .append(Database.getInstance().getTranslation(skillDetails.getNameTextMapHash()))
-                            .append("\n")
-                            .append(Database.getInstance().getTranslation(skillDetails.getDescTextMapHash()))
-                            .append("\n")
-                            .append(format("Level: %s\n", level));
+    public String getSkillDetail(int skill) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Interpolator interpolator = new Interpolator();
 
-                    levelDetails.getParamDescList()
-                            .forEach(parameter -> {
-                                String value = Database.getInstance().getTranslation(parameter);
-                                if (value != null) {
-                                    stringBuilder
-                                            .append(interpolator.interpolate(value, levelDetails.getParamList()))
-                                            .append("\n");
-                                }
-                            });
+        int level = currentTalentLevels.get(skill);
+        AvatarSkillExcelConfigDataJson skillDetails = getSkill(skill);
+        ProudSkillExcelConfigDataJson levelDetails = getTalentLevels(skillDetails.getProudSkillGroupId())
+                .get(level);
+
+        stringBuilder
+                .append(Database.getInstance().getTranslation(skillDetails.getNameTextMapHash()))
+                .append("\n")
+                .append(Database.getInstance().getTranslation(skillDetails.getDescTextMapHash()))
+                .append("\n")
+                .append(format("Level: %s\n", level));
+
+        levelDetails.getParamDescList()
+                .forEach(parameter -> {
+                    String value = Database.getInstance().getTranslation(parameter);
+                    if (value != null) {
+                        stringBuilder
+                                .append(interpolator.interpolate(value, levelDetails.getParamList()))
+                                .append("\n");
+                    }
                 });
+
         return stringBuilder.toString();
     }
 
@@ -307,13 +320,6 @@ public class CharacterContainer {
                         ProudSkillExcelConfigDataJson::getLevel,
                         data -> data
                 ));
-    }
-
-    private List<Integer> getLevelableSkills() {
-        return getTalents().keySet()
-                .stream()
-                .map(AvatarSkillExcelConfigDataJson::getId)
-                .collect(Collectors.toList());
     }
 
     public void setId(int id) {
