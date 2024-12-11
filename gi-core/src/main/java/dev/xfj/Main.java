@@ -1,6 +1,7 @@
 package dev.xfj;
 
 import dev.xfj.container.CharacterContainer;
+import dev.xfj.database.Database;
 
 public class Main {
     public static void main(String[] args) {

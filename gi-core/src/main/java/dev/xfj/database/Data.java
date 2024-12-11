@@ -1,10 +1,9 @@
 package dev.xfj.database;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import dev.xfj.constants.DataPath;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,19 +14,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static dev.xfj.constants.Global.DATA_PATH;
+import static dev.xfj.constants.DataPath.EXCEL_BIN_OUTPUT;
 
 interface Data {
-    String EXCEL_BIN_PATH = DATA_PATH + "\\ExcelBinOutput\\";
-    String TEXT_MAP_PATH = DATA_PATH + "\\TextMap\\";
-
     default <T> List<T> loadJSONArray(Class<T> clazz) throws FileNotFoundException {
-        String file = clazz.getSimpleName().replace("Json", ".json");
-        return loadJSONArray(clazz, EXCEL_BIN_PATH, file);
+        return loadJSONArray(EXCEL_BIN_OUTPUT, clazz);
     }
 
-    default <T> List<T> loadJSONArray(Class<T> clazz, String file) throws FileNotFoundException {
-        return loadJSONArray(clazz, EXCEL_BIN_PATH, file);
+    default <T> List<T> loadJSONArray(DataPath dataPath, Class<T> clazz) throws FileNotFoundException {
+        String file = clazz.getSimpleName().replace("Json", ".json");
+        return loadJSONArray(clazz, dataPath.path, file);
+    }
+
+    default <T> List<T> loadJSONArray(DataPath dataPath, Class<T> clazz, String file) throws FileNotFoundException {
+        return loadJSONArray(clazz, dataPath.path, file);
     }
 
     default <T> List<T> loadJSONArray(Class<T> clazz, String baseDirectory, String file) throws FileNotFoundException {
@@ -38,6 +38,25 @@ interface Data {
         System.out.printf("Loaded: %1$7d entries from %2$s%n", jsonArray.size(), file);
 
         return new Gson().fromJson(jsonArray, type);
+    }
+
+    default <T> T loadJSON(DataPath dataPath, Class<T> clazz) throws FileNotFoundException {
+        String file = clazz.getSimpleName().replace("Json", ".json");
+        return loadJSON(clazz, dataPath.path, file);
+    }
+
+    default <T> T loadJSON(DataPath dataPath, Class<T> clazz, String file) throws FileNotFoundException {
+        return loadJSON(clazz, dataPath.path, file);
+    }
+
+    default <T> T loadJSON(Class<T> clazz, String baseDirectory, String file) throws FileNotFoundException {
+        JsonReader jsonReader = new JsonReader(new FileReader(baseDirectory + file));
+        JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
+        //Type type = TypeToken.getParameterized(Map.class, String.class, clazz).getType();
+
+        System.out.printf("Loaded: %1$7d entries from %2$s%n", jsonObject.keySet().size(), file);
+
+        return new Gson().fromJson(jsonObject, clazz);
     }
 
     default <T, U> Map<Integer, T> loadDataWithIntegerId(Class<T> returnType, List<U> inputList) {

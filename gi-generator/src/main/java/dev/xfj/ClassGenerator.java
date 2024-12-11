@@ -29,19 +29,24 @@ public class ClassGenerator {
         this.outputDirectory = outputDirectory;
     }
 
-    private String prepare(String path) throws IOException {
-        File file = new File(path);
+    private String prepare(String path, boolean array) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
+        File file = new File(path);
         JsonNode jsonNode = objectMapper.readTree(file);
-        ObjectNode result = objectMapper.createObjectNode();
 
-        for (JsonNode node : jsonNode) {
-            if (node.isObject()) {
-                mergeJsonNodes(result, (ObjectNode) node);
+        if (array) {
+            ObjectNode result = objectMapper.createObjectNode();
+
+            for (JsonNode node : jsonNode) {
+                if (node.isObject()) {
+                    mergeJsonNodes(result, (ObjectNode) node);
+                }
             }
-        }
 
-        return result.toPrettyString();
+            return result.toPrettyString();
+        } else {
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readTree(file));
+        }
     }
 
     private static void mergeJsonNodes(ObjectNode target, ObjectNode source) {
@@ -107,18 +112,26 @@ public class ClassGenerator {
     }
 
     public void createClasses() throws IOException {
-        Set<String> set = getAllFiles();
+        createClasses(FileFilter.NONE, true);
+    }
+
+    public void createClasses(FileFilter fileFilter, boolean array) throws IOException {
+        Set<String> set = getAllFiles(fileFilter);
 
         for (String item : set) {
-            System.out.println("Generating for: " + item);
-            String json = prepare(dataDirectory + item);
-            System.out.println("Input JSON for generator:\r\n" + json);
-            createClass(
-                    json,
-                    new File(outputDirectory),
-                    "dev.xfj.jsonschema2pojo." + item.replace(".json", "").toLowerCase(),
-                    item
-            );
+            if (!Character.isDigit(item.charAt(0))) {
+                System.out.println("Generating for: " + item);
+                String json = prepare(dataDirectory + item, array);
+                System.out.println("Input JSON for generator:\r\n" + json);
+                createClass(
+                        json,
+                        new File(outputDirectory),
+                        "dev.xfj.jsonschema2pojo." + item.replace(".json", "").toLowerCase(),
+                        item
+                );
+            } else {
+                System.out.println("Skipping generation for: " + item);
+            }
         }
     }
 
@@ -153,13 +166,22 @@ public class ClassGenerator {
         jCodeModel.build(outputDirectory);
     }
 
-    private Set<String> getAllFiles() throws IOException {
+    private Set<String> getAllFiles(FileFilter fileFilter) throws IOException {
         try (Stream<Path> stream = Files.list(Paths.get(dataDirectory))) {
             return stream
                     .filter(file -> !Files.isDirectory(file))
                     .map(Path::getFileName)
                     .map(Path::toString)
+                    .filter(file -> !filterOut(file, fileFilter))
                     .collect(Collectors.toSet());
         }
+    }
+
+    private boolean filterOut(String string, FileFilter fileFilter) {
+        return switch (fileFilter) {
+            case NONE -> false;
+            case MORE_THAN_1_UNDERSCORE -> string.chars().filter(character -> character == '_').count() > 1;
+            case CHIORI_TEST -> !string.equals("ConfigAvatar_Chiori.json");
+        };
     }
 }

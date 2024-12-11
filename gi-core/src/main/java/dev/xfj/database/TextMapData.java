@@ -13,7 +13,8 @@ import java.io.FileReader;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static dev.xfj.constants.DataPath.TEXT_MAP;
 
 public class TextMapData implements Data {
     private static TextMapData instance;
@@ -48,7 +49,7 @@ public class TextMapData implements Data {
     private Map<String, String> loadLanguage(String language) throws FileNotFoundException {
         String file = String.format("TextMap%1$s.json", language);
 
-        JsonReader jsonReader = new JsonReader(new FileReader(TEXT_MAP_PATH + file));
+        JsonReader jsonReader = new JsonReader(new FileReader(TEXT_MAP.path + file));
         JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
         Type type = TypeToken.getParameterized(Map.class, String.class, String.class).getType();
 
