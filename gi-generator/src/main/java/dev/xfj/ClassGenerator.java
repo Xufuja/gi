@@ -172,16 +172,8 @@ public class ClassGenerator {
                     .filter(file -> !Files.isDirectory(file))
                     .map(Path::getFileName)
                     .map(Path::toString)
-                    .filter(file -> !filterOut(file, fileFilter))
+                    .filter(file -> !fileFilter.filterOut(file))
                     .collect(Collectors.toSet());
         }
-    }
-
-    private boolean filterOut(String string, FileFilter fileFilter) {
-        return switch (fileFilter) {
-            case NONE -> false;
-            case MORE_THAN_1_UNDERSCORE -> string.chars().filter(character -> character == '_').count() > 1;
-            case CHIORI_TEST -> !string.equals("ConfigAvatar_Chiori.json");
-        };
     }
 }
