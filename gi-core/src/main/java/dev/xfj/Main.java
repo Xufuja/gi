@@ -137,6 +137,7 @@ public class Main {
             System.out.println(character.getDescription());
             character.setCurrentTalentLevel(2, 15);
             System.out.println(character.getSkillDetails());
+            System.out.println(character.getPassiveDetails());
 
         } catch (Exception e) {
             e.printStackTrace();

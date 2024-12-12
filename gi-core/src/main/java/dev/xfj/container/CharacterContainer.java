@@ -227,6 +227,35 @@ public class CharacterContainer {
         return stringBuilder.toString();
     }
 
+    public String getPassiveDetails() {
+        StringBuilder stringBuilder = new StringBuilder();
+        getPassives().forEach(passive -> stringBuilder.append(getPassiveDetails(passive)));
+        return stringBuilder.toString();
+    }
+
+    public String getPassiveDetails(ProudSkillExcelConfigDataJson passive) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Interpolator interpolator = new Interpolator();
+
+        stringBuilder
+                .append(Database.getInstance().getTranslation(passive.getNameTextMapHash()))
+                .append("\n")
+                .append(Database.getInstance().getTranslation(passive.getDescTextMapHash()))
+                .append("\n");
+
+        passive.getParamDescList()
+                .forEach(parameter -> {
+                    String value = Database.getInstance().getTranslation(parameter);
+                    if (value != null) {
+                        stringBuilder
+                                .append(interpolator.interpolate(value, passive.getParamList()))
+                                .append("\n");
+                    }
+                });
+
+        return stringBuilder.toString();
+    }
+
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
