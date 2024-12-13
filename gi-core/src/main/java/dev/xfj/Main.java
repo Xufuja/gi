@@ -1,7 +1,6 @@
 package dev.xfj;
 
 import dev.xfj.container.CharacterContainer;
-import dev.xfj.database.Database;
 
 public class Main {
     public static void main(String[] args) {
@@ -137,7 +136,8 @@ public class Main {
             System.out.println(character.getDescription());
             character.setCurrentTalentLevel(2, 15);
             System.out.println(character.getSkillDetails());
-            System.out.println(character.getPassiveDetails());
+            System.out.println(character.getPassiveDetail());
+            System.out.println(character.getConstellations());
 
         } catch (Exception e) {
             e.printStackTrace();

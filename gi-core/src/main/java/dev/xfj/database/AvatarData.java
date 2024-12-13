@@ -26,7 +26,7 @@ public class AvatarData implements Data {
     public final List<AvatarSkillDepotExcelConfigDataJson> skillDepotConfig;
     private final List<AvatarLevelExcelConfigDataJson> levelConfig;
     public final List<AvatarPromoteExcelConfigDataJson> avatarPromoteConfig;
-    private final List<AvatarTalentExcelConfigDataJson> avatarTalentConfig;
+    public final List<AvatarTalentExcelConfigDataJson> avatarTalentConfig;
     private final List<AttackAttenuationExcelConfigDataJson> attackAttenuationConfig;
     private final List<AvatarFlycloakExcelConfigDataJson> avatarFlycloakConfig;
     private final List<AvatarCostumeExcelConfigDataJson> avatarCostumeConfig;

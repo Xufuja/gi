@@ -10,14 +10,14 @@ import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelCo
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.CostItem;
 import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 import dev.xfj.utils.Interpolator;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.lang.String.format;
 
@@ -227,13 +227,13 @@ public class CharacterContainer {
         return stringBuilder.toString();
     }
 
-    public String getPassiveDetails() {
+    public String getPassiveDetail() {
         StringBuilder stringBuilder = new StringBuilder();
-        getPassives().forEach(passive -> stringBuilder.append(getPassiveDetails(passive)));
+        getPassives().forEach(passive -> stringBuilder.append(getPassiveDetail(passive)));
         return stringBuilder.toString();
     }
 
-    public String getPassiveDetails(ProudSkillExcelConfigDataJson passive) {
+    public String getPassiveDetail(ProudSkillExcelConfigDataJson passive) {
         StringBuilder stringBuilder = new StringBuilder();
         Interpolator interpolator = new Interpolator();
 
@@ -254,6 +254,29 @@ public class CharacterContainer {
                 });
 
         return stringBuilder.toString();
+    }
+
+    public Map<Integer, String> getConstellations() {
+        List<AvatarTalentExcelConfigDataJson> constellations = getSkillDepot().getTalents()
+                .stream()
+                .filter(id -> id != 0)
+                .map(this::getConstellation)
+                .toList();
+
+        return IntStream.range(0, constellations.size())
+                .boxed()
+                .collect(Collectors.toMap(
+                        i -> i + 1,
+                        i -> {
+                            AvatarTalentExcelConfigDataJson current = constellations.get(i);
+                            return String.format("%s. %s\n%s\n",
+                                    i + 1,
+                                    Database.getInstance().getTranslation(current.getNameTextMapHash()),
+                                    Database.getInstance().getTranslation(current.getDescTextMapHash()));
+                        },
+                        (a, b) -> b,
+                        LinkedHashMap::new
+                ));
     }
 
     private double getBaseStat(double baseValue, String statType) {
@@ -349,6 +372,14 @@ public class CharacterContainer {
                         ProudSkillExcelConfigDataJson::getLevel,
                         data -> data
                 ));
+    }
+
+    private AvatarTalentExcelConfigDataJson getConstellation(int id) {
+        return AvatarData.getInstance().avatarTalentConfig
+                .stream()
+                .filter(constellation -> constellation.getTalentId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     public void setId(int id) {
