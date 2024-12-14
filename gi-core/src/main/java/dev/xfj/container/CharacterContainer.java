@@ -3,6 +3,7 @@ package dev.xfj.container;
 import dev.xfj.constants.CharacterRarity;
 import dev.xfj.database.AvatarData;
 import dev.xfj.database.Database;
+import dev.xfj.database.ItemData;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AddProp;
@@ -12,6 +13,7 @@ import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotE
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 import dev.xfj.utils.Interpolator;
 
@@ -102,24 +104,36 @@ public class CharacterContainer {
     }
 
     public Map<Integer, Integer> getAscensionItems() {
+        return getAscensionItems(false);
+    }
+
+    public Map<Integer, Integer> getAscensionItems(boolean allAscensions) {
         return getAscensions(getAvatar().getAvatarPromoteId()).values()
                 .stream()
-                .filter(ascension -> ascension.getPromoteLevel() == currentAscension)
+                .filter(ascension -> !allAscensions ?
+                        ascension.getPromoteLevel() == currentAscension :
+                        ascension.getPromoteLevel() <= 6)
                 .flatMap(promotions -> promotions.getCostItems().stream())
                 .distinct()
                 .collect(Collectors.toMap(
                         CostItem::getId,
-                        CostItem::getCount
+                        CostItem::getCount,
+                        Integer::sum
                 ));
     }
 
     public Integer getAscensionCost() {
+        return getAscensionCost(false);
+    }
+
+    public Integer getAscensionCost(boolean allAscensions) {
         return getAscensions(getAvatar().getAvatarPromoteId()).values()
                 .stream()
-                .filter(ascension -> ascension.getPromoteLevel() == currentAscension)
+                .filter(ascension -> !allAscensions ?
+                        ascension.getPromoteLevel() == currentAscension :
+                        ascension.getPromoteLevel() <= 6)
                 .mapToInt(AvatarPromoteExcelConfigDataJson::getScoinCost)
-                .findFirst()
-                .orElse(-1);
+                .sum();
     }
 
     public String getVision() {
@@ -279,6 +293,20 @@ public class CharacterContainer {
                 ));
     }
 
+    public Map<String, Integer> getAllAscensionItems() {
+        return getAscensionItems(true).entrySet()
+                .stream()
+                .filter(id -> id.getKey() != 0)
+                .collect(Collectors.toMap(
+                        item -> Database.getInstance().getTranslation(getItem(item.getKey()).getNameTextMapHash()),
+                        Map.Entry::getValue
+                ));
+    }
+
+    public Integer getAllAscensionCosts() {
+        return getAscensionCost(true);
+    }
+
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
@@ -378,6 +406,14 @@ public class CharacterContainer {
         return AvatarData.getInstance().avatarTalentConfig
                 .stream()
                 .filter(constellation -> constellation.getTalentId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private MaterialExcelConfigDataJson getItem(int id) {
+        return ItemData.getInstance().materialConfig
+                .stream()
+                .filter(item -> item.getId() == id)
                 .findFirst()
                 .orElse(null);
     }

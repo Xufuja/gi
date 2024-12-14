@@ -9,13 +9,17 @@ import java.util.Map;
 
 public class ItemData implements Data {
     private static ItemData instance;
-    private final List<MaterialExcelConfigDataJson> materialConfig;
+    public final List<MaterialExcelConfigDataJson> materialConfig;
 
-    private ItemData() throws FileNotFoundException {
-        this.materialConfig = loadJSONArray(MaterialExcelConfigDataJson.class);
+    private ItemData() {
+        try {
+            this.materialConfig = loadJSONArray(MaterialExcelConfigDataJson.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
-    public static ItemData getInstance() throws FileNotFoundException {
+    public static ItemData getInstance() {
         if (instance == null) {
             instance = new ItemData();
         }

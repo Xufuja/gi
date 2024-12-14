@@ -138,6 +138,8 @@ public class Main {
             System.out.println(character.getSkillDetails());
             System.out.println(character.getPassiveDetail());
             System.out.println(character.getConstellations());
+            System.out.println(character.getAllAscensionItems());
+            System.out.println(character.getAllAscensionCosts());
 
         } catch (Exception e) {
             e.printStackTrace();
