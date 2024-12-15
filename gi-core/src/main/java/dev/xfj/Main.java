@@ -140,6 +140,9 @@ public class Main {
             System.out.println(character.getConstellations());
             System.out.println(character.getAllAscensionItems());
             System.out.println(character.getAllAscensionCosts());
+            System.out.println(character.getAllTalentItems());
+            System.out.println(character.getAllTalentCosts());
+            System.out.println(character.getAllExpBooks());
 
         } catch (Exception e) {
             e.printStackTrace();

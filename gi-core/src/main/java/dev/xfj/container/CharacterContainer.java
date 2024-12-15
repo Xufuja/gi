@@ -6,6 +6,7 @@ import dev.xfj.database.Database;
 import dev.xfj.database.ItemData;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AddProp;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.CostItem;
@@ -15,6 +16,7 @@ import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConf
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.trainingguideexpcostconfigdata.TrainingGuideExpCostConfigDataJson;
 import dev.xfj.utils.Interpolator;
 
 import java.util.*;
@@ -114,7 +116,6 @@ public class CharacterContainer {
                         ascension.getPromoteLevel() == currentAscension :
                         ascension.getPromoteLevel() <= 6)
                 .flatMap(promotions -> promotions.getCostItems().stream())
-                .distinct()
                 .collect(Collectors.toMap(
                         CostItem::getId,
                         CostItem::getCount,
@@ -288,7 +289,7 @@ public class CharacterContainer {
                                     Database.getInstance().getTranslation(current.getNameTextMapHash()),
                                     Database.getInstance().getTranslation(current.getDescTextMapHash()));
                         },
-                        (a, b) -> b,
+                        (a, b) -> b, //There are no duplicates, but need to specify something to select LinkedHashMap
                         LinkedHashMap::new
                 ));
     }
@@ -306,6 +307,44 @@ public class CharacterContainer {
     public Integer getAllAscensionCosts() {
         return getAscensionCost(true);
     }
+
+    public Map<String, Integer> getAllTalentItems() {
+        return getTalents().values()
+                .stream()
+                .flatMap(map -> map.values().stream())
+                .flatMap(costs -> costs.getCostItems().stream())
+                .filter(id -> id.getId() != 0)
+                .collect(Collectors.toMap(
+                        item -> Database.getInstance().getTranslation(getItem(item.getId()).getNameTextMapHash()),
+                        dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.CostItem::getCount,
+                        Integer::sum
+                ));
+    }
+
+    public Integer getAllTalentCosts() {
+        return getTalents().values()
+                .stream()
+                .flatMap(map -> map.values().stream())
+                .mapToInt(ProudSkillExcelConfigDataJson::getCoinCost)
+                .sum();
+    }
+
+    public Map<String, Integer> getAllExpBooks() {
+        Map<String, Integer> result = new LinkedHashMap<>();
+
+        Map<Integer, AvatarPromoteExcelConfigDataJson> ascensions = getAscensions(getAvatar().getAvatarPromoteId());
+        int NextStartingLevel = 1;
+
+        for (int i = 0; i < ascensions.size(); i++) {
+            AvatarPromoteExcelConfigDataJson current = ascensions.get(i);
+            int currentMaxLevel = current.getUnlockMaxLevel();
+            getExpBooksForLevel(NextStartingLevel, currentMaxLevel).forEach((id, count) -> result.merge(id, count, Integer::sum));
+            NextStartingLevel = currentMaxLevel;
+        }
+
+        return result;
+    }
+
 
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
@@ -416,6 +455,76 @@ public class CharacterContainer {
                 .filter(item -> item.getId() == id)
                 .findFirst()
                 .orElse(null);
+    }
+
+    private Map<Integer, Integer> getExpBooks() {
+        return ItemData.getInstance().materialConfig
+                .stream()
+                .filter(item -> "MATERIAL_EXP_FRUIT".equals(item.getMaterialType()))
+                .collect(Collectors.toMap(
+                        MaterialExcelConfigDataJson::getId,
+                        item -> item.getItemUse()
+                                .stream()
+                                .filter(use -> "ITEM_USE_ADD_EXP".equals(use.getUseOp()))
+                                .flatMap(use -> use.getUseParam().stream())
+                                .filter(param -> !param.isBlank())
+                                .mapToInt(Integer::parseInt)
+                                .sum()
+                ));
+    }
+
+    private int getExpRequired(int startingLevel, int targetLevel) {
+        return AvatarData.getInstance().levelConfig
+                .stream()
+                .filter(level -> level.getLevel() >= startingLevel)
+                .filter(level -> level.getLevel() < targetLevel)
+                .mapToInt(AvatarLevelExcelConfigDataJson::getExp)
+                .sum();
+    }
+
+    private Map<String, Integer> getExpBooksForLevel(int startingLevel, int targetLevel) {
+        int expRequired = getExpRequired(startingLevel, targetLevel);
+
+        Map<Integer, Integer> expBooks = getExpBooks().entrySet()
+                .stream()
+                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (entryA, entryB) -> entryA,
+                        LinkedHashMap::new));
+
+        Map<String, Integer> result = new LinkedHashMap<>();
+        int expRemaining = expRequired;
+
+        Iterator<Map.Entry<Integer, Integer>> iterator = expBooks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Integer> entry = iterator.next();
+
+            if (expRemaining <= 0) {
+                break;
+            }
+
+            int expProvided = entry.getValue();
+            int booksNeeded = expRemaining / expProvided;
+
+            if (!iterator.hasNext()) {
+                booksNeeded++;
+            }
+
+            result.put(Database.getInstance().getTranslation(getItem(entry.getKey()).getNameTextMapHash()), booksNeeded);
+            expRemaining -= booksNeeded * expProvided;
+        }
+
+        return result;
+    }
+
+    private int getCostForExpItem(int id) {
+        return AvatarData.getInstance().trainingGuideExpCostConfig
+                .stream()
+                .filter(item -> item.getItemId() == id)
+                .mapToInt(TrainingGuideExpCostConfigDataJson::getCoinCost)
+                .sum();
     }
 
     public void setId(int id) {
