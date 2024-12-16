@@ -15,7 +15,6 @@ import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfig
 import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.trainingguideexpcostconfigdata.TrainingGuideExpCostConfigDataJson;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,6 @@ public class AvatarData implements Data {
     private final List<AvatarFettersLevelExcelConfigDataJson> avatarFettersLevelConfig;
     public final List<FetterInfoExcelConfigDataJson> fetterInfoConfig;
     public final List<ProudSkillExcelConfigDataJson> proudSkillConfig;
-    public final List<TrainingGuideExpCostConfigDataJson> trainingGuideExpCostConfig;
 
     private AvatarData() {
         try {
@@ -52,7 +50,6 @@ public class AvatarData implements Data {
             avatarFettersLevelConfig = loadJSONArray(AvatarFettersLevelExcelConfigDataJson.class);
             fetterInfoConfig = loadJSONArray(FetterInfoExcelConfigDataJson.class);
             proudSkillConfig = loadJSONArray(ProudSkillExcelConfigDataJson.class);
-            trainingGuideExpCostConfig = loadJSONArray(TrainingGuideExpCostConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

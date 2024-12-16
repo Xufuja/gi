@@ -143,6 +143,7 @@ public class Main {
             System.out.println(character.getAllTalentItems());
             System.out.println(character.getAllTalentCosts());
             System.out.println(character.getAllExpBooks());
+            System.out.println(character.getAllExpCosts());
 
         } catch (Exception e) {
             e.printStackTrace();

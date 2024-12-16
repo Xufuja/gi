@@ -333,18 +333,32 @@ public class CharacterContainer {
         Map<String, Integer> result = new LinkedHashMap<>();
 
         Map<Integer, AvatarPromoteExcelConfigDataJson> ascensions = getAscensions(getAvatar().getAvatarPromoteId());
-        int NextStartingLevel = 1;
+        int nextStartingLevel = 1;
 
         for (int i = 0; i < ascensions.size(); i++) {
             AvatarPromoteExcelConfigDataJson current = ascensions.get(i);
             int currentMaxLevel = current.getUnlockMaxLevel();
-            getExpBooksForLevel(NextStartingLevel, currentMaxLevel).forEach((id, count) -> result.merge(id, count, Integer::sum));
-            NextStartingLevel = currentMaxLevel;
+            getExpBooksForLevel(nextStartingLevel, currentMaxLevel).forEach((id, count) -> result.merge(id, count, Integer::sum));
+            nextStartingLevel = currentMaxLevel;
         }
 
         return result;
     }
 
+    public Integer getAllExpCosts() {
+        Map<String, Integer> expBooks = getExpBooks().keySet()
+                .stream()
+                .map(this::getItem)
+                .collect(Collectors.toMap(
+                        book -> Database.getInstance().getTranslation(book.getNameTextMapHash()),
+                        MaterialExcelConfigDataJson::getId
+                ));
+
+        return getAllExpBooks().entrySet()
+                .stream()
+                .mapToInt(cost -> getCostForExpItem(expBooks.get(cost.getKey())) * cost.getValue())
+                .sum();
+    }
 
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
@@ -516,14 +530,41 @@ public class CharacterContainer {
             expRemaining -= booksNeeded * expProvided;
         }
 
+        checkExpBookEfficiency(result);
+
         return result;
     }
 
-    private int getCostForExpItem(int id) {
-        return AvatarData.getInstance().trainingGuideExpCostConfig
+    private void checkExpBookEfficiency(Map<String, Integer> input) {
+        List<Integer> expBookIds = getExpBooks().entrySet()
                 .stream()
-                .filter(item -> item.getItemId() == id)
-                .mapToInt(TrainingGuideExpCostConfigDataJson::getCoinCost)
+                .sorted(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .toList();
+
+        for (int i = 0; i < expBookIds.size() - 1; i++) {
+            String current = Database.getInstance().getTranslation(getItem(expBookIds.get(i)).getNameTextMapHash());
+            String next = Database.getInstance().getTranslation(getItem(expBookIds.get(i + 1)).getNameTextMapHash());
+
+            Map<Integer, Integer> expBooks = getExpBooks();
+
+            if (expBooks.get(expBookIds.get(i)) * input.get(current) >= expBooks.get(expBookIds.get(i + 1))) {
+                input.put(current, 0);
+                input.put(next, input.get(next) + 1);
+            }
+        }
+    }
+
+    private int getCostForExpItem(int id) {
+        //Cannot locate data source, values from wiki
+        return Map.of(
+                        104001, 200,
+                        104002, 1000,
+                        104003, 4000
+                ).entrySet()
+                .stream()
+                .filter(item -> item.getKey() == id)
+                .mapToInt(Map.Entry::getValue)
                 .sum();
     }
 
