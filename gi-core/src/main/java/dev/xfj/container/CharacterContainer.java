@@ -360,6 +360,17 @@ public class CharacterContainer {
                 .sum();
     }
 
+    public Map<String, Integer> getAllItemRequirements() {
+        Map<String, Integer> result = getAllAscensionItems();
+        getAllTalentItems().forEach((id, count) -> result.merge(id, count, Integer::sum));
+        getAllExpBooks().forEach((id, count) -> result.merge(id, count, Integer::sum));
+        return result;
+    }
+
+    public Integer getAllItemCosts() {
+        return getAllAscensionCosts() + getAllTalentCosts() + getAllExpCosts();
+    }
+
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
@@ -546,9 +557,7 @@ public class CharacterContainer {
             String current = Database.getInstance().getTranslation(getItem(expBookIds.get(i)).getNameTextMapHash());
             String next = Database.getInstance().getTranslation(getItem(expBookIds.get(i + 1)).getNameTextMapHash());
 
-            Map<Integer, Integer> expBooks = getExpBooks();
-
-            if (expBooks.get(expBookIds.get(i)) * input.get(current) >= expBooks.get(expBookIds.get(i + 1))) {
+            if (getCostForExpItem(expBookIds.get(i)) * input.get(current) >= getCostForExpItem(expBookIds.get(i + 1))) {
                 input.put(current, 0);
                 input.put(next, input.get(next) + 1);
             }
@@ -556,12 +565,10 @@ public class CharacterContainer {
     }
 
     private int getCostForExpItem(int id) {
-        //Cannot locate data source, values from wiki
-        return Map.of(
-                        104001, 200,
-                        104002, 1000,
-                        104003, 4000
-                ).entrySet()
+        Map<Integer, Integer> expBooks = getExpBooks();
+        expBooks.replaceAll((book, exp) -> exp / 5);
+
+        return expBooks.entrySet()
                 .stream()
                 .filter(item -> item.getKey() == id)
                 .mapToInt(Map.Entry::getValue)

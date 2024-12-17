@@ -144,6 +144,8 @@ public class Main {
             System.out.println(character.getAllTalentCosts());
             System.out.println(character.getAllExpBooks());
             System.out.println(character.getAllExpCosts());
+            System.out.println(character.getAllItemRequirements());
+            System.out.println(character.getAllItemCosts());
 
         } catch (Exception e) {
             e.printStackTrace();
