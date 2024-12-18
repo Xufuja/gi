@@ -146,6 +146,9 @@ public class Main {
             System.out.println(character.getAllExpCosts());
             System.out.println(character.getAllItemRequirements());
             System.out.println(character.getAllItemCosts());
+            System.out.println(character.getNameCardDescription());
+            System.out.println(character.getSpecialtyFoodName());
+            System.out.println(character.getOutfits());
 
         } catch (Exception e) {
             e.printStackTrace();

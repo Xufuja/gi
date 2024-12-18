@@ -13,6 +13,7 @@ import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelCo
 import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.fettercharactercardexcelconfigdata.FetterCharacterCardExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 
@@ -29,11 +30,12 @@ public class AvatarData implements Data {
     public final List<AvatarTalentExcelConfigDataJson> avatarTalentConfig;
     private final List<AttackAttenuationExcelConfigDataJson> attackAttenuationConfig;
     private final List<AvatarFlycloakExcelConfigDataJson> avatarFlycloakConfig;
-    private final List<AvatarCostumeExcelConfigDataJson> avatarCostumeConfig;
+    public final List<AvatarCostumeExcelConfigDataJson> avatarCostumeConfig;
     public final List<AvatarCurveExcelConfigDataJson> avatarCurveConfig;
     private final List<AvatarFettersLevelExcelConfigDataJson> avatarFettersLevelConfig;
     public final List<FetterInfoExcelConfigDataJson> fetterInfoConfig;
     public final List<ProudSkillExcelConfigDataJson> proudSkillConfig;
+    public final List<FetterCharacterCardExcelConfigDataJson> fetterCharacterCardConfig;
 
     private AvatarData() {
         try {
@@ -50,6 +52,7 @@ public class AvatarData implements Data {
             avatarFettersLevelConfig = loadJSONArray(AvatarFettersLevelExcelConfigDataJson.class);
             fetterInfoConfig = loadJSONArray(FetterInfoExcelConfigDataJson.class);
             proudSkillConfig = loadJSONArray(ProudSkillExcelConfigDataJson.class);
+            fetterCharacterCardConfig = loadJSONArray(FetterCharacterCardExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

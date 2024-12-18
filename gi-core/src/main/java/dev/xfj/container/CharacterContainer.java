@@ -4,6 +4,7 @@ import dev.xfj.constants.CharacterRarity;
 import dev.xfj.database.AvatarData;
 import dev.xfj.database.Database;
 import dev.xfj.database.ItemData;
+import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
@@ -13,9 +14,11 @@ import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.CostItem;
 import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.fettercharactercardexcelconfigdata.FetterCharacterCardExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardItem;
 import dev.xfj.jsonschema2pojo.trainingguideexpcostconfigdata.TrainingGuideExpCostConfigDataJson;
 import dev.xfj.utils.Interpolator;
 
@@ -371,6 +374,30 @@ public class CharacterContainer {
         return getAllAscensionCosts() + getAllTalentCosts() + getAllExpCosts();
     }
 
+    public String getNameCardDescription() {
+        MaterialExcelConfigDataJson card = getCharacterCard();
+        return format("%s\n%s",
+                Database.getInstance().getTranslation(card.getNameTextMapHash()),
+                Database.getInstance().getTranslation(card.getDescTextMapHash())
+        );
+    }
+
+    public String getSpecialtyFoodName() {
+        return Database.getInstance().getTranslation(getSpecialtyFood().getNameTextMapHash());
+    }
+
+    public String getOutfits() {
+        StringBuilder stringBuilder = new StringBuilder();
+        getCostumes()
+                .forEach(costume -> {
+                    stringBuilder.append(Database.getInstance().getTranslation(costume.getNameTextMapHash()));
+                    stringBuilder.append("\n");
+                    stringBuilder.append(Database.getInstance().getTranslation(costume.getDescTextMapHash()));
+                    stringBuilder.append("\n");
+                });
+        return stringBuilder.toString();
+    }
+
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
@@ -573,6 +600,42 @@ public class CharacterContainer {
                 .filter(item -> item.getKey() == id)
                 .mapToInt(Map.Entry::getValue)
                 .sum();
+    }
+
+    private MaterialExcelConfigDataJson getCharacterCard() {
+        return getItem(ItemData.getInstance().rewardConfig
+                .stream()
+                .filter(reward -> reward.getRewardId() == AvatarData.getInstance().fetterCharacterCardConfig
+                        .stream()
+                        .filter(character -> character.getAvatarId() == getAvatar().getId())
+                        .mapToInt(FetterCharacterCardExcelConfigDataJson::getRewardId)
+                        .findFirst()
+                        .orElse(-1))
+                .mapToInt(item -> item.getRewardItemList()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .mapToInt(RewardItem::getItemId)
+                        .findFirst()
+                        .orElse(-1))
+                .findFirst()
+                .orElse(-1));
+    }
+
+    private MaterialExcelConfigDataJson getSpecialtyFood() {
+        return getItem(ItemData.getInstance().cookBonusConfig
+                .stream()
+                .filter(id -> id.getAvatarId() == getAvatar().getId())
+                .flatMap(entry -> entry.getParamVec().stream())
+                .filter(param -> param != 0)
+                .findFirst()
+                .orElse(-1));
+    }
+
+    private List<AvatarCostumeExcelConfigDataJson> getCostumes() {
+        return AvatarData.getInstance().avatarCostumeConfig
+                .stream()
+                .filter(id -> id.getCharacterId() == getAvatar().getId())
+                .collect(Collectors.toList());
     }
 
     public void setId(int id) {
