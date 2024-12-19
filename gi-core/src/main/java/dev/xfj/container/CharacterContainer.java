@@ -16,6 +16,9 @@ import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfig
 import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fettercharactercardexcelconfigdata.FetterCharacterCardExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardItem;
@@ -398,6 +401,24 @@ public class CharacterContainer {
         return stringBuilder.toString();
     }
 
+    public String getTeaPotDetails() {
+        StringBuilder stringBuilder = new StringBuilder();
+        HomeWorldFurnitureExcelConfigDataJson furniture = getFurnitureDetails();
+
+        furniture.getFurnType().forEach(type -> stringBuilder.append(getFurnitureType(type)).append("\n"));
+        stringBuilder.append(format("Comfort: %s\n", furniture.getComfort()));
+        stringBuilder.append(format("Load: %s\n", furniture.getCost()));
+        stringBuilder.append(format("Rarity: %s\n", furniture.getRankLevel()));
+        stringBuilder.append(Database.getInstance().getTranslation(furniture.getDescTextMapHash())).append("\n");
+
+        getPreferredFurnitureSets()
+                .forEach(set -> stringBuilder
+                        .append(Database.getInstance().getTranslation(set.getSuiteNameTextMapHash()))
+                        .append("\n"));
+
+        return stringBuilder.toString();
+    }
+
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
@@ -635,6 +656,39 @@ public class CharacterContainer {
         return AvatarData.getInstance().avatarCostumeConfig
                 .stream()
                 .filter(id -> id.getCharacterId() == getAvatar().getId())
+                .collect(Collectors.toList());
+    }
+
+    private int getFurnitureId() {
+        return AvatarData.getInstance().homeWorldNPCConfig
+                .stream()
+                .filter(id -> id.getAvatarID() == getAvatar().getId())
+                .mapToInt(HomeWorldNPCExcelConfigDataJson::getFurnitureID)
+                .findFirst()
+                .orElse(-1);
+    }
+
+    private HomeWorldFurnitureExcelConfigDataJson getFurnitureDetails() {
+        return ItemData.getInstance().homeWorldFurnitureConfig
+                .stream()
+                .filter(id -> id.getId() == getFurnitureId())
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String getFurnitureType(int id) {
+        return ItemData.getInstance().homeWorldFurnitureTypeConfig
+                .stream()
+                .filter(type -> type.getTypeID() == id)
+                .map(name -> Database.getInstance().getTranslation(name.getTypeNameTextMapHash()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private List<FurnitureSuiteExcelConfigDataJson> getPreferredFurnitureSets() {
+        return ItemData.getInstance().furnitureSuiteConfig
+                .stream()
+                .filter(furniture -> furniture.getFavoriteNpcExcelIdVec().contains(getAvatar().getId()))
                 .collect(Collectors.toList());
     }
 

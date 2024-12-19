@@ -2,6 +2,10 @@ package dev.xfj.database;
 
 import dev.xfj.item.Material;
 import dev.xfj.jsonschema2pojo.cookbonusexcelconfigdata.CookBonusExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.homeworldfurnituretypeexcelconfigdata.HomeWorldFurnitureTypeExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardExcelConfigDataJson;
 
@@ -14,12 +18,18 @@ public class ItemData implements Data {
     public final List<MaterialExcelConfigDataJson> materialConfig;
     public final List<RewardExcelConfigDataJson> rewardConfig;
     public final List<CookBonusExcelConfigDataJson> cookBonusConfig;
+    public final List<FurnitureSuiteExcelConfigDataJson> furnitureSuiteConfig;
+    public final List<HomeWorldFurnitureExcelConfigDataJson> homeWorldFurnitureConfig;
+    public final List<HomeWorldFurnitureTypeExcelConfigDataJson> homeWorldFurnitureTypeConfig;
 
     private ItemData() {
         try {
             this.materialConfig = loadJSONArray(MaterialExcelConfigDataJson.class);
             this.rewardConfig = loadJSONArray(RewardExcelConfigDataJson.class);
             this.cookBonusConfig = loadJSONArray(CookBonusExcelConfigDataJson.class);
+            this.furnitureSuiteConfig = loadJSONArray(FurnitureSuiteExcelConfigDataJson.class);
+            this.homeWorldFurnitureConfig = loadJSONArray(HomeWorldFurnitureExcelConfigDataJson.class);
+            this.homeWorldFurnitureTypeConfig = loadJSONArray(HomeWorldFurnitureTypeExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

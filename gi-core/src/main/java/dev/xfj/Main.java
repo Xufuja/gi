@@ -149,6 +149,7 @@ public class Main {
             System.out.println(character.getNameCardDescription());
             System.out.println(character.getSpecialtyFoodName());
             System.out.println(character.getOutfits());
+            System.out.println(character.getTeaPotDetails());
 
         } catch (Exception e) {
             e.printStackTrace();
