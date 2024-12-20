@@ -79,7 +79,7 @@ public class ClassGenerator {
             return new FloatNode(1.1f);
         } else if (fieldName.endsWith("Hash")) { //Seems it originally uses numeric strings that look like longs
             return new TextNode("a");
-        } else if (fieldName.equals("paramDescList")) {
+        } else if (fieldName.equals("paramDescList") || fieldName.equals("tips")) {
             ArrayNode arrayNode = mapper.createArrayNode();
             return arrayNode.add("a");
         } else if (fieldName.equals("paramList")) {

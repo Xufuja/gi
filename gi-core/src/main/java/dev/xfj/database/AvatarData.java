@@ -15,6 +15,7 @@ import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfig
 import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fettercharactercardexcelconfigdata.FetterCharacterCardExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.fetterstoryexcelconfigdata.FetterStoryExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 
@@ -38,6 +39,7 @@ public class AvatarData implements Data {
     public final List<ProudSkillExcelConfigDataJson> proudSkillConfig;
     public final List<FetterCharacterCardExcelConfigDataJson> fetterCharacterCardConfig;
     public final List<HomeWorldNPCExcelConfigDataJson> homeWorldNPCConfig;
+    public final List<FetterStoryExcelConfigDataJson> fetterStoryConfig;
 
     private AvatarData() {
         try {
@@ -55,7 +57,8 @@ public class AvatarData implements Data {
             fetterInfoConfig = loadJSONArray(FetterInfoExcelConfigDataJson.class);
             proudSkillConfig = loadJSONArray(ProudSkillExcelConfigDataJson.class);
             fetterCharacterCardConfig = loadJSONArray(FetterCharacterCardExcelConfigDataJson.class);
-            this.homeWorldNPCConfig = loadJSONArray(HomeWorldNPCExcelConfigDataJson.class);
+            homeWorldNPCConfig = loadJSONArray(HomeWorldNPCExcelConfigDataJson.class);
+            fetterStoryConfig = loadJSONArray(FetterStoryExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

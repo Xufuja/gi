@@ -16,6 +16,7 @@ import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfig
 import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fettercharactercardexcelconfigdata.FetterCharacterCardExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.fetterstoryexcelconfigdata.FetterStoryExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
@@ -419,6 +420,27 @@ public class CharacterContainer {
         return stringBuilder.toString();
     }
 
+    public String getStories() {
+        StringBuilder stringBuilder = new StringBuilder();
+        getFetterStories()
+                .forEach(story -> {
+                    stringBuilder.append(Database.getInstance().getTranslation(story.getStoryTitleTextMapHash())).append("\n");
+                    if (story.getOpenConds()
+                            .stream()
+                            .anyMatch(condition -> "FETTER_COND_FETTER_LEVEL".equals(condition.getCondType()))
+                    ) {
+                        stringBuilder.append(Database.getInstance().getTranslation(story.getTips()
+                                .stream()
+                                .findFirst()
+                                .orElse(null))).append("\n");
+                    }
+
+                    stringBuilder.append(Database.getInstance().getTranslation(story.getStoryContextTextMapHash())).append("\n");
+                });
+
+        return stringBuilder.toString();
+    }
+
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
@@ -689,6 +711,13 @@ public class CharacterContainer {
         return ItemData.getInstance().furnitureSuiteConfig
                 .stream()
                 .filter(furniture -> furniture.getFavoriteNpcExcelIdVec().contains(getAvatar().getId()))
+                .collect(Collectors.toList());
+    }
+
+    private List<FetterStoryExcelConfigDataJson> getFetterStories() {
+        return AvatarData.getInstance().fetterStoryConfig
+                .stream()
+                .filter(id -> id.getAvatarId() == getAvatar().getId())
                 .collect(Collectors.toList());
     }
 

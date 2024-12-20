@@ -150,6 +150,7 @@ public class Main {
             System.out.println(character.getSpecialtyFoodName());
             System.out.println(character.getOutfits());
             System.out.println(character.getTeaPotDetails());
+            System.out.println(character.getStories());
 
         } catch (Exception e) {
             e.printStackTrace();
