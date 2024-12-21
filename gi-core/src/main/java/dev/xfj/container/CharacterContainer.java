@@ -16,6 +16,7 @@ import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfig
 import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fettercharactercardexcelconfigdata.FetterCharacterCardExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.fettersexcelconfigdata.FettersExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.fetterstoryexcelconfigdata.FetterStoryExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
@@ -23,7 +24,6 @@ import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConf
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardItem;
-import dev.xfj.jsonschema2pojo.trainingguideexpcostconfigdata.TrainingGuideExpCostConfigDataJson;
 import dev.xfj.utils.Interpolator;
 
 import java.util.*;
@@ -69,7 +69,7 @@ public class CharacterContainer {
     }
 
     public String getTitle() {
-        return Database.getInstance().getTranslation(getFetter().getAvatarTitleTextMapHash());
+        return Database.getInstance().getTranslation(getFetterInfo().getAvatarTitleTextMapHash());
     }
 
     public int getRarity() {
@@ -145,7 +145,7 @@ public class CharacterContainer {
     }
 
     public String getVision() {
-        return Database.getInstance().getTranslation(getFetter().getAvatarVisionBeforTextMapHash());
+        return Database.getInstance().getTranslation(getFetterInfo().getAvatarVisionBeforTextMapHash());
     }
 
     public String getWeaponType() {
@@ -153,30 +153,30 @@ public class CharacterContainer {
     }
 
     public String getConstellation() {
-        return Database.getInstance().getTranslation(getFetter().getAvatarConstellationBeforTextMapHash());
+        return Database.getInstance().getTranslation(getFetterInfo().getAvatarConstellationBeforTextMapHash());
     }
 
     public String getNative() {
-        return Database.getInstance().getTranslation(getFetter().getAvatarNativeTextMapHash());
+        return Database.getInstance().getTranslation(getFetterInfo().getAvatarNativeTextMapHash());
     }
 
     public String getBirthday() {
         return format("%1$2s/%2$2s",
-                getFetter().getInfoBirthMonth(), getFetter().getInfoBirthDay()).replace(' ', '0');
+                getFetterInfo().getInfoBirthMonth(), getFetterInfo().getInfoBirthDay()).replace(' ', '0');
     }
 
     public String getVA(String language) {
         return switch (language) {
-            case "EN" -> Database.getInstance().getTranslation(getFetter().getCvEnglishTextMapHash());
-            case "JP" -> Database.getInstance().getTranslation(getFetter().getCvJapaneseTextMapHash());
-            case "CHS" -> Database.getInstance().getTranslation(getFetter().getCvChineseTextMapHash());
-            case "KR" -> Database.getInstance().getTranslation(getFetter().getCvKoreanTextMapHash());
+            case "EN" -> Database.getInstance().getTranslation(getFetterInfo().getCvEnglishTextMapHash());
+            case "JP" -> Database.getInstance().getTranslation(getFetterInfo().getCvJapaneseTextMapHash());
+            case "CHS" -> Database.getInstance().getTranslation(getFetterInfo().getCvChineseTextMapHash());
+            case "KR" -> Database.getInstance().getTranslation(getFetterInfo().getCvKoreanTextMapHash());
             default -> "No VA available";
         };
     }
 
     public String getDescription() {
-        return Database.getInstance().getTranslation(getFetter().getAvatarDetailTextMapHash());
+        return Database.getInstance().getTranslation(getFetterInfo().getAvatarDetailTextMapHash());
     }
 
     public Map<AvatarSkillExcelConfigDataJson, Map<Integer, ProudSkillExcelConfigDataJson>> getTalents() {
@@ -441,6 +441,27 @@ public class CharacterContainer {
         return stringBuilder.toString();
     }
 
+    public String getQuotes() {
+        StringBuilder stringBuilder = new StringBuilder();
+        getFetters()
+                .forEach(story -> {
+                    stringBuilder.append(Database.getInstance().getTranslation(story.getVoiceTitleTextMapHash())).append("\n");
+                    if (story.getOpenConds()
+                            .stream()
+                            .anyMatch(condition -> "FETTER_COND_FETTER_LEVEL".equals(condition.getCondType()))
+                    ) {
+                        stringBuilder.append(Database.getInstance().getTranslation(story.getTips()
+                                .stream()
+                                .findFirst()
+                                .orElse(null))).append("\n");
+                    }
+
+                    stringBuilder.append(Database.getInstance().getTranslation(story.getVoiceFileTextTextMapHash())).append("\n");
+                });
+
+        return stringBuilder.toString();
+    }
+
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
@@ -484,7 +505,7 @@ public class CharacterContainer {
                 .orElse(null);
     }
 
-    private FetterInfoExcelConfigDataJson getFetter() {
+    private FetterInfoExcelConfigDataJson getFetterInfo() {
         return AvatarData.getInstance().fetterInfoConfig
                 .stream()
                 .filter(character -> character.getAvatarId() == id)
@@ -716,6 +737,13 @@ public class CharacterContainer {
 
     private List<FetterStoryExcelConfigDataJson> getFetterStories() {
         return AvatarData.getInstance().fetterStoryConfig
+                .stream()
+                .filter(id -> id.getAvatarId() == getAvatar().getId())
+                .collect(Collectors.toList());
+    }
+
+    private List<FettersExcelConfigDataJson> getFetters() {
+        return AvatarData.getInstance().fettersConfig
                 .stream()
                 .filter(id -> id.getAvatarId() == getAvatar().getId())
                 .collect(Collectors.toList());

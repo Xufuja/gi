@@ -151,6 +151,7 @@ public class Main {
             System.out.println(character.getOutfits());
             System.out.println(character.getTeaPotDetails());
             System.out.println(character.getStories());
+            System.out.println(character.getQuotes());
 
         } catch (Exception e) {
             e.printStackTrace();
