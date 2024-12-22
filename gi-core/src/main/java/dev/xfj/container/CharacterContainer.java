@@ -108,7 +108,7 @@ public class CharacterContainer {
                                 !prop.getPropType().equals(BASE_ATK)
                 )
                 .collect(Collectors.toMap(
-                        AddProp::getPropType,
+                        stat -> getManualMappedText(stat.getPropType()),
                         AddProp::getValue
                 ));
     }
