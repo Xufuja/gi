@@ -4,6 +4,7 @@ import dev.xfj.constants.CharacterRarity;
 import dev.xfj.database.AvatarData;
 import dev.xfj.database.Database;
 import dev.xfj.database.ItemData;
+import dev.xfj.database.TextMapData;
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
@@ -149,7 +150,7 @@ public class CharacterContainer {
     }
 
     public String getWeaponType() {
-        return getAvatar().getWeaponType();
+        return getManualMappedText(getAvatar().getWeaponType());
     }
 
     public String getConstellation() {
@@ -510,6 +511,15 @@ public class CharacterContainer {
                 .stream()
                 .filter(character -> character.getAvatarId() == id)
                 .findFirst()
+                .orElse(null);
+    }
+
+    private String getManualMappedText(String id) {
+        return TextMapData.getInstance().manualTextMapConfig
+                .stream()
+                .filter(text -> id.equals(text.getTextMapId()))
+                .map(map -> Database.getInstance().getTranslation(map.getTextMapContentTextMapHash()))
+                .findAny()
                 .orElse(null);
     }
 

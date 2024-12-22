@@ -19,7 +19,7 @@ import static dev.xfj.constants.DataPath.TEXT_MAP;
 public class TextMapData implements Data {
     private static TextMapData instance;
     private Map<String, String> languageMap;
-    private final List<ManualTextMapConfigDataJson> manualTextMapConfig;
+    public final List<ManualTextMapConfigDataJson> manualTextMapConfig;
 
     private TextMapData() throws FileNotFoundException {
         languageMap = loadLanguage("EN");
