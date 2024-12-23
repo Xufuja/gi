@@ -609,7 +609,7 @@ public class CharacterContainer {
     }
 
     private Map<String, Integer> getExpBooksForLevel(int startingLevel, int targetLevel) {
-        int expRequired = getExpRequired(startingLevel, targetLevel);
+        int expRequired = getExpRequired(startingLevel, targetLevel) - currentExperience;
 
         Map<Integer, Integer> expBooks = getExpBooks().entrySet()
                 .stream()
