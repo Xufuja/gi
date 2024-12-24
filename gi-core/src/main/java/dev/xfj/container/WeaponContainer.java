@@ -57,7 +57,7 @@ public class WeaponContainer {
                 BASE_ATK);
     }
 
-    public double getAscensionStat() {
+    public Map<String, Double> getAscensionStat() {
         String ascensionStat = getWeapon().getWeaponProp()
                 .stream()
                 .map(WeaponProp::getPropType)
@@ -65,12 +65,14 @@ public class WeaponContainer {
                 .findAny()
                 .orElse("");
 
-        return getBaseStat(getWeapon().getWeaponProp()
-                .stream()
-                .filter(curves -> curves.getPropType().equals(ascensionStat))
-                .mapToDouble(WeaponProp::getInitValue)
-                .findFirst()
-                .orElse(-1.0), ascensionStat);
+        return Map.of(
+                getManualMappedText(ascensionStat),
+                getBaseStat(getWeapon().getWeaponProp()
+                        .stream()
+                        .filter(curves -> curves.getPropType().equals(ascensionStat))
+                        .mapToDouble(WeaponProp::getInitValue)
+                        .findFirst()
+                        .orElse(-1.0), ascensionStat));
     }
 
     private double getBaseStat(double baseValue, String statType) {
