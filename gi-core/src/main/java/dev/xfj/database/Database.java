@@ -52,7 +52,7 @@ public class Database {
         characterLevels = AvatarData.getInstance().loadLevelRequirements();
         characterAscensions = AvatarData.getInstance().loadCharacterAscensions();
         weaponAscensions = WeaponData.getInstance().loadWeaponAscensions();
-        artifactSetDetails = ReliquarySetData.getInstance().loadArtifactSetDetails();
+        artifactSetDetails = ItemData.getInstance().loadArtifactSetDetails();
         constellations = AvatarData.getInstance().loadConstellations();
         internalCooldowns = AvatarData.getInstance().loadInternalCooldown();
         gliders = AvatarData.getInstance().loadGliders();

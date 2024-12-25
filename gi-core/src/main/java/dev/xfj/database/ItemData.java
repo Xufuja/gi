@@ -1,7 +1,9 @@
 package dev.xfj.database;
 
+import dev.xfj.artifact.ArtifactSetDetails;
 import dev.xfj.item.Material;
 import dev.xfj.jsonschema2pojo.cookbonusexcelconfigdata.CookBonusExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.homeworldfurnituretypeexcelconfigdata.HomeWorldFurnitureTypeExcelConfigDataJson;
@@ -21,6 +23,7 @@ public class ItemData implements Data {
     public final List<FurnitureSuiteExcelConfigDataJson> furnitureSuiteConfig;
     public final List<HomeWorldFurnitureExcelConfigDataJson> homeWorldFurnitureConfig;
     public final List<HomeWorldFurnitureTypeExcelConfigDataJson> homeWorldFurnitureTypeConfig;
+    public final List<EquipAffixExcelConfigDataJson> equipAffixConfig;
 
     private ItemData() {
         try {
@@ -30,6 +33,7 @@ public class ItemData implements Data {
             this.furnitureSuiteConfig = loadJSONArray(FurnitureSuiteExcelConfigDataJson.class);
             this.homeWorldFurnitureConfig = loadJSONArray(HomeWorldFurnitureExcelConfigDataJson.class);
             this.homeWorldFurnitureTypeConfig = loadJSONArray(HomeWorldFurnitureTypeExcelConfigDataJson.class);
+            this.equipAffixConfig = loadJSONArray(EquipAffixExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -45,5 +49,9 @@ public class ItemData implements Data {
 
     public Map<Integer, Material> loadItems() {
         return loadDataWithIntegerId(Material.class, materialConfig);
+    }
+
+    public Map<Integer, Map<Integer, ArtifactSetDetails>> loadArtifactSetDetails() {
+        return loadNestedDataWithIds(ArtifactSetDetails.class, equipAffixConfig, "getId", "getSetBonusId");
     }
 }

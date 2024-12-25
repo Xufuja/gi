@@ -154,12 +154,13 @@ public class Main {
             System.out.println(character.getStories());
             System.out.println(character.getQuotes());
 
-            WeaponContainer weapon = new WeaponContainer(13509, 80, 0, 5);
+            WeaponContainer weapon = new WeaponContainer(13509, 80, 0, 5, 5);
             //Database.getInstance().setLanguage("JP");
             System.out.printf("ID: %s\nName: %s\nTitle: %s\nRarity: %s\n",
                     weapon.getId(), weapon.getName(), weapon.getWeaponType(), weapon.getRarity());
             System.out.println(weapon.getBaseAttack());
             System.out.println(weapon.getAscensionStat());
+            System.out.println(weapon.getEffect());
 
         } catch (Exception e) {
             e.printStackTrace();

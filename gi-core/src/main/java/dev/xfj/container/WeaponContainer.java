@@ -1,9 +1,10 @@
 package dev.xfj.container;
 
-import dev.xfj.constants.CharacterRarity;
 import dev.xfj.database.Database;
+import dev.xfj.database.ItemData;
 import dev.xfj.database.TextMapData;
 import dev.xfj.database.WeaponData;
+import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponProp;
@@ -19,16 +20,18 @@ public class WeaponContainer {
     private int currentLevel;
     private int currentExperience;
     private int currentAscension;
+    private int currentRefinement;
 
     public WeaponContainer(int id) {
-        this(id, 1, 0, 0);
+        this(id, 1, 0, 0, 1);
     }
 
-    public WeaponContainer(int id, int currentLevel, int currentExperience, int currentAscension) {
+    public WeaponContainer(int id, int currentLevel, int currentExperience, int currentAscension, int currentRefinement) {
         this.id = id;
         this.currentLevel = currentLevel;
         this.currentExperience = currentExperience;
         this.currentAscension = currentAscension;
+        this.currentRefinement = currentRefinement;
     }
 
     public int getId() {
@@ -67,12 +70,21 @@ public class WeaponContainer {
 
         return Map.of(
                 getManualMappedText(ascensionStat),
-                getBaseStat(getWeapon().getWeaponProp()
-                        .stream()
-                        .filter(curves -> curves.getPropType().equals(ascensionStat))
-                        .mapToDouble(WeaponProp::getInitValue)
-                        .findFirst()
-                        .orElse(-1.0), ascensionStat));
+                getBaseStat(
+                        getWeapon().getWeaponProp()
+                                .stream()
+                                .filter(curves -> curves.getPropType().equals(ascensionStat))
+                                .mapToDouble(WeaponProp::getInitValue)
+                                .findFirst()
+                                .orElse(-1.0),
+                        ascensionStat
+                ));
+    }
+
+    public String getEffect() {
+        EquipAffixExcelConfigDataJson details = getRefinementDetails(currentRefinement);
+        return String.format("%s\n%s", Database.getInstance().getTranslation(details.getNameTextMapHash()),
+                Database.getInstance().getTranslation(details.getDescTextMapHash()));
     }
 
     private double getBaseStat(double baseValue, String statType) {
@@ -134,6 +146,29 @@ public class WeaponContainer {
                 .filter(text -> id.equals(text.getTextMapId()))
                 .map(map -> Database.getInstance().getTranslation(map.getTextMapContentTextMapHash()))
                 .findAny()
+                .orElse(null);
+    }
+
+    private Map<Integer, EquipAffixExcelConfigDataJson> getAffixes(int affixId) {
+        return ItemData.getInstance().equipAffixConfig
+                .stream()
+                .filter(affix -> affix.getId() == affixId)
+                .collect(Collectors.toMap(
+                        EquipAffixExcelConfigDataJson::getLevel,
+                        affix -> affix
+                ));
+    }
+
+    private EquipAffixExcelConfigDataJson getRefinementDetails(int refinement) {
+        return getAffixes(getWeapon().getSkillAffix()
+                .stream()
+                .filter(affix -> affix != 0)
+                .findFirst()
+                .orElse(-1)).entrySet()
+                .stream()
+                .filter(entry -> entry.getKey() == refinement - 1)
+                .map(Map.Entry::getValue)
+                .findFirst()
                 .orElse(null);
     }
 }

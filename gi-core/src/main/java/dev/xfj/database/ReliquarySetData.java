@@ -12,11 +12,9 @@ import java.util.Map;
 public class ReliquarySetData implements Data {
     private static ReliquarySetData instance;
     private final List<ReliquarySetExcelConfigDataJson> reliquarySetConfig;
-    private final List<EquipAffixExcelConfigDataJson> equipAffixConfig;
 
     private ReliquarySetData() throws FileNotFoundException {
         this.reliquarySetConfig = loadJSONArray(ReliquarySetExcelConfigDataJson.class);
-        this.equipAffixConfig = loadJSONArray(EquipAffixExcelConfigDataJson.class);
     }
 
     public static ReliquarySetData getInstance() throws FileNotFoundException {
@@ -29,9 +27,5 @@ public class ReliquarySetData implements Data {
 
     public Map<Integer, ArtifactSet> loadArtifactSets() {
         return loadDataWithIntegerId(ArtifactSet.class, reliquarySetConfig, "getSetId");
-    }
-
-    public Map<Integer, Map<Integer, ArtifactSetDetails>> loadArtifactSetDetails() {
-        return loadNestedDataWithIds(ArtifactSetDetails.class, equipAffixConfig, "getId", "getSetBonusId");
     }
 }
