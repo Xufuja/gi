@@ -161,6 +161,7 @@ public class Main {
             System.out.println(weapon.getBaseAttack());
             System.out.println(weapon.getAscensionStat());
             System.out.println(weapon.getEffect());
+            System.out.println(weapon.getDescription());
 
         } catch (Exception e) {
             e.printStackTrace();

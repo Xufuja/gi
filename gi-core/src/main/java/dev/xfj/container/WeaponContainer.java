@@ -87,6 +87,10 @@ public class WeaponContainer {
                 Database.getInstance().getTranslation(details.getDescTextMapHash()));
     }
 
+    public String getDescription() {
+        return Database.getInstance().getTranslation(getWeapon().getDescTextMapHash());
+    }
+
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
