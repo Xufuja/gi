@@ -4,6 +4,8 @@ import dev.xfj.database.Database;
 import dev.xfj.database.ItemData;
 import dev.xfj.database.TextMapData;
 import dev.xfj.database.WeaponData;
+import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.CostItem;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
@@ -91,6 +93,34 @@ public class WeaponContainer {
         return Database.getInstance().getTranslation(getWeapon().getDescTextMapHash());
     }
 
+    public Map<Integer, Integer> getAscensionItems() {
+        return getAscensionItems(false);
+    }
+
+    public Map<Integer, Integer> getAscensionItems(boolean allAscensions) {
+        return getAscensions(getWeapon().getWeaponPromoteId()).values()
+                .stream()
+                .filter(ascension -> !allAscensions ?
+                        ascension.getPromoteLevel() == currentAscension :
+                        ascension.getPromoteLevel() <= 6)
+                .flatMap(promotions -> promotions.getCostItems().stream())
+                .collect(Collectors.toMap(
+                        CostItem::getId,
+                        CostItem::getCount,
+                        Integer::sum
+                ));
+    }
+
+    public Map<String, Integer> getAllAscensionItems() {
+        return getAscensionItems(true).entrySet()
+                .stream()
+                .filter(id -> id.getKey() != 0)
+                .collect(Collectors.toMap(
+                        item -> Database.getInstance().getTranslation(getItem(item.getKey()).getNameTextMapHash()),
+                        Map.Entry::getValue
+                ));
+    }
+
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
@@ -172,6 +202,14 @@ public class WeaponContainer {
                 .stream()
                 .filter(entry -> entry.getKey() == refinement - 1)
                 .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private MaterialExcelConfigDataJson getItem(int id) {
+        return ItemData.getInstance().materialConfig
+                .stream()
+                .filter(item -> item.getId() == id)
                 .findFirst()
                 .orElse(null);
     }

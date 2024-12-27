@@ -162,6 +162,7 @@ public class Main {
             System.out.println(weapon.getAscensionStat());
             System.out.println(weapon.getEffect());
             System.out.println(weapon.getDescription());
+            System.out.println(weapon.getAllAscensionItems());
 
         } catch (Exception e) {
             e.printStackTrace();
