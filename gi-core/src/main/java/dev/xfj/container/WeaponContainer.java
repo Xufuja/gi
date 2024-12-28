@@ -4,6 +4,7 @@ import dev.xfj.database.Database;
 import dev.xfj.database.ItemData;
 import dev.xfj.database.TextMapData;
 import dev.xfj.database.WeaponData;
+import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.CostItem;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
@@ -111,6 +112,20 @@ public class WeaponContainer {
                 ));
     }
 
+    public Integer getAscensionCost() {
+        return getAscensionCost(false);
+    }
+
+    public Integer getAscensionCost(boolean allAscensions) {
+        return getAscensions(getWeapon().getWeaponPromoteId()).values()
+                .stream()
+                .filter(ascension -> !allAscensions ?
+                        ascension.getPromoteLevel() == currentAscension :
+                        ascension.getPromoteLevel() <= 6)
+                .mapToInt(WeaponPromoteExcelConfigDataJson::getCoinCost)
+                .sum();
+    }
+
     public Map<String, Integer> getAllAscensionItems() {
         return getAscensionItems(true).entrySet()
                 .stream()
@@ -119,6 +134,10 @@ public class WeaponContainer {
                         item -> Database.getInstance().getTranslation(getItem(item.getKey()).getNameTextMapHash()),
                         Map.Entry::getValue
                 ));
+    }
+
+    public Integer getAllAscensionCosts() {
+        return getAscensionCost(true);
     }
 
     private double getBaseStat(double baseValue, String statType) {

@@ -163,6 +163,7 @@ public class Main {
             System.out.println(weapon.getEffect());
             System.out.println(weapon.getDescription());
             System.out.println(weapon.getAllAscensionItems());
+            System.out.println(weapon.getAllAscensionCosts());
 
         } catch (Exception e) {
             e.printStackTrace();
