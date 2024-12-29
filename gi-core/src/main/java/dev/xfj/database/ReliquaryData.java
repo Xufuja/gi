@@ -15,19 +15,23 @@ import java.util.Map;
 
 public class ReliquaryData implements Data {
     private static ReliquaryData instance;
-    private final List<ReliquaryExcelConfigDataJson> reliquaryConfig;
+    public final List<ReliquaryExcelConfigDataJson> reliquaryConfig;
     private final List<ReliquaryMainPropExcelConfigDataJson> reliquaryMainPropConfig;
     private final List<ReliquaryAffixExcelConfigDataJson> reliquaryAffixConfig;
     private final List<ReliquaryLevelExcelConfigDataJson> reliquaryLevelConfig;
 
-    private ReliquaryData() throws FileNotFoundException {
-        this.reliquaryConfig = loadJSONArray(ReliquaryExcelConfigDataJson.class);
-        this.reliquaryMainPropConfig = loadJSONArray(ReliquaryMainPropExcelConfigDataJson.class);
-        this.reliquaryAffixConfig = loadJSONArray(ReliquaryAffixExcelConfigDataJson.class);
-        this.reliquaryLevelConfig = loadJSONArray(ReliquaryLevelExcelConfigDataJson.class);
+    private ReliquaryData() {
+        try {
+            this.reliquaryConfig = loadJSONArray(ReliquaryExcelConfigDataJson.class);
+            this.reliquaryMainPropConfig = loadJSONArray(ReliquaryMainPropExcelConfigDataJson.class);
+            this.reliquaryAffixConfig = loadJSONArray(ReliquaryAffixExcelConfigDataJson.class);
+            this.reliquaryLevelConfig = loadJSONArray(ReliquaryLevelExcelConfigDataJson.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
-    public static ReliquaryData getInstance() throws FileNotFoundException {
+    public static ReliquaryData getInstance() {
         if (instance == null) {
             instance = new ReliquaryData();
         }
