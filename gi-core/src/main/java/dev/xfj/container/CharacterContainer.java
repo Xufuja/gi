@@ -217,7 +217,13 @@ public class CharacterContainer {
 
     public String getSkillDetails() {
         StringBuilder stringBuilder = new StringBuilder();
-        getLevelableSkills().forEach(skill -> stringBuilder.append(getSkillDetail(skill)));
+        getLevelableSkills().forEach(skill -> {
+            String details = getSkillDetail(skill);
+
+            if (!details.isBlank()) {
+                stringBuilder.append(details);
+            }
+        });
         return stringBuilder.toString();
     }
 
@@ -230,22 +236,24 @@ public class CharacterContainer {
         ProudSkillExcelConfigDataJson levelDetails = getTalentLevels(skillDetails.getProudSkillGroupId())
                 .get(level);
 
-        stringBuilder
-                .append(Database.getInstance().getTranslation(skillDetails.getNameTextMapHash()))
-                .append("\n")
-                .append(Database.getInstance().getTranslation(skillDetails.getDescTextMapHash()))
-                .append("\n")
-                .append(format("Level: %s\n", level));
+        if (levelDetails != null) {
+            stringBuilder
+                    .append(Database.getInstance().getTranslation(skillDetails.getNameTextMapHash()))
+                    .append("\n")
+                    .append(Database.getInstance().getTranslation(skillDetails.getDescTextMapHash()))
+                    .append("\n")
+                    .append(format("Level: %s\n", level));
 
-        levelDetails.getParamDescList()
-                .forEach(parameter -> {
-                    String value = Database.getInstance().getTranslation(parameter);
-                    if (value != null) {
-                        stringBuilder
-                                .append(interpolator.interpolate(value, levelDetails.getParamList()))
-                                .append("\n");
-                    }
-                });
+            levelDetails.getParamDescList()
+                    .forEach(parameter -> {
+                        String value = Database.getInstance().getTranslation(parameter);
+                        if (value != null) {
+                            stringBuilder
+                                    .append(interpolator.interpolate(value, levelDetails.getParamList()))
+                                    .append("\n");
+                        }
+                    });
+        }
 
         return stringBuilder.toString();
     }

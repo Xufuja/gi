@@ -16,6 +16,7 @@ public class Interpolator {
         this.typeHandlers = Map.of(
                 "P", value -> formatValue(value, "P"),
                 "F1P", value -> formatValue(value, "F1P"),
+                "F2P", value -> formatValue(value, "F2P"),
                 "F1", value -> formatValue(value, "F1"),
                 "I", value -> formatValue(value, "I")
         );
@@ -75,6 +76,7 @@ public class Interpolator {
             return switch (type) {
                 case "P" -> format("%.0f%%", ((Number) value).doubleValue() * 100);
                 case "F1P" -> format("%.1f%%", ((Number) value).doubleValue() * 100);
+                case "F2P" -> format("%.2f%%", ((Number) value).doubleValue() * 100);
                 case "F1" -> format("%.1f", value);
                 case "I" -> format("%.0f", value);
                 default -> "Invalid type: " + type;

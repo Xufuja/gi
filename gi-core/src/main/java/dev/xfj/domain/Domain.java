@@ -111,7 +111,7 @@ public class Domain {
     }
 
     public DomainLimitation getDomainLimitation() {
-        return DomainLimitation.valueOf(data.getMgggicjglhn());
+        return DomainLimitation.valueOf(data.getObpjiobobmb());
     }
 
     public String getIconName() {
