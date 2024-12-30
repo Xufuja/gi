@@ -11,13 +11,17 @@ import java.util.Map;
 
 public class ReliquarySetData implements Data {
     private static ReliquarySetData instance;
-    private final List<ReliquarySetExcelConfigDataJson> reliquarySetConfig;
+    public final List<ReliquarySetExcelConfigDataJson> reliquarySetConfig;
 
-    private ReliquarySetData() throws FileNotFoundException {
-        this.reliquarySetConfig = loadJSONArray(ReliquarySetExcelConfigDataJson.class);
+    private ReliquarySetData() {
+        try {
+            this.reliquarySetConfig = loadJSONArray(ReliquarySetExcelConfigDataJson.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
-    public static ReliquarySetData getInstance() throws FileNotFoundException {
+    public static ReliquarySetData getInstance() {
         if (instance == null) {
             instance = new ReliquarySetData();
         }

@@ -1,9 +1,12 @@
 package dev.xfj.container;
 
-import dev.xfj.database.Database;
-import dev.xfj.database.ReliquaryData;
-import dev.xfj.database.TextMapData;
+import dev.xfj.database.*;
+import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ArtifactContainer {
     private int id;
@@ -22,6 +25,14 @@ public class ArtifactContainer {
 
     public int getId() {
         return id;
+    }
+
+    public String getSetName() {
+        return getAffixes(getArtifactSet().getEquipAffixId()).values()
+                .stream()
+                .findFirst()
+                .map(entry -> Database.getInstance().getTranslation(entry.getNameTextMapHash()))
+                .orElse(null);
     }
 
     public String getName() {
@@ -51,5 +62,23 @@ public class ArtifactContainer {
                 .map(map -> Database.getInstance().getTranslation(map.getTextMapContentTextMapHash()))
                 .findAny()
                 .orElse(null);
+    }
+
+    private ReliquarySetExcelConfigDataJson getArtifactSet() {
+        return ReliquarySetData.getInstance().reliquarySetConfig
+                .stream()
+                .filter(set -> set.getSetId() == getArtifact().getSetId())
+                .findAny()
+                .orElse(null);
+    }
+
+    private Map<Integer, EquipAffixExcelConfigDataJson> getAffixes(int affixId) {
+        return ItemData.getInstance().equipAffixConfig
+                .stream()
+                .filter(affix -> affix.getId() == affixId)
+                .collect(Collectors.toMap(
+                        EquipAffixExcelConfigDataJson::getLevel,
+                        affix -> affix
+                ));
     }
 }

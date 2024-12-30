@@ -167,8 +167,8 @@ public class Main {
             System.out.println(weapon.getAllAscensionCosts());
 
             ArtifactContainer artifact = new ArtifactContainer(94543, 20, 0);
-            System.out.printf("ID: %s\nName: %s\nTitle: %s\nRarity: %s\n",
-                    artifact.getId(), artifact.getName(), artifact.getArtifactType(), weapon.getRarity());
+            System.out.printf("ID: %s\nSet Name: %s\nName: %s\nTitle: %s\nRarity: %s\n",
+                    artifact.getId(), artifact.getSetName(), artifact.getName(), artifact.getArtifactType(), weapon.getRarity());
 
         } catch (Exception e) {
             e.printStackTrace();
