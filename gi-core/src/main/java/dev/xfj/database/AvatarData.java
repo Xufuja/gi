@@ -3,6 +3,7 @@ package dev.xfj.database;
 import dev.xfj.character.Character;
 import dev.xfj.character.*;
 import dev.xfj.jsonschema2pojo.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.AvatarCurveExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
@@ -42,6 +43,7 @@ public class AvatarData implements Data {
     public final List<HomeWorldNPCExcelConfigDataJson> homeWorldNPCConfig;
     public final List<FetterStoryExcelConfigDataJson> fetterStoryConfig;
     public final List<FettersExcelConfigDataJson> fettersConfig;
+    public final List<AvatarCodexExcelConfigDataJson> avatarCodexConfig;
 
     private AvatarData() {
         try {
@@ -62,6 +64,7 @@ public class AvatarData implements Data {
             homeWorldNPCConfig = loadJSONArray(HomeWorldNPCExcelConfigDataJson.class);
             fetterStoryConfig = loadJSONArray(FetterStoryExcelConfigDataJson.class);
             fettersConfig = loadJSONArray(FettersExcelConfigDataJson.class);
+            avatarCodexConfig = loadJSONArray(AvatarCodexExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

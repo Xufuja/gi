@@ -1,5 +1,6 @@
 package dev.xfj;
 
+import dev.xfj.codex.Codex;
 import dev.xfj.container.ArtifactContainer;
 import dev.xfj.container.CharacterContainer;
 import dev.xfj.container.WeaponContainer;
@@ -114,6 +115,8 @@ public class Main {
             Database.getInstance().getManualTextMappings().forEach((key, value) -> {
                 System.out.printf("ID: %s, Hash: %s, Parameters: %s\n", value.getId(), value.getHash(), value.getParameters());
             });*/
+
+            System.out.println(Codex.getCharacters());
 
             //CharacterContainer character = new CharacterContainer(10000094);
             CharacterContainer character = new CharacterContainer(10000107, 80, 0, 5);
