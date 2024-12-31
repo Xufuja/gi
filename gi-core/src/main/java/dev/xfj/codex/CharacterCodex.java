@@ -6,9 +6,11 @@ import com.google.gson.JsonObject;
 import dev.xfj.database.AvatarData;
 import dev.xfj.database.Database;
 import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class CharacterCodex {
     private final AvatarCodexExcelConfigDataJson data;
@@ -22,12 +24,12 @@ public class CharacterCodex {
     }
 
     public String getName() {
-        return Database.getInstance().getTranslation(AvatarData.getInstance().avatarConfig
+        return AvatarData.getInstance().avatarConfig
                 .stream()
                 .filter(character -> character.getId() == getId())
                 .findFirst()
-                .orElse(null).getNameTextMapHash()
-        );
+                .map(entry -> Database.getInstance().getTranslation(entry.getNameTextMapHash()))
+                .orElse("");
     }
 
     public LocalDateTime getReleaseTime() {
@@ -40,14 +42,12 @@ public class CharacterCodex {
 
     @Override
     public String toString() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("id", getId());
         jsonObject.addProperty("name", getName());
         jsonObject.addProperty("releaseTime", getReleaseTime().toString());
         jsonObject.addProperty("sortFactor", getSortFactor());
 
-        return gson.toJson(jsonObject);
+        return new GsonBuilder().setPrettyPrinting().create().toJson(jsonObject);
     }
 }
