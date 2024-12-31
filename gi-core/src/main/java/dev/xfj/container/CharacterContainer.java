@@ -233,10 +233,11 @@ public class CharacterContainer {
 
         int level = currentTalentLevels.get(skill);
         AvatarSkillExcelConfigDataJson skillDetails = getSkill(skill);
-        ProudSkillExcelConfigDataJson levelDetails = getTalentLevels(skillDetails.getProudSkillGroupId())
-                .get(level);
 
-        if (levelDetails != null) {
+        if (skillDetails.getProudSkillGroupId() != 0) {
+            ProudSkillExcelConfigDataJson levelDetails = getTalentLevels(skillDetails.getProudSkillGroupId())
+                    .get(level);
+
             stringBuilder
                     .append(Database.getInstance().getTranslation(skillDetails.getNameTextMapHash()))
                     .append("\n")
