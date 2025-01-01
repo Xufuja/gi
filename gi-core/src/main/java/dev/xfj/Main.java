@@ -173,6 +173,7 @@ public class Main {
             System.out.printf("ID: %s\nSet Name: %s\nName: %s\nTitle: %s\nRarity: %s\n",
                     artifact.getId(), artifact.getSetName(), artifact.getName(), artifact.getArtifactType(), weapon.getRarity());
 
+            System.out.println(artifact.getSetEffect());
         } catch (Exception e) {
             e.printStackTrace();
         }

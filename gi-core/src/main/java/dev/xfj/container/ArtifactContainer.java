@@ -5,8 +5,10 @@ import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDa
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ArtifactContainer {
     private int id;
@@ -45,6 +47,22 @@ public class ArtifactContainer {
 
     public int getRarity() {
         return getArtifact().getRankLevel();
+    }
+
+    public Map<Integer, String> getSetEffect() {
+        ReliquarySetExcelConfigDataJson set = getArtifactSet();
+
+        List<String> bonuses = getAffixes(set.getEquipAffixId()).values()
+                .stream()
+                .map(entry -> Database.getInstance().getTranslation(entry.getDescTextMapHash()))
+                .toList();
+
+        return IntStream.range(0, set.getSetNeedNum().size())
+                .boxed()
+                .collect(Collectors.toMap(
+                        set.getSetNeedNum()::get,
+                        bonuses::get
+                ));
     }
 
     private ReliquaryExcelConfigDataJson getArtifact() {
