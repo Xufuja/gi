@@ -174,6 +174,7 @@ public class Main {
                     artifact.getId(), artifact.getSetName(), artifact.getName(), artifact.getArtifactType(), weapon.getRarity());
 
             System.out.println(artifact.getSetEffect());
+            System.out.println(artifact.getDescription());
         } catch (Exception e) {
             e.printStackTrace();
         }

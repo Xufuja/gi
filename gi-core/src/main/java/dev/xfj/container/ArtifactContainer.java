@@ -65,6 +65,10 @@ public class ArtifactContainer {
                 ));
     }
 
+    public String getDescription() {
+        return Database.getInstance().getTranslation(getArtifact().getDescTextMapHash());
+    }
+
     private ReliquaryExcelConfigDataJson getArtifact() {
         return ReliquaryData.getInstance().reliquaryConfig
                 .stream()
