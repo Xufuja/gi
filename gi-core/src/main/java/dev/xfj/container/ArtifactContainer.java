@@ -77,7 +77,7 @@ public class ArtifactContainer {
                 .stream()
                 .map(ReliquaryMainPropExcelConfigDataJson::getPropType)
                 .collect(Collectors.toMap(
-                                entry -> entry,
+                                this::getManualMappedText,
                                 entry -> getLevelData(getRarity(), entry)
                         )
                 );
