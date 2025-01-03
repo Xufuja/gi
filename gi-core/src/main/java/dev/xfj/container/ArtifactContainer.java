@@ -72,7 +72,7 @@ public class ArtifactContainer {
         return Database.getInstance().getTranslation(getArtifact().getDescTextMapHash());
     }
 
-    public Map<String, Map<Integer, Map<String, Double>>> getMainStats() {
+    public Map<String, Map<Integer, Double>> getMainStats() {
         return getPossibleMainStats()
                 .stream()
                 .map(ReliquaryMainPropExcelConfigDataJson::getPropType)
@@ -125,7 +125,7 @@ public class ArtifactContainer {
                 .collect(Collectors.toList());
     }
 
-    private Map<Integer, Map<String, Double>> getLevelData(int rarity, String stat) {
+    private Map<Integer, Double> getLevelData(int rarity, String stat) {
         return ReliquaryData.getInstance().reliquaryLevelConfig
                 .stream()
                 .filter(entry -> entry.getRank() == rarity)
@@ -134,10 +134,9 @@ public class ArtifactContainer {
                                 entry -> entry.getAddProps()
                                         .stream()
                                         .filter(prop -> prop.getPropType().equals(stat))
-                                        .collect(Collectors.toMap(
-                                                AddProp::getPropType,
-                                                AddProp::getValue
-                                        ))
+                                        .map(AddProp::getValue)
+                                        .findFirst()
+                                        .orElse(-1.0)
                         )
                 );
     }
