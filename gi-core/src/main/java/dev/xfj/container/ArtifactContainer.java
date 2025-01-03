@@ -3,6 +3,9 @@ package dev.xfj.container;
 import dev.xfj.database.*;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.AddProp;
+import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.reliquarymainpropexcelconfigdata.ReliquaryMainPropExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
 
 import java.util.List;
@@ -69,6 +72,17 @@ public class ArtifactContainer {
         return Database.getInstance().getTranslation(getArtifact().getDescTextMapHash());
     }
 
+    public Map<String, Map<Integer, Map<String, Double>>> getMainStats() {
+        return getPossibleMainStats()
+                .stream()
+                .map(ReliquaryMainPropExcelConfigDataJson::getPropType)
+                .collect(Collectors.toMap(
+                                entry -> entry,
+                                entry -> getLevelData(getRarity(), entry)
+                        )
+                );
+    }
+
     private ReliquaryExcelConfigDataJson getArtifact() {
         return ReliquaryData.getInstance().reliquaryConfig
                 .stream()
@@ -102,5 +116,29 @@ public class ArtifactContainer {
                         EquipAffixExcelConfigDataJson::getLevel,
                         affix -> affix
                 ));
+    }
+
+    private List<ReliquaryMainPropExcelConfigDataJson> getPossibleMainStats() {
+        return ReliquaryData.getInstance().reliquaryMainPropConfig
+                .stream()
+                .filter(stat -> getArtifact().getMainPropDepotId() == stat.getPropDepotId())
+                .collect(Collectors.toList());
+    }
+
+    private Map<Integer, Map<String, Double>> getLevelData(int rarity, String stat) {
+        return ReliquaryData.getInstance().reliquaryLevelConfig
+                .stream()
+                .filter(entry -> entry.getRank() == rarity)
+                .collect(Collectors.toMap(
+                                ReliquaryLevelExcelConfigDataJson::getLevel,
+                                entry -> entry.getAddProps()
+                                        .stream()
+                                        .filter(prop -> prop.getPropType().equals(stat))
+                                        .collect(Collectors.toMap(
+                                                AddProp::getPropType,
+                                                AddProp::getValue
+                                        ))
+                        )
+                );
     }
 }

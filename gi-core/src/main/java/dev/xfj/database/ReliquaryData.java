@@ -16,9 +16,9 @@ import java.util.Map;
 public class ReliquaryData implements Data {
     private static ReliquaryData instance;
     public final List<ReliquaryExcelConfigDataJson> reliquaryConfig;
-    private final List<ReliquaryMainPropExcelConfigDataJson> reliquaryMainPropConfig;
+    public final List<ReliquaryMainPropExcelConfigDataJson> reliquaryMainPropConfig;
     private final List<ReliquaryAffixExcelConfigDataJson> reliquaryAffixConfig;
-    private final List<ReliquaryLevelExcelConfigDataJson> reliquaryLevelConfig;
+    public final List<ReliquaryLevelExcelConfigDataJson> reliquaryLevelConfig;
 
     private ReliquaryData() {
         try {
