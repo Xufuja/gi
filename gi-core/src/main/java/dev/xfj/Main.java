@@ -176,6 +176,7 @@ public class Main {
             System.out.println(artifact.getSetEffect());
             System.out.println(artifact.getDescription());
             System.out.println(artifact.getMainStats());
+            System.out.println(artifact.getSubStats());
         } catch (Exception e) {
             e.printStackTrace();
         }

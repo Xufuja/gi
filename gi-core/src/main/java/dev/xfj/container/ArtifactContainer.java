@@ -2,6 +2,7 @@ package dev.xfj.container;
 
 import dev.xfj.database.*;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.AddProp;
 import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
@@ -83,6 +84,19 @@ public class ArtifactContainer {
                 );
     }
 
+    public Map<String, List<Double>> getSubStats() {
+        return getPossibleSubStats().values()
+                .stream()
+                .flatMap(List::stream)
+                .collect(Collectors.groupingBy(
+                        entry -> getManualMappedText(entry.getPropType()),
+                        Collectors.mapping(
+                                ReliquaryAffixExcelConfigDataJson::getPropValue,
+                                Collectors.toList()
+                        )
+                ));
+    }
+
     private ReliquaryExcelConfigDataJson getArtifact() {
         return ReliquaryData.getInstance().reliquaryConfig
                 .stream()
@@ -139,5 +153,12 @@ public class ArtifactContainer {
                                         .orElse(-1.0)
                         )
                 );
+    }
+
+    private Map<Integer, List<ReliquaryAffixExcelConfigDataJson>> getPossibleSubStats() {
+        return ReliquaryData.getInstance().reliquaryAffixConfig
+                .stream()
+                .filter(entry -> entry.getDepotId() == getArtifact().getAppendPropDepotId())
+                .collect(Collectors.groupingBy(ReliquaryAffixExcelConfigDataJson::getGroupId));
     }
 }

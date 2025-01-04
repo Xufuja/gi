@@ -17,7 +17,7 @@ public class ReliquaryData implements Data {
     private static ReliquaryData instance;
     public final List<ReliquaryExcelConfigDataJson> reliquaryConfig;
     public final List<ReliquaryMainPropExcelConfigDataJson> reliquaryMainPropConfig;
-    private final List<ReliquaryAffixExcelConfigDataJson> reliquaryAffixConfig;
+    public final List<ReliquaryAffixExcelConfigDataJson> reliquaryAffixConfig;
     public final List<ReliquaryLevelExcelConfigDataJson> reliquaryLevelConfig;
 
     private ReliquaryData() {

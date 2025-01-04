@@ -96,10 +96,12 @@ interface Data {
         return inputList
                 .stream()
                 .collect(Collectors.groupingBy(
-                        input -> getId(Integer.class, input, firstIdMethod),
+                        unwrappedData -> getId(Integer.class, unwrappedData, firstIdMethod),
                         Collectors.mapping(
                                 unwrappedData -> constructInstance(returnType, unwrappedData),
-                                Collectors.toMap(wrappedData -> getId(Integer.class, wrappedData, secondIdMethod), data -> data)
+                                Collectors.toMap(
+                                        wrappedData -> getId(Integer.class, wrappedData, secondIdMethod),
+                                        wrappedData -> wrappedData)
                         )
                 ));
     }
