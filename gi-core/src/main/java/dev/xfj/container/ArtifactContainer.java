@@ -1,6 +1,7 @@
 package dev.xfj.container;
 
 import dev.xfj.database.*;
+import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
@@ -9,6 +10,7 @@ import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcel
 import dev.xfj.jsonschema2pojo.reliquarymainpropexcelconfigdata.ReliquaryMainPropExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -97,6 +99,14 @@ public class ArtifactContainer {
                 ));
     }
 
+    public int getExpNeededForNextLevel() {
+        if (currentLevel <= getMaxLevel(getRarity())) {
+            return getExpRequired(getRarity(), currentLevel, currentLevel + 1);
+        }
+
+        return 0;
+    }
+
     private ReliquaryExcelConfigDataJson getArtifact() {
         return ReliquaryData.getInstance().reliquaryConfig
                 .stream()
@@ -160,5 +170,26 @@ public class ArtifactContainer {
                 .stream()
                 .filter(entry -> entry.getDepotId() == getArtifact().getAppendPropDepotId())
                 .collect(Collectors.groupingBy(ReliquaryAffixExcelConfigDataJson::getGroupId));
+    }
+
+    private int getMaxLevel(int rarity) {
+        return ReliquaryData.getInstance().reliquaryLevelConfig
+                .stream()
+                .filter(entry -> entry.getRank() == rarity)
+                .max(Comparator.comparing(ReliquaryLevelExcelConfigDataJson::getLevel))
+                .stream()
+                .mapToInt(ReliquaryLevelExcelConfigDataJson::getLevel)
+                .findFirst()
+                .orElse(-1);
+    }
+
+    private int getExpRequired(int rarity, int startingLevel, int targetLevel) {
+        return ReliquaryData.getInstance().reliquaryLevelConfig
+                .stream()
+                .filter(entry -> entry.getRank() == rarity)
+                .filter(level -> level.getLevel() >= startingLevel)
+                .filter(level -> level.getLevel() < targetLevel)
+                .mapToInt(ReliquaryLevelExcelConfigDataJson::getExp)
+                .sum();
     }
 }

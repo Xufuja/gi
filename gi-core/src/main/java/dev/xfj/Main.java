@@ -177,6 +177,7 @@ public class Main {
             System.out.println(artifact.getDescription());
             System.out.println(artifact.getMainStats());
             System.out.println(artifact.getSubStats());
+            System.out.println(artifact.getExpNeededForNextLevel());
         } catch (Exception e) {
             e.printStackTrace();
         }
