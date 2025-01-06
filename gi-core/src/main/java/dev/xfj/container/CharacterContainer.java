@@ -24,6 +24,7 @@ import dev.xfj.jsonschema2pojo.homeworldfurnitureexcelconfigdata.HomeWorldFurnit
 import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardItem;
 import dev.xfj.utils.Interpolator;
 
@@ -114,15 +115,18 @@ public class CharacterContainer {
     }
 
     public Map<Integer, Integer> getAscensionItems() {
-        return getAscensionItems(false);
+        if (currentAscension < getMaxAscensions(getAvatar().getAvatarPromoteId())) {
+            return getAscensionItems(currentAscension, currentAscension + 1);
+        } else {
+            return new HashMap<>();
+        }
     }
 
-    public Map<Integer, Integer> getAscensionItems(boolean allAscensions) {
+    public Map<Integer, Integer> getAscensionItems(int startingAscension, int targetAscension) {
         return getAscensions(getAvatar().getAvatarPromoteId()).values()
                 .stream()
-                .filter(ascension -> !allAscensions ?
-                        ascension.getPromoteLevel() == currentAscension :
-                        ascension.getPromoteLevel() <= 6)
+                .filter(ascension -> ascension.getPromoteLevel() > startingAscension)
+                .filter(ascension -> ascension.getPromoteLevel() <= targetAscension)
                 .flatMap(promotions -> promotions.getCostItems().stream())
                 .collect(Collectors.toMap(
                         CostItem::getId,
@@ -132,15 +136,18 @@ public class CharacterContainer {
     }
 
     public Integer getAscensionCost() {
-        return getAscensionCost(false);
+        if (currentAscension < getMaxAscensions(getAvatar().getAvatarPromoteId())) {
+            return getAscensionCost(currentAscension, currentAscension + 1);
+        } else {
+            return 0;
+        }
     }
 
-    public Integer getAscensionCost(boolean allAscensions) {
+    public Integer getAscensionCost(int startingAscension, int targetAscension) {
         return getAscensions(getAvatar().getAvatarPromoteId()).values()
                 .stream()
-                .filter(ascension -> !allAscensions ?
-                        ascension.getPromoteLevel() == currentAscension :
-                        ascension.getPromoteLevel() <= 6)
+                .filter(ascension -> ascension.getPromoteLevel() > startingAscension)
+                .filter(ascension -> ascension.getPromoteLevel() <= targetAscension)
                 .mapToInt(AvatarPromoteExcelConfigDataJson::getScoinCost)
                 .sum();
     }
@@ -312,7 +319,7 @@ public class CharacterContainer {
     }
 
     public Map<String, Integer> getAllAscensionItems() {
-        return getAscensionItems(true).entrySet()
+        return getAscensionItems(0, getMaxAscensions(getAvatar().getAvatarPromoteId())).entrySet()
                 .stream()
                 .filter(id -> id.getKey() != 0)
                 .collect(Collectors.toMap(
@@ -322,7 +329,7 @@ public class CharacterContainer {
     }
 
     public Integer getAllAscensionCosts() {
-        return getAscensionCost(true);
+        return getAscensionCost(0, getMaxAscensions(getAvatar().getAvatarPromoteId()));
     }
 
     public Map<String, Integer> getAllTalentItems() {
@@ -540,6 +547,17 @@ public class CharacterContainer {
                         AvatarPromoteExcelConfigDataJson::getPromoteLevel,
                         data -> data
                 ));
+    }
+
+    private int getMaxAscensions(int promoteId) {
+        return AvatarData.getInstance().avatarPromoteConfig
+                .stream()
+                .filter(ascension -> ascension.getAvatarPromoteId() == promoteId)
+                .max(Comparator.comparing(AvatarPromoteExcelConfigDataJson::getPromoteLevel))
+                .stream()
+                .mapToInt(AvatarPromoteExcelConfigDataJson::getPromoteLevel)
+                .findFirst()
+                .orElse(-1);
     }
 
     private AvatarSkillDepotExcelConfigDataJson getSkillDepot() {
