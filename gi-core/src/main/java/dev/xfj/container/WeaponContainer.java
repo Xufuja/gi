@@ -1,9 +1,6 @@
 package dev.xfj.container;
 
-import dev.xfj.database.Database;
-import dev.xfj.database.ItemData;
-import dev.xfj.database.TextMapData;
-import dev.xfj.database.WeaponData;
+import dev.xfj.database.*;
 import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.CostItem;
@@ -14,6 +11,8 @@ import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponProp;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.AddProp;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -95,15 +94,18 @@ public class WeaponContainer {
     }
 
     public Map<Integer, Integer> getAscensionItems() {
-        return getAscensionItems(false);
+        if (currentAscension < getMaxAscensions(getWeapon().getWeaponPromoteId())) {
+            return getAscensionItems(currentAscension, currentAscension + 1);
+        } else {
+            return new HashMap<>();
+        }
     }
 
-    public Map<Integer, Integer> getAscensionItems(boolean allAscensions) {
+    public Map<Integer, Integer> getAscensionItems(int startingAscension, int targetAscension) {
         return getAscensions(getWeapon().getWeaponPromoteId()).values()
                 .stream()
-                .filter(ascension -> !allAscensions ?
-                        ascension.getPromoteLevel() == currentAscension :
-                        ascension.getPromoteLevel() <= 6)
+                .filter(ascension -> ascension.getPromoteLevel() > startingAscension)
+                .filter(ascension -> ascension.getPromoteLevel() <= targetAscension)
                 .flatMap(promotions -> promotions.getCostItems().stream())
                 .collect(Collectors.toMap(
                         CostItem::getId,
@@ -113,21 +115,24 @@ public class WeaponContainer {
     }
 
     public Integer getAscensionCost() {
-        return getAscensionCost(false);
+        if (currentAscension < getMaxAscensions(getWeapon().getWeaponPromoteId())) {
+            return getAscensionCost(currentAscension, currentAscension + 1);
+        } else {
+            return 0;
+        }
     }
 
-    public Integer getAscensionCost(boolean allAscensions) {
+    public Integer getAscensionCost(int startingAscension, int targetAscension) {
         return getAscensions(getWeapon().getWeaponPromoteId()).values()
                 .stream()
-                .filter(ascension -> !allAscensions ?
-                        ascension.getPromoteLevel() == currentAscension :
-                        ascension.getPromoteLevel() <= 6)
+                .filter(ascension -> ascension.getPromoteLevel() > startingAscension)
+                .filter(ascension -> ascension.getPromoteLevel() <= targetAscension)
                 .mapToInt(WeaponPromoteExcelConfigDataJson::getCoinCost)
                 .sum();
     }
 
     public Map<String, Integer> getAllAscensionItems() {
-        return getAscensionItems(true).entrySet()
+        return getAscensionItems(0, getMaxAscensions(getWeapon().getWeaponPromoteId())).entrySet()
                 .stream()
                 .filter(id -> id.getKey() != 0)
                 .collect(Collectors.toMap(
@@ -137,7 +142,7 @@ public class WeaponContainer {
     }
 
     public Integer getAllAscensionCosts() {
-        return getAscensionCost(true);
+        return getAscensionCost(0, getMaxAscensions(getWeapon().getWeaponPromoteId()));
     }
 
     private double getBaseStat(double baseValue, String statType) {
@@ -191,6 +196,17 @@ public class WeaponContainer {
                         WeaponPromoteExcelConfigDataJson::getPromoteLevel,
                         data -> data
                 ));
+    }
+
+    private int getMaxAscensions(int promoteId) {
+        return WeaponData.getInstance().weaponPromoteConfig
+                .stream()
+                .filter(ascension -> ascension.getWeaponPromoteId() == promoteId)
+                .max(Comparator.comparing(WeaponPromoteExcelConfigDataJson::getPromoteLevel))
+                .stream()
+                .mapToInt(WeaponPromoteExcelConfigDataJson::getPromoteLevel)
+                .findFirst()
+                .orElse(-1);
     }
 
     private String getManualMappedText(String id) {
