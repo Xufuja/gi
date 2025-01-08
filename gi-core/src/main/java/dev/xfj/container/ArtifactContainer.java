@@ -107,6 +107,10 @@ public class ArtifactContainer {
         return 0;
     }
 
+    public List<Integer> getArtifactsInSet() {
+        return getArtifactSet().getContainsList();
+    }
+
     private ReliquaryExcelConfigDataJson getArtifact() {
         return ReliquaryData.getInstance().reliquaryConfig
                 .stream()
