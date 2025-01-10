@@ -171,6 +171,8 @@ public class Main {
             System.out.println(weapon.getAllAscensionItems());
             System.out.println(weapon.getAllAscensionCosts());
 
+            System.out.println(Codex.getArtifactSets());
+
             ArtifactContainer artifact = new ArtifactContainer(94543, 20, 0);
             System.out.printf("ID: %s\nSet Name: %s\nName: %s\nTitle: %s\nRarity: %s\n",
                     artifact.getId(), artifact.getSetName(), artifact.getName(), artifact.getArtifactType(), weapon.getRarity());

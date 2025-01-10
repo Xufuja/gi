@@ -5,6 +5,7 @@ import dev.xfj.artifact.ArtifactLevel;
 import dev.xfj.artifact.MainStat;
 import dev.xfj.artifact.SubStat;
 import dev.xfj.jsonschema2pojo.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarymainpropexcelconfigdata.ReliquaryMainPropExcelConfigDataJson;
@@ -19,6 +20,7 @@ public class ReliquaryData implements Data {
     public final List<ReliquaryMainPropExcelConfigDataJson> reliquaryMainPropConfig;
     public final List<ReliquaryAffixExcelConfigDataJson> reliquaryAffixConfig;
     public final List<ReliquaryLevelExcelConfigDataJson> reliquaryLevelConfig;
+    public final List<ReliquaryCodexExcelConfigDataJson> reliquaryCodexConfig;
 
     private ReliquaryData() {
         try {
@@ -26,6 +28,7 @@ public class ReliquaryData implements Data {
             this.reliquaryMainPropConfig = loadJSONArray(ReliquaryMainPropExcelConfigDataJson.class);
             this.reliquaryAffixConfig = loadJSONArray(ReliquaryAffixExcelConfigDataJson.class);
             this.reliquaryLevelConfig = loadJSONArray(ReliquaryLevelExcelConfigDataJson.class);
+            this.reliquaryCodexConfig = loadJSONArray(ReliquaryCodexExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
