@@ -4,6 +4,7 @@ import dev.xfj.codex.Codex;
 import dev.xfj.container.ArtifactContainer;
 import dev.xfj.container.CharacterContainer;
 import dev.xfj.container.WeaponContainer;
+import dev.xfj.database.Database;
 
 public class Main {
     public static void main(String[] args) {
@@ -183,6 +184,9 @@ public class Main {
             System.out.println(artifact.getSubStats());
             System.out.println(artifact.getExpNeededForNextLevel());
             System.out.println(artifact.getArtifactsInSet());
+
+            Database.getInstance().setLanguage("CHS");
+            System.out.println(Codex.getItems());
         } catch (Exception e) {
             e.printStackTrace();
         }

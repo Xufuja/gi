@@ -1,10 +1,8 @@
 package dev.xfj.codex;
 
-import dev.xfj.database.AvatarData;
-import dev.xfj.database.Database;
-import dev.xfj.database.ReliquaryData;
-import dev.xfj.database.WeaponData;
+import dev.xfj.database.*;
 import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 
@@ -34,6 +32,14 @@ public class Codex {
                 .stream()
                 .sorted(Comparator.comparing(ReliquaryCodexExcelConfigDataJson::getSortOrder))
                 .map(ArtifactSetCodex::new)
+                .collect(Collectors.toList());
+    }
+
+    public static List<ItemCodex> getItems() {
+        return ItemData.getInstance().materialCodexConfig
+                .stream()
+                .sorted(Comparator.comparing(MaterialCodexExcelConfigDataJson::getSortOrder))
+                .map(ItemCodex::new)
                 .collect(Collectors.toList());
     }
 }
