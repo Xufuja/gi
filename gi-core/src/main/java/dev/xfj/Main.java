@@ -187,6 +187,10 @@ public class Main {
 
             Database.getInstance().setLanguage("CHS");
             System.out.println(Codex.getItems());
+
+            Database.getInstance().setLanguage("EN");
+            System.out.println(Codex.getBooks());
+
         } catch (Exception e) {
             e.printStackTrace();
         }

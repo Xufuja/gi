@@ -2,6 +2,7 @@ package dev.xfj.database;
 
 import dev.xfj.artifact.ArtifactSetDetails;
 import dev.xfj.item.Material;
+import dev.xfj.jsonschema2pojo.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.cookbonusexcelconfigdata.CookBonusExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
@@ -26,6 +27,7 @@ public class ItemData implements Data {
     public final List<HomeWorldFurnitureTypeExcelConfigDataJson> homeWorldFurnitureTypeConfig;
     public final List<EquipAffixExcelConfigDataJson> equipAffixConfig;
     public final List<MaterialCodexExcelConfigDataJson> materialCodexConfig;
+    public final List<BooksCodexExcelConfigDataJson> booksCodexConfig;
 
     private ItemData() {
         try {
@@ -37,6 +39,7 @@ public class ItemData implements Data {
             this.homeWorldFurnitureTypeConfig = loadJSONArray(HomeWorldFurnitureTypeExcelConfigDataJson.class);
             this.equipAffixConfig = loadJSONArray(EquipAffixExcelConfigDataJson.class);
             this.materialCodexConfig = loadJSONArray(MaterialCodexExcelConfigDataJson.class);
+            this.booksCodexConfig = loadJSONArray(BooksCodexExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

@@ -2,6 +2,7 @@ package dev.xfj.codex;
 
 import dev.xfj.database.*;
 import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
+import dev.xfj.jsonschema2pojo.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
@@ -40,6 +41,14 @@ public class Codex {
                 .stream()
                 .sorted(Comparator.comparing(MaterialCodexExcelConfigDataJson::getSortOrder))
                 .map(ItemCodex::new)
+                .collect(Collectors.toList());
+    }
+
+    public static List<BookCodex> getBooks() {
+        return ItemData.getInstance().booksCodexConfig
+                .stream()
+                .sorted(Comparator.comparing(BooksCodexExcelConfigDataJson::getSortOrder))
+                .map(BookCodex::new)
                 .collect(Collectors.toList());
     }
 }
