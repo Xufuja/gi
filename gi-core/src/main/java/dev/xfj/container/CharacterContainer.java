@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 
 import static java.lang.String.format;
 
-public class CharacterContainer {
+public class CharacterContainer implements Container {
     private static final String BASE_HP = "FIGHT_PROP_BASE_HP";
     private static final String BASE_DEF = "FIGHT_PROP_BASE_DEFENSE";
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
@@ -62,10 +62,12 @@ public class CharacterContainer {
                 ));
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public String getName() {
         return Database.getInstance().getTranslation(getAvatar().getNameTextMapHash());
     }
@@ -183,6 +185,7 @@ public class CharacterContainer {
         };
     }
 
+    @Override
     public String getDescription() {
         return Database.getInstance().getTranslation(getFetterInfo().getAvatarDetailTextMapHash());
     }
@@ -527,15 +530,6 @@ public class CharacterContainer {
                 .stream()
                 .filter(character -> character.getAvatarId() == id)
                 .findFirst()
-                .orElse(null);
-    }
-
-    private String getManualMappedText(String id) {
-        return TextMapData.getInstance().manualTextMapConfig
-                .stream()
-                .filter(text -> id.equals(text.getTextMapId()))
-                .map(map -> Database.getInstance().getTranslation(map.getTextMapContentTextMapHash()))
-                .findAny()
                 .orElse(null);
     }
 

@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class WeaponContainer {
+public class WeaponContainer implements Container {
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
     private int id;
     private int currentLevel;
@@ -36,10 +36,12 @@ public class WeaponContainer {
         this.currentRefinement = currentRefinement;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public String getName() {
         return Database.getInstance().getTranslation(getWeapon().getNameTextMapHash());
     }
@@ -89,6 +91,7 @@ public class WeaponContainer {
                 Database.getInstance().getTranslation(details.getDescTextMapHash()));
     }
 
+    @Override
     public String getDescription() {
         return Database.getInstance().getTranslation(getWeapon().getDescTextMapHash());
     }
@@ -207,15 +210,6 @@ public class WeaponContainer {
                 .mapToInt(WeaponPromoteExcelConfigDataJson::getPromoteLevel)
                 .findFirst()
                 .orElse(-1);
-    }
-
-    private String getManualMappedText(String id) {
-        return TextMapData.getInstance().manualTextMapConfig
-                .stream()
-                .filter(text -> id.equals(text.getTextMapId()))
-                .map(map -> Database.getInstance().getTranslation(map.getTextMapContentTextMapHash()))
-                .findAny()
-                .orElse(null);
     }
 
     private Map<Integer, EquipAffixExcelConfigDataJson> getAffixes(int affixId) {
