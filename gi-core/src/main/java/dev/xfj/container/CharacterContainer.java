@@ -4,7 +4,6 @@ import dev.xfj.constants.CharacterRarity;
 import dev.xfj.database.AvatarData;
 import dev.xfj.database.Database;
 import dev.xfj.database.ItemData;
-import dev.xfj.database.TextMapData;
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
@@ -24,7 +23,6 @@ import dev.xfj.jsonschema2pojo.homeworldfurnitureexcelconfigdata.HomeWorldFurnit
 import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardItem;
 import dev.xfj.utils.Interpolator;
 
@@ -34,7 +32,7 @@ import java.util.stream.IntStream;
 
 import static java.lang.String.format;
 
-public class CharacterContainer implements Container {
+public class CharacterContainer implements Ascendable {
     private static final String BASE_HP = "FIGHT_PROP_BASE_HP";
     private static final String BASE_DEF = "FIGHT_PROP_BASE_DEFENSE";
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
@@ -63,7 +61,7 @@ public class CharacterContainer implements Container {
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -76,7 +74,8 @@ public class CharacterContainer implements Container {
         return Database.getInstance().getTranslation(getFetterInfo().getAvatarTitleTextMapHash());
     }
 
-    public int getRarity() {
+    @Override
+    public Integer getRarity() {
         return CharacterRarity.valueOf(getAvatar().getQualityType()).getStarValue();
     }
 
@@ -100,6 +99,7 @@ public class CharacterContainer implements Container {
         return getAvatar().getCriticalHurt();
     }
 
+    @Override
     public Map<String, Double> getAscensionStat() {
         return getAscensions(getAvatar().getAvatarPromoteId()).values()
                 .stream()
@@ -116,6 +116,7 @@ public class CharacterContainer implements Container {
                 ));
     }
 
+    @Override
     public Map<Integer, Integer> getAscensionItems() {
         if (currentAscension < getMaxAscensions(getAvatar().getAvatarPromoteId())) {
             return getAscensionItems(currentAscension, currentAscension + 1);
@@ -124,6 +125,7 @@ public class CharacterContainer implements Container {
         }
     }
 
+    @Override
     public Map<Integer, Integer> getAscensionItems(int startingAscension, int targetAscension) {
         return getAscensions(getAvatar().getAvatarPromoteId()).values()
                 .stream()
@@ -137,6 +139,7 @@ public class CharacterContainer implements Container {
                 ));
     }
 
+    @Override
     public Integer getAscensionCost() {
         if (currentAscension < getMaxAscensions(getAvatar().getAvatarPromoteId())) {
             return getAscensionCost(currentAscension, currentAscension + 1);
@@ -145,6 +148,7 @@ public class CharacterContainer implements Container {
         }
     }
 
+    @Override
     public Integer getAscensionCost(int startingAscension, int targetAscension) {
         return getAscensions(getAvatar().getAvatarPromoteId()).values()
                 .stream()
@@ -321,6 +325,7 @@ public class CharacterContainer implements Container {
                 ));
     }
 
+    @Override
     public Map<String, Integer> getAllAscensionItems() {
         return getAscensionItems(0, getMaxAscensions(getAvatar().getAvatarPromoteId())).entrySet()
                 .stream()
@@ -331,6 +336,7 @@ public class CharacterContainer implements Container {
                 ));
     }
 
+    @Override
     public Integer getAllAscensionCosts() {
         return getAscensionCost(0, getMaxAscensions(getAvatar().getAvatarPromoteId()));
     }
@@ -592,14 +598,6 @@ public class CharacterContainer implements Container {
         return AvatarData.getInstance().avatarTalentConfig
                 .stream()
                 .filter(constellation -> constellation.getTalentId() == id)
-                .findFirst()
-                .orElse(null);
-    }
-
-    private MaterialExcelConfigDataJson getItem(int id) {
-        return ItemData.getInstance().materialConfig
-                .stream()
-                .filter(item -> item.getId() == id)
                 .findFirst()
                 .orElse(null);
     }

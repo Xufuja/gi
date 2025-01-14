@@ -1,7 +1,6 @@
 package dev.xfj.container;
 
 import dev.xfj.database.*;
-import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.CostItem;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
@@ -16,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class WeaponContainer implements Container {
+public class WeaponContainer implements Ascendable {
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
     private int id;
     private int currentLevel;
@@ -37,7 +36,7 @@ public class WeaponContainer implements Container {
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -50,7 +49,8 @@ public class WeaponContainer implements Container {
         return getManualMappedText(getWeapon().getWeaponType());
     }
 
-    public int getRarity() {
+    @Override
+    public Integer getRarity() {
         return getWeapon().getRankLevel();
     }
 
@@ -64,6 +64,7 @@ public class WeaponContainer implements Container {
                 BASE_ATK);
     }
 
+    @Override
     public Map<String, Double> getAscensionStat() {
         String ascensionStat = getWeapon().getWeaponProp()
                 .stream()
@@ -96,6 +97,7 @@ public class WeaponContainer implements Container {
         return Database.getInstance().getTranslation(getWeapon().getDescTextMapHash());
     }
 
+    @Override
     public Map<Integer, Integer> getAscensionItems() {
         if (currentAscension < getMaxAscensions(getWeapon().getWeaponPromoteId())) {
             return getAscensionItems(currentAscension, currentAscension + 1);
@@ -104,6 +106,7 @@ public class WeaponContainer implements Container {
         }
     }
 
+    @Override
     public Map<Integer, Integer> getAscensionItems(int startingAscension, int targetAscension) {
         return getAscensions(getWeapon().getWeaponPromoteId()).values()
                 .stream()
@@ -117,6 +120,7 @@ public class WeaponContainer implements Container {
                 ));
     }
 
+    @Override
     public Integer getAscensionCost() {
         if (currentAscension < getMaxAscensions(getWeapon().getWeaponPromoteId())) {
             return getAscensionCost(currentAscension, currentAscension + 1);
@@ -125,6 +129,7 @@ public class WeaponContainer implements Container {
         }
     }
 
+    @Override
     public Integer getAscensionCost(int startingAscension, int targetAscension) {
         return getAscensions(getWeapon().getWeaponPromoteId()).values()
                 .stream()
@@ -134,6 +139,7 @@ public class WeaponContainer implements Container {
                 .sum();
     }
 
+    @Override
     public Map<String, Integer> getAllAscensionItems() {
         return getAscensionItems(0, getMaxAscensions(getWeapon().getWeaponPromoteId())).entrySet()
                 .stream()
@@ -144,6 +150,7 @@ public class WeaponContainer implements Container {
                 ));
     }
 
+    @Override
     public Integer getAllAscensionCosts() {
         return getAscensionCost(0, getMaxAscensions(getWeapon().getWeaponPromoteId()));
     }
@@ -231,14 +238,6 @@ public class WeaponContainer implements Container {
                 .stream()
                 .filter(entry -> entry.getKey() == refinement - 1)
                 .map(Map.Entry::getValue)
-                .findFirst()
-                .orElse(null);
-    }
-
-    private MaterialExcelConfigDataJson getItem(int id) {
-        return ItemData.getInstance().materialConfig
-                .stream()
-                .filter(item -> item.getId() == id)
                 .findFirst()
                 .orElse(null);
     }
