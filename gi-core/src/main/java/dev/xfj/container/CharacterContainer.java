@@ -32,7 +32,7 @@ import java.util.stream.IntStream;
 
 import static java.lang.String.format;
 
-public class CharacterContainer implements Ascendable {
+public class CharacterContainer implements Container, Ascendable {
     private static final String BASE_HP = "FIGHT_PROP_BASE_HP";
     private static final String BASE_DEF = "FIGHT_PROP_BASE_DEFENSE";
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";

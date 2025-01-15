@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class WeaponContainer implements Ascendable {
+public class WeaponContainer implements Container, Ascendable {
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
     private int id;
     private int currentLevel;
