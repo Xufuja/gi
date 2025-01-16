@@ -1,7 +1,9 @@
 package dev.xfj.container;
 
-import dev.xfj.database.*;
-import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
+import dev.xfj.database.Database;
+import dev.xfj.database.ItemData;
+import dev.xfj.database.ReliquaryData;
+import dev.xfj.database.ReliquarySetData;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
@@ -16,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ArtifactContainer {
+public class ArtifactContainer implements Container{
     private int id;
     private int currentLevel;
     private int currentExperience;
@@ -31,7 +33,8 @@ public class ArtifactContainer {
         this.currentExperience = currentExperience;
     }
 
-    public int getId() {
+    @Override
+    public Integer getId() {
         return id;
     }
 
@@ -43,6 +46,7 @@ public class ArtifactContainer {
                 .orElse(null);
     }
 
+    @Override
     public String getName() {
         return Database.getInstance().getTranslation(getArtifact().getNameTextMapHash());
     }
@@ -51,7 +55,8 @@ public class ArtifactContainer {
         return getManualMappedText(getArtifact().getEquipType());
     }
 
-    public int getRarity() {
+    @Override
+    public Integer getRarity() {
         return getArtifact().getRankLevel();
     }
 
@@ -71,6 +76,7 @@ public class ArtifactContainer {
                 ));
     }
 
+    @Override
     public String getDescription() {
         return Database.getInstance().getTranslation(getArtifact().getDescTextMapHash());
     }
@@ -116,15 +122,6 @@ public class ArtifactContainer {
                 .stream()
                 .filter(artifact -> artifact.getId() == id)
                 .findFirst()
-                .orElse(null);
-    }
-
-    private String getManualMappedText(String id) {
-        return TextMapData.getInstance().manualTextMapConfig
-                .stream()
-                .filter(text -> id.equals(text.getTextMapId()))
-                .map(map -> Database.getInstance().getTranslation(map.getTextMapContentTextMapHash()))
-                .findAny()
                 .orElse(null);
     }
 

@@ -6,6 +6,11 @@ import dev.xfj.database.TextMapData;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 
 public interface Container {
+    Integer getId();
+    String getName();
+    String getDescription();
+    Integer getRarity();
+    
     default String getManualMappedText(String id) {
         return TextMapData.getInstance().manualTextMapConfig
                 .stream()
