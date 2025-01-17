@@ -107,7 +107,7 @@ public class ArtifactContainer implements Container{
 
     public int getExpNeededForNextLevel() {
         if (currentLevel <= getMaxLevel(getRarity())) {
-            return getExpRequired(getRarity(), currentLevel, currentLevel + 1);
+            return getExpRequired(getRarity(), currentLevel, currentLevel + 1) - currentExperience;
         }
 
         return 0;
