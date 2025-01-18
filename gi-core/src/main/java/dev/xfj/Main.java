@@ -171,6 +171,7 @@ public class Main {
             System.out.println(weapon.getDescription());
             System.out.println(weapon.getAllAscensionItems());
             System.out.println(weapon.getAllAscensionCosts());
+            System.out.println(weapon.getExpNeededForNextLevel());
 
             System.out.println(Codex.getArtifactSets());
 

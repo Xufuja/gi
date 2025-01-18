@@ -1,13 +1,15 @@
 package dev.xfj.container;
 
-import dev.xfj.database.*;
-import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.CostItem;
+import dev.xfj.database.Database;
+import dev.xfj.database.ItemData;
+import dev.xfj.database.WeaponData;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponProp;
+import dev.xfj.jsonschema2pojo.weaponlevelexcelconfigdata.WeaponLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.AddProp;
+import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.CostItem;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
 
 import java.util.Comparator;
@@ -155,6 +157,14 @@ public class WeaponContainer implements Container, Ascendable {
         return getAscensionCost(0, getMaxAscensions(getWeapon().getWeaponPromoteId()));
     }
 
+    public int getExpNeededForNextLevel() {
+        if (currentLevel <= getMaxLevel()) {
+            return getExpRequired(getRarity(), currentLevel, currentLevel + 1) - currentExperience;
+        }
+
+        return 0;
+    }
+
     private double getBaseStat(double baseValue, String statType) {
         return (baseValue * getBaseStatMultiplier(statType)) + getExtraBaseStats(statType);
     }
@@ -240,5 +250,24 @@ public class WeaponContainer implements Container, Ascendable {
                 .map(Map.Entry::getValue)
                 .findFirst()
                 .orElse(null);
+    }
+
+    private int getMaxLevel() {
+        return WeaponData.getInstance().weaponLevelConfig
+                .stream()
+                .max(Comparator.comparing(WeaponLevelExcelConfigDataJson::getLevel))
+                .stream()
+                .mapToInt(WeaponLevelExcelConfigDataJson::getLevel)
+                .findFirst()
+                .orElse(-1);
+    }
+
+    private int getExpRequired(int rarity, int startingLevel, int targetLevel) {
+        return WeaponData.getInstance().weaponLevelConfig
+                .stream()
+                .filter(level -> level.getLevel() >= startingLevel)
+                .filter(level -> level.getLevel() < targetLevel)
+                .mapToInt(entry -> entry.getRequiredExps().get(rarity - 1))
+                .sum();
     }
 }
