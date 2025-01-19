@@ -4,6 +4,7 @@ import dev.xfj.constants.CharacterRarity;
 import dev.xfj.database.AvatarData;
 import dev.xfj.database.Database;
 import dev.xfj.database.ItemData;
+import dev.xfj.database.WeaponData;
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
@@ -24,6 +25,7 @@ import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConf
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardItem;
+import dev.xfj.jsonschema2pojo.weaponlevelexcelconfigdata.WeaponLevelExcelConfigDataJson;
 import dev.xfj.utils.Interpolator;
 
 import java.util.*;
@@ -616,6 +618,16 @@ public class CharacterContainer implements Container, Ascendable {
                                 .mapToInt(Integer::parseInt)
                                 .sum()
                 ));
+    }
+
+    private int getMaxLevel() {
+        return AvatarData.getInstance().levelConfig
+                .stream()
+                .max(Comparator.comparing(AvatarLevelExcelConfigDataJson::getLevel))
+                .stream()
+                .mapToInt(AvatarLevelExcelConfigDataJson::getLevel)
+                .findFirst()
+                .orElse(-1);
     }
 
     private int getExpRequired(int startingLevel, int targetLevel) {
