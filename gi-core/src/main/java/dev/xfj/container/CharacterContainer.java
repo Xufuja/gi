@@ -364,6 +364,17 @@ public class CharacterContainer implements Container, Ascendable {
                 .sum();
     }
 
+    @Override
+    public Integer getMaxLevel() {
+        return AvatarData.getInstance().levelConfig
+                .stream()
+                .max(Comparator.comparing(AvatarLevelExcelConfigDataJson::getLevel))
+                .stream()
+                .mapToInt(AvatarLevelExcelConfigDataJson::getLevel)
+                .findFirst()
+                .orElse(-1);
+    }
+
     public Map<String, Integer> getAllExpBooks() {
         Map<String, Integer> result = new LinkedHashMap<>();
 
@@ -618,16 +629,6 @@ public class CharacterContainer implements Container, Ascendable {
                                 .mapToInt(Integer::parseInt)
                                 .sum()
                 ));
-    }
-
-    private int getMaxLevel() {
-        return AvatarData.getInstance().levelConfig
-                .stream()
-                .max(Comparator.comparing(AvatarLevelExcelConfigDataJson::getLevel))
-                .stream()
-                .mapToInt(AvatarLevelExcelConfigDataJson::getLevel)
-                .findFirst()
-                .orElse(-1);
     }
 
     private int getExpRequired(int startingLevel, int targetLevel) {

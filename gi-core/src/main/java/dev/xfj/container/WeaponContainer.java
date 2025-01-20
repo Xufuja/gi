@@ -157,6 +157,17 @@ public class WeaponContainer implements Container, Ascendable {
         return getAscensionCost(0, getMaxAscensions(getWeapon().getWeaponPromoteId()));
     }
 
+    @Override
+    public Integer getMaxLevel() {
+        return WeaponData.getInstance().weaponLevelConfig
+                .stream()
+                .max(Comparator.comparing(WeaponLevelExcelConfigDataJson::getLevel))
+                .stream()
+                .mapToInt(WeaponLevelExcelConfigDataJson::getLevel)
+                .findFirst()
+                .orElse(-1);
+    }
+
     public int getExpNeededForNextLevel() {
         if (currentLevel <= getMaxLevel()) {
             return getExpRequired(getRarity(), currentLevel, currentLevel + 1) - currentExperience;
@@ -250,16 +261,6 @@ public class WeaponContainer implements Container, Ascendable {
                 .map(Map.Entry::getValue)
                 .findFirst()
                 .orElse(null);
-    }
-
-    private int getMaxLevel() {
-        return WeaponData.getInstance().weaponLevelConfig
-                .stream()
-                .max(Comparator.comparing(WeaponLevelExcelConfigDataJson::getLevel))
-                .stream()
-                .mapToInt(WeaponLevelExcelConfigDataJson::getLevel)
-                .findFirst()
-                .orElse(-1);
     }
 
     private int getExpRequired(int rarity, int startingLevel, int targetLevel) {

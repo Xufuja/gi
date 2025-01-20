@@ -10,4 +10,5 @@ public interface Ascendable {
     Integer getAscensionCost(int startingAscension, int targetAscension);
     Map<String, Integer> getAllAscensionItems();
     Integer getAllAscensionCosts();
+    Integer getMaxLevel();
 }
