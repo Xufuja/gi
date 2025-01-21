@@ -1,7 +1,5 @@
 package dev.xfj.database;
 
-import dev.xfj.character.Character;
-import dev.xfj.character.*;
 import dev.xfj.jsonschema2pojo.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
@@ -22,7 +20,6 @@ import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConf
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 
 import java.util.List;
-import java.util.Map;
 
 public class AvatarData implements Data {
     private static AvatarData instance;
@@ -76,53 +73,5 @@ public class AvatarData implements Data {
         }
 
         return instance;
-    }
-
-    public Map<Integer, Character> loadCharacters() {
-        return loadDataWithIntegerId(Character.class, avatarConfig);
-    }
-
-    public Map<Integer, Talent> loadTalents() {
-        return loadDataWithIntegerId(Talent.class, skillConfig);
-    }
-
-    public Map<Integer, TalentTree> loadTalentTrees() {
-        return loadDataWithIntegerId(TalentTree.class, skillDepotConfig);
-    }
-
-    public Map<Integer, CharacterLevel> loadLevelRequirements() {
-        return loadDataWithIntegerId(CharacterLevel.class, levelConfig, "getLevel");
-    }
-
-    public Map<Integer, Map<Integer, CharacterAscension>> loadCharacterAscensions() {
-        return loadNestedDataWithIds(
-                CharacterAscension.class,
-                avatarPromoteConfig,
-                "getAvatarPromoteId",
-                "getAscension");
-    }
-
-    public Map<Integer, Constellation> loadConstellations() {
-        return loadDataWithIntegerId(Constellation.class, avatarTalentConfig, "getTalentId");
-    }
-
-    public Map<String, InternalCooldown> loadInternalCooldown() {
-        return loadDataWithStringId(InternalCooldown.class, attackAttenuationConfig, "getGroup");
-    }
-
-    public Map<Integer, Glider> loadGliders() {
-        return loadDataWithIntegerId(Glider.class, avatarFlycloakConfig, "getFlycloakId");
-    }
-
-    public Map<Integer, CharacterSkin> loadSkins() {
-        return loadDataWithIntegerId(CharacterSkin.class, avatarCostumeConfig, "getSkinId");
-    }
-
-    public Map<Integer, CharacterLevelCurve> loadLevelCurves() {
-        return loadDataWithIntegerId(CharacterLevelCurve.class, avatarCurveConfig, "getLevel");
-    }
-
-    public Map<Integer, CharacterFriendshipLevel> loadFriendshipLevelRequirements() {
-        return loadDataWithIntegerId(CharacterFriendshipLevel.class, avatarFettersLevelConfig, "getFetterLevel");
     }
 }

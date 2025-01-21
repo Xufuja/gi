@@ -1,18 +1,12 @@
 package dev.xfj.database;
 
-import dev.xfj.artifact.Artifact;
-import dev.xfj.artifact.ArtifactLevel;
-import dev.xfj.artifact.MainStat;
-import dev.xfj.artifact.SubStat;
 import dev.xfj.jsonschema2pojo.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarymainpropexcelconfigdata.ReliquaryMainPropExcelConfigDataJson;
 
-import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Map;
 
 public class ReliquaryData implements Data {
     private static ReliquaryData instance;
@@ -40,25 +34,5 @@ public class ReliquaryData implements Data {
         }
 
         return instance;
-    }
-
-    public Map<Integer, Artifact> loadArtifacts() {
-        return loadDataWithIntegerId(Artifact.class, reliquaryConfig);
-    }
-
-    public Map<Integer, MainStat> loadMainStats() {
-        return loadDataWithIntegerId(MainStat.class, reliquaryMainPropConfig);
-    }
-
-    public Map<Integer, SubStat> loadSubStats() {
-        return loadDataWithIntegerId(SubStat.class, reliquaryAffixConfig);
-    }
-
-    public Map<Integer, Map<Integer, ArtifactLevel>> loadLevelRequirements() {
-        return loadNestedDataWithIds(
-                ArtifactLevel.class,
-                reliquaryLevelConfig,
-                "getRank",
-                "getLevel");
     }
 }

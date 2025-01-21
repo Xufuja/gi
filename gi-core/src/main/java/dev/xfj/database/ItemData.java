@@ -1,21 +1,16 @@
 package dev.xfj.database;
 
-import dev.xfj.artifact.ArtifactSetDetails;
-import dev.xfj.item.Material;
 import dev.xfj.jsonschema2pojo.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.cookbonusexcelconfigdata.CookBonusExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.homeworldfurnituretypeexcelconfigdata.HomeWorldFurnitureTypeExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardExcelConfigDataJson;
 
-import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Map;
 
 public class ItemData implements Data {
     private static ItemData instance;
@@ -51,13 +46,5 @@ public class ItemData implements Data {
         }
 
         return instance;
-    }
-
-    public Map<Integer, Material> loadItems() {
-        return loadDataWithIntegerId(Material.class, materialConfig);
-    }
-
-    public Map<Integer, Map<Integer, ArtifactSetDetails>> loadArtifactSetDetails() {
-        return loadNestedDataWithIds(ArtifactSetDetails.class, equipAffixConfig, "getId", "getSetBonusId");
     }
 }

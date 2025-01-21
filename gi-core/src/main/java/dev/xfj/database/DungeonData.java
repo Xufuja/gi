@@ -1,13 +1,10 @@
 package dev.xfj.database;
 
-import dev.xfj.domain.Domain;
-import dev.xfj.domain.DomainEntry;
 import dev.xfj.jsonschema2pojo.dungeonentryexcelconfigdata.DungeonEntryExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.dungeonexcelconfigdata.DungeonExcelConfigDataJson;
 
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Map;
 
 public class DungeonData implements Data {
     private static DungeonData instance;
@@ -25,13 +22,5 @@ public class DungeonData implements Data {
         }
 
         return instance;
-    }
-
-    public Map<Integer, Domain> loadDomains() {
-        return loadDataWithIntegerId(Domain.class, dungeonConfig);
-    }
-
-    public Map<Integer, DomainEntry> loadDomainEntries() {
-        return loadDataWithIntegerId(DomainEntry.class, dungeonEntryConfig);
     }
 }
