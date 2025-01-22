@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class Codex {
     public static List<CharacterCodex> getCharacters() {
-        return AvatarData.getInstance().avatarCodexConfig
+        return Database.getInstance().avatarCodexConfig
                 .stream()
                 .sorted(Comparator.comparing(AvatarCodexExcelConfigDataJson::getSortFactor))
                 .map(CharacterCodex::new)
@@ -21,7 +21,7 @@ public class Codex {
     }
 
     public static List<WeaponCodex> getWeapons() {
-        return WeaponData.getInstance().weaponConfig
+        return Database.getInstance().weaponConfig
                 .stream()
                 .sorted(Comparator.comparing(WeaponExcelConfigDataJson::getId))
                 .map(entry -> new WeaponCodex(entry.getId(), Database.getInstance().getTranslation(entry.getNameTextMapHash())))
@@ -29,7 +29,7 @@ public class Codex {
     }
 
     public static List<ArtifactSetCodex> getArtifactSets() {
-        return ReliquaryData.getInstance().reliquaryCodexConfig
+        return Database.getInstance().reliquaryCodexConfig
                 .stream()
                 .sorted(Comparator.comparing(ReliquaryCodexExcelConfigDataJson::getSortOrder))
                 .map(ArtifactSetCodex::new)
@@ -37,7 +37,7 @@ public class Codex {
     }
 
     public static List<ItemCodex> getItems() {
-        return ItemData.getInstance().materialCodexConfig
+        return Database.getInstance().materialCodexConfig
                 .stream()
                 .sorted(Comparator.comparing(MaterialCodexExcelConfigDataJson::getSortOrder))
                 .map(ItemCodex::new)
@@ -45,7 +45,7 @@ public class Codex {
     }
 
     public static List<BookCodex> getBooks() {
-        return ItemData.getInstance().booksCodexConfig
+        return Database.getInstance().booksCodexConfig
                 .stream()
                 .sorted(Comparator.comparing(BooksCodexExcelConfigDataJson::getSortOrder))
                 .map(BookCodex::new)

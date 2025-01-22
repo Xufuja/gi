@@ -1,9 +1,6 @@
 package dev.xfj.container;
 
 import dev.xfj.database.Database;
-import dev.xfj.database.ItemData;
-import dev.xfj.database.ReliquaryData;
-import dev.xfj.database.ReliquarySetData;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
@@ -118,7 +115,7 @@ public class ArtifactContainer implements Container{
     }
 
     private ReliquaryExcelConfigDataJson getArtifact() {
-        return ReliquaryData.getInstance().reliquaryConfig
+        return Database.getInstance().reliquaryConfig
                 .stream()
                 .filter(artifact -> artifact.getId() == id)
                 .findFirst()
@@ -126,7 +123,7 @@ public class ArtifactContainer implements Container{
     }
 
     private ReliquarySetExcelConfigDataJson getArtifactSet() {
-        return ReliquarySetData.getInstance().reliquarySetConfig
+        return Database.getInstance().reliquarySetConfig
                 .stream()
                 .filter(set -> set.getSetId() == getArtifact().getSetId())
                 .findAny()
@@ -134,7 +131,7 @@ public class ArtifactContainer implements Container{
     }
 
     private Map<Integer, EquipAffixExcelConfigDataJson> getAffixes(int affixId) {
-        return ItemData.getInstance().equipAffixConfig
+        return Database.getInstance().equipAffixConfig
                 .stream()
                 .filter(affix -> affix.getId() == affixId)
                 .collect(Collectors.toMap(
@@ -144,14 +141,14 @@ public class ArtifactContainer implements Container{
     }
 
     private List<ReliquaryMainPropExcelConfigDataJson> getPossibleMainStats() {
-        return ReliquaryData.getInstance().reliquaryMainPropConfig
+        return Database.getInstance().reliquaryMainPropConfig
                 .stream()
                 .filter(stat -> getArtifact().getMainPropDepotId() == stat.getPropDepotId())
                 .collect(Collectors.toList());
     }
 
     private Map<Integer, Double> getLevelData(int rarity, String stat) {
-        return ReliquaryData.getInstance().reliquaryLevelConfig
+        return Database.getInstance().reliquaryLevelConfig
                 .stream()
                 .filter(entry -> entry.getRank() == rarity)
                 .collect(Collectors.toMap(
@@ -167,14 +164,14 @@ public class ArtifactContainer implements Container{
     }
 
     private Map<Integer, List<ReliquaryAffixExcelConfigDataJson>> getPossibleSubStats() {
-        return ReliquaryData.getInstance().reliquaryAffixConfig
+        return Database.getInstance().reliquaryAffixConfig
                 .stream()
                 .filter(entry -> entry.getDepotId() == getArtifact().getAppendPropDepotId())
                 .collect(Collectors.groupingBy(ReliquaryAffixExcelConfigDataJson::getGroupId));
     }
 
     private int getMaxLevel(int rarity) {
-        return ReliquaryData.getInstance().reliquaryLevelConfig
+        return Database.getInstance().reliquaryLevelConfig
                 .stream()
                 .filter(entry -> entry.getRank() == rarity)
                 .max(Comparator.comparing(ReliquaryLevelExcelConfigDataJson::getLevel))
@@ -185,7 +182,7 @@ public class ArtifactContainer implements Container{
     }
 
     private int getExpRequired(int rarity, int startingLevel, int targetLevel) {
-        return ReliquaryData.getInstance().reliquaryLevelConfig
+        return Database.getInstance().reliquaryLevelConfig
                 .stream()
                 .filter(entry -> entry.getRank() == rarity)
                 .filter(level -> level.getLevel() >= startingLevel)

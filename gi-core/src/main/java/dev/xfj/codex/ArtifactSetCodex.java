@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.xfj.database.Database;
-import dev.xfj.database.ReliquaryData;
 import dev.xfj.jsonschema2pojo.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
 
@@ -66,7 +65,7 @@ public class ArtifactSetCodex {
     }
 
     private ReliquaryExcelConfigDataJson getArtifact(int id) {
-        return ReliquaryData.getInstance().reliquaryConfig
+        return Database.getInstance().reliquaryConfig
                 .stream()
                 .filter(artifact -> artifact.getId() == id)
                 .findFirst()

@@ -1,10 +1,7 @@
 package dev.xfj.container;
 
 import dev.xfj.constants.CharacterRarity;
-import dev.xfj.database.AvatarData;
 import dev.xfj.database.Database;
-import dev.xfj.database.ItemData;
-import dev.xfj.database.WeaponData;
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
@@ -366,7 +363,7 @@ public class CharacterContainer implements Container, Ascendable {
 
     @Override
     public Integer getMaxLevel() {
-        return AvatarData.getInstance().levelConfig
+        return Database.getInstance().levelConfig
                 .stream()
                 .max(Comparator.comparing(AvatarLevelExcelConfigDataJson::getLevel))
                 .stream()
@@ -517,7 +514,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private double getCurveMultiplier(String curveType) {
-        return AvatarData.getInstance().avatarCurveConfig
+        return Database.getInstance().avatarCurveConfig
                 .stream()
                 .filter(level -> level.getLevel() == currentLevel)
                 .flatMap(curves -> curves.getCurveInfos().stream())
@@ -537,7 +534,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private AvatarExcelConfigDataJson getAvatar() {
-        return AvatarData.getInstance().avatarConfig
+        return Database.getInstance().avatarConfig
                 .stream()
                 .filter(character -> character.getId() == id)
                 .findFirst()
@@ -545,7 +542,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private FetterInfoExcelConfigDataJson getFetterInfo() {
-        return AvatarData.getInstance().fetterInfoConfig
+        return Database.getInstance().fetterInfoConfig
                 .stream()
                 .filter(character -> character.getAvatarId() == id)
                 .findFirst()
@@ -553,7 +550,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private Map<Integer, AvatarPromoteExcelConfigDataJson> getAscensions(int promoteId) {
-        return AvatarData.getInstance().avatarPromoteConfig
+        return Database.getInstance().avatarPromoteConfig
                 .stream()
                 .filter(ascension -> ascension.getAvatarPromoteId() == promoteId)
                 .collect(Collectors.toMap(
@@ -563,7 +560,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private int getMaxAscensions(int promoteId) {
-        return AvatarData.getInstance().avatarPromoteConfig
+        return Database.getInstance().avatarPromoteConfig
                 .stream()
                 .filter(ascension -> ascension.getAvatarPromoteId() == promoteId)
                 .max(Comparator.comparing(AvatarPromoteExcelConfigDataJson::getPromoteLevel))
@@ -574,7 +571,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private AvatarSkillDepotExcelConfigDataJson getSkillDepot() {
-        return AvatarData.getInstance().skillDepotConfig
+        return Database.getInstance().skillDepotConfig
                 .stream()
                 .filter(depot -> depot.getId() == getAvatar().getSkillDepotId())
                 .findFirst()
@@ -582,7 +579,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private AvatarSkillExcelConfigDataJson getSkill(int id) {
-        return AvatarData.getInstance().skillConfig
+        return Database.getInstance().skillConfig
                 .stream()
                 .filter(skill -> skill.getId() == id)
                 .findFirst()
@@ -590,7 +587,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private ProudSkillExcelConfigDataJson getPassive(int id) {
-        return AvatarData.getInstance().proudSkillConfig
+        return Database.getInstance().proudSkillConfig
                 .stream()
                 .filter(passive -> passive.getProudSkillGroupId() == id)
                 .findFirst()
@@ -598,7 +595,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private Map<Integer, ProudSkillExcelConfigDataJson> getTalentLevels(int proudSkillGroupId) {
-        return AvatarData.getInstance().proudSkillConfig
+        return Database.getInstance().proudSkillConfig
                 .stream()
                 .filter(talent -> talent.getProudSkillGroupId() == proudSkillGroupId)
                 .collect(Collectors.toMap(
@@ -608,7 +605,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private AvatarTalentExcelConfigDataJson getConstellation(int id) {
-        return AvatarData.getInstance().avatarTalentConfig
+        return Database.getInstance().avatarTalentConfig
                 .stream()
                 .filter(constellation -> constellation.getTalentId() == id)
                 .findFirst()
@@ -616,7 +613,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private Map<Integer, Integer> getExpBooks() {
-        return ItemData.getInstance().materialConfig
+        return Database.getInstance().materialConfig
                 .stream()
                 .filter(item -> "MATERIAL_EXP_FRUIT".equals(item.getMaterialType()))
                 .collect(Collectors.toMap(
@@ -632,7 +629,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private int getExpRequired(int startingLevel, int targetLevel) {
-        return AvatarData.getInstance().levelConfig
+        return Database.getInstance().levelConfig
                 .stream()
                 .filter(level -> level.getLevel() >= startingLevel)
                 .filter(level -> level.getLevel() < targetLevel)
@@ -709,9 +706,9 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private MaterialExcelConfigDataJson getCharacterCard() {
-        return getItem(ItemData.getInstance().rewardConfig
+        return getItem(Database.getInstance().rewardConfig
                 .stream()
-                .filter(reward -> reward.getRewardId() == AvatarData.getInstance().fetterCharacterCardConfig
+                .filter(reward -> reward.getRewardId() == Database.getInstance().fetterCharacterCardConfig
                         .stream()
                         .filter(character -> character.getAvatarId() == getAvatar().getId())
                         .mapToInt(FetterCharacterCardExcelConfigDataJson::getRewardId)
@@ -728,7 +725,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private MaterialExcelConfigDataJson getSpecialtyFood() {
-        return getItem(ItemData.getInstance().cookBonusConfig
+        return getItem(Database.getInstance().cookBonusConfig
                 .stream()
                 .filter(id -> id.getAvatarId() == getAvatar().getId())
                 .flatMap(entry -> entry.getParamVec().stream())
@@ -738,14 +735,14 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private List<AvatarCostumeExcelConfigDataJson> getCostumes() {
-        return AvatarData.getInstance().avatarCostumeConfig
+        return Database.getInstance().avatarCostumeConfig
                 .stream()
                 .filter(id -> id.getCharacterId() == getAvatar().getId())
                 .collect(Collectors.toList());
     }
 
     private int getFurnitureId() {
-        return AvatarData.getInstance().homeWorldNPCConfig
+        return Database.getInstance().homeWorldNPCConfig
                 .stream()
                 .filter(id -> id.getAvatarID() == getAvatar().getId())
                 .mapToInt(HomeWorldNPCExcelConfigDataJson::getFurnitureID)
@@ -754,7 +751,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private HomeWorldFurnitureExcelConfigDataJson getFurnitureDetails() {
-        return ItemData.getInstance().homeWorldFurnitureConfig
+        return Database.getInstance().homeWorldFurnitureConfig
                 .stream()
                 .filter(id -> id.getId() == getFurnitureId())
                 .findFirst()
@@ -762,7 +759,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private String getFurnitureType(int id) {
-        return ItemData.getInstance().homeWorldFurnitureTypeConfig
+        return Database.getInstance().homeWorldFurnitureTypeConfig
                 .stream()
                 .filter(type -> type.getTypeID() == id)
                 .map(name -> Database.getInstance().getTranslation(name.getTypeNameTextMapHash()))
@@ -771,21 +768,21 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private List<FurnitureSuiteExcelConfigDataJson> getPreferredFurnitureSets() {
-        return ItemData.getInstance().furnitureSuiteConfig
+        return Database.getInstance().furnitureSuiteConfig
                 .stream()
                 .filter(furniture -> furniture.getFavoriteNpcExcelIdVec().contains(getAvatar().getId()))
                 .collect(Collectors.toList());
     }
 
     private List<FetterStoryExcelConfigDataJson> getFetterStories() {
-        return AvatarData.getInstance().fetterStoryConfig
+        return Database.getInstance().fetterStoryConfig
                 .stream()
                 .filter(id -> id.getAvatarId() == getAvatar().getId())
                 .collect(Collectors.toList());
     }
 
     private List<FettersExcelConfigDataJson> getFetters() {
-        return AvatarData.getInstance().fettersConfig
+        return Database.getInstance().fettersConfig
                 .stream()
                 .filter(id -> id.getAvatarId() == getAvatar().getId())
                 .collect(Collectors.toList());

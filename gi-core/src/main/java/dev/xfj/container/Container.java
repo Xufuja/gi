@@ -1,8 +1,6 @@
 package dev.xfj.container;
 
 import dev.xfj.database.Database;
-import dev.xfj.database.ItemData;
-import dev.xfj.database.TextMapData;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 
 public interface Container {
@@ -12,7 +10,7 @@ public interface Container {
     Integer getRarity();
     
     default String getManualMappedText(String id) {
-        return TextMapData.getInstance().manualTextMapConfig
+        return Database.getInstance().manualTextMapConfig
                 .stream()
                 .filter(text -> id.equals(text.getTextMapId()))
                 .map(map -> Database.getInstance().getTranslation(map.getTextMapContentTextMapHash()))
@@ -21,7 +19,7 @@ public interface Container {
     }
 
     default MaterialExcelConfigDataJson getItem(int id) {
-        return ItemData.getInstance().materialConfig
+        return Database.getInstance().materialConfig
                 .stream()
                 .filter(item -> item.getId() == id)
                 .findFirst()

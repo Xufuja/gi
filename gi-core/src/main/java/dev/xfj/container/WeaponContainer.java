@@ -1,8 +1,6 @@
 package dev.xfj.container;
 
 import dev.xfj.database.Database;
-import dev.xfj.database.ItemData;
-import dev.xfj.database.WeaponData;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
@@ -159,7 +157,7 @@ public class WeaponContainer implements Container, Ascendable {
 
     @Override
     public Integer getMaxLevel() {
-        return WeaponData.getInstance().weaponLevelConfig
+        return Database.getInstance().weaponLevelConfig
                 .stream()
                 .max(Comparator.comparing(WeaponLevelExcelConfigDataJson::getLevel))
                 .stream()
@@ -192,7 +190,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private double getCurveMultiplier(String curveType) {
-        return WeaponData.getInstance().weaponCurveConfig
+        return Database.getInstance().weaponCurveConfig
                 .stream()
                 .filter(level -> level.getLevel() == currentLevel)
                 .flatMap(curves -> curves.getCurveInfos().stream())
@@ -212,7 +210,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private WeaponExcelConfigDataJson getWeapon() {
-        return WeaponData.getInstance().weaponConfig
+        return Database.getInstance().weaponConfig
                 .stream()
                 .filter(weapon -> weapon.getId() == id)
                 .findFirst()
@@ -220,7 +218,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private Map<Integer, WeaponPromoteExcelConfigDataJson> getAscensions(int promoteId) {
-        return WeaponData.getInstance().weaponPromoteConfig
+        return Database.getInstance().weaponPromoteConfig
                 .stream()
                 .filter(ascension -> ascension.getWeaponPromoteId() == promoteId)
                 .collect(Collectors.toMap(
@@ -230,7 +228,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private int getMaxAscensions(int promoteId) {
-        return WeaponData.getInstance().weaponPromoteConfig
+        return Database.getInstance().weaponPromoteConfig
                 .stream()
                 .filter(ascension -> ascension.getWeaponPromoteId() == promoteId)
                 .max(Comparator.comparing(WeaponPromoteExcelConfigDataJson::getPromoteLevel))
@@ -241,7 +239,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private Map<Integer, EquipAffixExcelConfigDataJson> getAffixes(int affixId) {
-        return ItemData.getInstance().equipAffixConfig
+        return Database.getInstance().equipAffixConfig
                 .stream()
                 .filter(affix -> affix.getId() == affixId)
                 .collect(Collectors.toMap(
@@ -264,7 +262,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private int getExpRequired(int rarity, int startingLevel, int targetLevel) {
-        return WeaponData.getInstance().weaponLevelConfig
+        return Database.getInstance().weaponLevelConfig
                 .stream()
                 .filter(level -> level.getLevel() >= startingLevel)
                 .filter(level -> level.getLevel() < targetLevel)

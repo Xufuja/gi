@@ -3,7 +3,6 @@ package dev.xfj.codex;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dev.xfj.database.Database;
-import dev.xfj.database.ItemData;
 import dev.xfj.jsonschema2pojo.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
 
@@ -42,7 +41,7 @@ public class BookCodex {
     }
 
     private MaterialExcelConfigDataJson getItem() {
-        return ItemData.getInstance().materialConfig
+        return Database.getInstance().materialConfig
                 .stream()
                 .filter(item -> item.getId() == data.getMaterialId())
                 .findFirst()
