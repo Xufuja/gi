@@ -1,10 +1,12 @@
 package dev.xfj.database;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import dev.xfj.constants.DataPath;
 import dev.xfj.jsonschema2pojo.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
@@ -48,13 +50,17 @@ import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.WeaponPromoteExcelCo
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import static dev.xfj.constants.DataPath.EXCEL_BIN_OUTPUT;
 import static dev.xfj.constants.DataPath.TEXT_MAP;
 
-public class Database implements Data {
+public class Database {
     public static Database instance;
     public Map<String, String> languageMap;
     public final List<ManualTextMapConfigDataJson> manualTextMapConfig;
@@ -178,5 +184,112 @@ public class Database implements Data {
 
     public String getTranslation(String key) {
         return languageMap.get(key);
+    }
+
+    private <T> List<T> loadJSONArray(Class<T> clazz) throws FileNotFoundException {
+        return loadJSONArray(EXCEL_BIN_OUTPUT, clazz);
+    }
+
+    private <T> List<T> loadJSONArray(DataPath dataPath, Class<T> clazz) throws FileNotFoundException {
+        String file = clazz.getSimpleName().replace("Json", ".json");
+        return loadJSONArray(clazz, dataPath.path, file);
+    }
+
+    private <T> List<T> loadJSONArray(DataPath dataPath, Class<T> clazz, String file) throws FileNotFoundException {
+        return loadJSONArray(clazz, dataPath.path, file);
+    }
+
+    private <T> List<T> loadJSONArray(Class<T> clazz, String baseDirectory, String file) throws FileNotFoundException {
+        JsonReader jsonReader = new JsonReader(new FileReader(baseDirectory + file));
+        JsonArray jsonArray = JsonParser.parseReader(jsonReader).getAsJsonArray();
+        Type type = TypeToken.getParameterized(List.class, clazz).getType();
+
+        System.out.printf("Loaded: %1$7d entries from %2$s%n", jsonArray.size(), file);
+
+        return new Gson().fromJson(jsonArray, type);
+    }
+
+    private <T> T loadJSON(DataPath dataPath, Class<T> clazz) throws FileNotFoundException {
+        String file = clazz.getSimpleName().replace("Json", ".json");
+        return loadJSON(clazz, dataPath.path, file);
+    }
+
+    private <T> T loadJSON(DataPath dataPath, Class<T> clazz, String file) throws FileNotFoundException {
+        return loadJSON(clazz, dataPath.path, file);
+    }
+
+    private <T> T loadJSON(Class<T> clazz, String baseDirectory, String file) throws FileNotFoundException {
+        JsonReader jsonReader = new JsonReader(new FileReader(baseDirectory + file));
+        JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
+        //Type type = TypeToken.getParameterized(Map.class, String.class, clazz).getType();
+
+        System.out.printf("Loaded: %1$7d entries from %2$s%n", jsonObject.keySet().size(), file);
+
+        return new Gson().fromJson(jsonObject, clazz);
+    }
+
+    private <T, U> Map<Integer, T> loadDataWithIntegerId(Class<T> returnType, List<U> inputList) {
+        return loadDataWithId(Integer.class, returnType, inputList);
+    }
+
+    private <T, U> Map<Integer, T> loadDataWithIntegerId(Class<T> returnType, List<U> inputList, String idMethod) {
+        return loadDataWithId(Integer.class, returnType, inputList, idMethod);
+    }
+
+    private <T, U> Map<String, T> loadDataWithStringId(Class<T> returnType, List<U> inputList) {
+        return loadDataWithId(String.class, returnType, inputList);
+    }
+
+    private <T, U> Map<String, T> loadDataWithStringId(Class<T> returnType, List<U> inputList, String idMethod) {
+        return loadDataWithId(String.class, returnType, inputList, idMethod);
+    }
+
+    private <T, U, V> Map<T, U> loadDataWithId(Class<T> identifierType, Class<U> returnType, List<V> inputList) {
+        return loadDataWithId(identifierType, returnType, inputList, "getId");
+    }
+
+    private <T, U, V> Map<T, U> loadDataWithId(Class<T> identifierType, Class<U> returnType, List<V> inputList, String idMethod) {
+        return inputList.stream()
+                .collect(Collectors.toMap(
+                        input -> getId(identifierType, input, idMethod),
+                        unwrappedData -> constructInstance(returnType, unwrappedData))
+                );
+    }
+
+    private <T, U> Map<Integer, Map<Integer, T>> loadNestedDataWithIds(
+            Class<T> returnType,
+            List<U> inputList,
+            String firstIdMethod,
+            String secondIdMethod
+    ) {
+        return inputList
+                .stream()
+                .collect(Collectors.groupingBy(
+                        unwrappedData -> getId(Integer.class, unwrappedData, firstIdMethod),
+                        Collectors.mapping(
+                                unwrappedData -> constructInstance(returnType, unwrappedData),
+                                Collectors.toMap(
+                                        wrappedData -> getId(Integer.class, wrappedData, secondIdMethod),
+                                        wrappedData -> wrappedData)
+                        )
+                ));
+    }
+
+    private <T> T getId(Class<T> returnType, Object input, String idMethod) {
+        try {
+            Method method = input.getClass().getMethod(idMethod);
+            return returnType.cast(method.invoke(input));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private <T> T constructInstance(Class<T> returnType, Object argument) {
+        try {
+            Constructor<T> constructor = returnType.getConstructor(argument.getClass());
+            return constructor.newInstance(argument);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }
