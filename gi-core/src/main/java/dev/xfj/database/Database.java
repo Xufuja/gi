@@ -104,48 +104,52 @@ public class Database {
     public final List<DungeonExcelConfigDataJson> dungeonConfig;
     public final List<DungeonEntryExcelConfigDataJson> dungeonEntryConfig;
 
-    public Database() throws FileNotFoundException {
-        this.languageMap = loadLanguage("EN");
-        this.manualTextMapConfig = loadJSONArray(ManualTextMapConfigDataJson.class);
-        this.avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
-        this.skillConfig = loadJSONArray(AvatarSkillExcelConfigDataJson.class);
-        this.skillDepotConfig = loadJSONArray(AvatarSkillDepotExcelConfigDataJson.class);
-        this.levelConfig = loadJSONArray(AvatarLevelExcelConfigDataJson.class);
-        this.avatarPromoteConfig = loadJSONArray(AvatarPromoteExcelConfigDataJson.class);
-        this.avatarTalentConfig = loadJSONArray(AvatarTalentExcelConfigDataJson.class);
-        this.attackAttenuationConfig = loadJSONArray(AttackAttenuationExcelConfigDataJson.class);
-        this.avatarFlycloakConfig = loadJSONArray(AvatarFlycloakExcelConfigDataJson.class);
-        this.avatarCostumeConfig = loadJSONArray(AvatarCostumeExcelConfigDataJson.class);
-        this.avatarCurveConfig = loadJSONArray(AvatarCurveExcelConfigDataJson.class);
-        this.avatarFettersLevelConfig = loadJSONArray(AvatarFettersLevelExcelConfigDataJson.class);
-        this.fetterInfoConfig = loadJSONArray(FetterInfoExcelConfigDataJson.class);
-        this.proudSkillConfig = loadJSONArray(ProudSkillExcelConfigDataJson.class);
-        this.fetterCharacterCardConfig = loadJSONArray(FetterCharacterCardExcelConfigDataJson.class);
-        this.homeWorldNPCConfig = loadJSONArray(HomeWorldNPCExcelConfigDataJson.class);
-        this.fetterStoryConfig = loadJSONArray(FetterStoryExcelConfigDataJson.class);
-        this.fettersConfig = loadJSONArray(FettersExcelConfigDataJson.class);
-        this.avatarCodexConfig = loadJSONArray(AvatarCodexExcelConfigDataJson.class);
-        this.weaponConfig = loadJSONArray(WeaponExcelConfigDataJson.class);
-        this.weaponPromoteConfig = loadJSONArray(WeaponPromoteExcelConfigDataJson.class);
-        this.weaponLevelConfig = loadJSONArray(WeaponLevelExcelConfigDataJson.class);
-        this.weaponCurveConfig = loadJSONArray(WeaponCurveExcelConfigDataJson.class);
-        this.reliquaryConfig = loadJSONArray(ReliquaryExcelConfigDataJson.class);
-        this.reliquaryMainPropConfig = loadJSONArray(ReliquaryMainPropExcelConfigDataJson.class);
-        this.reliquaryAffixConfig = loadJSONArray(ReliquaryAffixExcelConfigDataJson.class);
-        this.reliquaryLevelConfig = loadJSONArray(ReliquaryLevelExcelConfigDataJson.class);
-        this.reliquaryCodexConfig = loadJSONArray(ReliquaryCodexExcelConfigDataJson.class);
-        this.reliquarySetConfig = loadJSONArray(ReliquarySetExcelConfigDataJson.class);
-        this.materialConfig = loadJSONArray(MaterialExcelConfigDataJson.class);
-        this.rewardConfig = loadJSONArray(RewardExcelConfigDataJson.class);
-        this.cookBonusConfig = loadJSONArray(CookBonusExcelConfigDataJson.class);
-        this.furnitureSuiteConfig = loadJSONArray(FurnitureSuiteExcelConfigDataJson.class);
-        this.homeWorldFurnitureConfig = loadJSONArray(HomeWorldFurnitureExcelConfigDataJson.class);
-        this.homeWorldFurnitureTypeConfig = loadJSONArray(HomeWorldFurnitureTypeExcelConfigDataJson.class);
-        this.equipAffixConfig = loadJSONArray(EquipAffixExcelConfigDataJson.class);
-        this.materialCodexConfig = loadJSONArray(MaterialCodexExcelConfigDataJson.class);
-        this.booksCodexConfig = loadJSONArray(BooksCodexExcelConfigDataJson.class);
-        this.dungeonConfig = loadJSONArray(DungeonExcelConfigDataJson.class);
-        this.dungeonEntryConfig = loadJSONArray(DungeonEntryExcelConfigDataJson.class);
+    public Database() {
+        try {
+            this.languageMap = loadLanguage("EN");
+            this.manualTextMapConfig = loadJSONArray(ManualTextMapConfigDataJson.class);
+            this.avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
+            this.skillConfig = loadJSONArray(AvatarSkillExcelConfigDataJson.class);
+            this.skillDepotConfig = loadJSONArray(AvatarSkillDepotExcelConfigDataJson.class);
+            this.levelConfig = loadJSONArray(AvatarLevelExcelConfigDataJson.class);
+            this.avatarPromoteConfig = loadJSONArray(AvatarPromoteExcelConfigDataJson.class);
+            this.avatarTalentConfig = loadJSONArray(AvatarTalentExcelConfigDataJson.class);
+            this.attackAttenuationConfig = loadJSONArray(AttackAttenuationExcelConfigDataJson.class);
+            this.avatarFlycloakConfig = loadJSONArray(AvatarFlycloakExcelConfigDataJson.class);
+            this.avatarCostumeConfig = loadJSONArray(AvatarCostumeExcelConfigDataJson.class);
+            this.avatarCurveConfig = loadJSONArray(AvatarCurveExcelConfigDataJson.class);
+            this.avatarFettersLevelConfig = loadJSONArray(AvatarFettersLevelExcelConfigDataJson.class);
+            this.fetterInfoConfig = loadJSONArray(FetterInfoExcelConfigDataJson.class);
+            this.proudSkillConfig = loadJSONArray(ProudSkillExcelConfigDataJson.class);
+            this.fetterCharacterCardConfig = loadJSONArray(FetterCharacterCardExcelConfigDataJson.class);
+            this.homeWorldNPCConfig = loadJSONArray(HomeWorldNPCExcelConfigDataJson.class);
+            this.fetterStoryConfig = loadJSONArray(FetterStoryExcelConfigDataJson.class);
+            this.fettersConfig = loadJSONArray(FettersExcelConfigDataJson.class);
+            this.avatarCodexConfig = loadJSONArray(AvatarCodexExcelConfigDataJson.class);
+            this.weaponConfig = loadJSONArray(WeaponExcelConfigDataJson.class);
+            this.weaponPromoteConfig = loadJSONArray(WeaponPromoteExcelConfigDataJson.class);
+            this.weaponLevelConfig = loadJSONArray(WeaponLevelExcelConfigDataJson.class);
+            this.weaponCurveConfig = loadJSONArray(WeaponCurveExcelConfigDataJson.class);
+            this.reliquaryConfig = loadJSONArray(ReliquaryExcelConfigDataJson.class);
+            this.reliquaryMainPropConfig = loadJSONArray(ReliquaryMainPropExcelConfigDataJson.class);
+            this.reliquaryAffixConfig = loadJSONArray(ReliquaryAffixExcelConfigDataJson.class);
+            this.reliquaryLevelConfig = loadJSONArray(ReliquaryLevelExcelConfigDataJson.class);
+            this.reliquaryCodexConfig = loadJSONArray(ReliquaryCodexExcelConfigDataJson.class);
+            this.reliquarySetConfig = loadJSONArray(ReliquarySetExcelConfigDataJson.class);
+            this.materialConfig = loadJSONArray(MaterialExcelConfigDataJson.class);
+            this.rewardConfig = loadJSONArray(RewardExcelConfigDataJson.class);
+            this.cookBonusConfig = loadJSONArray(CookBonusExcelConfigDataJson.class);
+            this.furnitureSuiteConfig = loadJSONArray(FurnitureSuiteExcelConfigDataJson.class);
+            this.homeWorldFurnitureConfig = loadJSONArray(HomeWorldFurnitureExcelConfigDataJson.class);
+            this.homeWorldFurnitureTypeConfig = loadJSONArray(HomeWorldFurnitureTypeExcelConfigDataJson.class);
+            this.equipAffixConfig = loadJSONArray(EquipAffixExcelConfigDataJson.class);
+            this.materialCodexConfig = loadJSONArray(MaterialCodexExcelConfigDataJson.class);
+            this.booksCodexConfig = loadJSONArray(BooksCodexExcelConfigDataJson.class);
+            this.dungeonConfig = loadJSONArray(DungeonExcelConfigDataJson.class);
+            this.dungeonEntryConfig = loadJSONArray(DungeonEntryExcelConfigDataJson.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public static Database getInstance() {
