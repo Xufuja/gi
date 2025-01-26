@@ -1,6 +1,6 @@
-package dev.xfj.container;
+package dev.xfj.controllers;
 
-import dev.xfj.database.Database;
+import dev.xfj.services.Database;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class WeaponContainer implements Container, Ascendable {
+public class WeaponController implements Container, Ascendable {
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
     private int id;
     private int currentLevel;
@@ -23,11 +23,11 @@ public class WeaponContainer implements Container, Ascendable {
     private int currentAscension;
     private int currentRefinement;
 
-    public WeaponContainer(int id) {
+    public WeaponController(int id) {
         this(id, 1, 0, 0, 1);
     }
 
-    public WeaponContainer(int id, int currentLevel, int currentExperience, int currentAscension, int currentRefinement) {
+    public WeaponController(int id, int currentLevel, int currentExperience, int currentAscension, int currentRefinement) {
         this.id = id;
         this.currentLevel = currentLevel;
         this.currentExperience = currentExperience;

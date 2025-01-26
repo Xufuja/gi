@@ -1,10 +1,10 @@
 package dev.xfj;
 
 import dev.xfj.codex.Codex;
-import dev.xfj.container.ArtifactContainer;
-import dev.xfj.container.CharacterContainer;
-import dev.xfj.container.WeaponContainer;
-import dev.xfj.database.Database;
+import dev.xfj.controllers.ArtifactController;
+import dev.xfj.controllers.CharacterController;
+import dev.xfj.controllers.WeaponController;
+import dev.xfj.services.Database;
 
 public class Main {
     public static void main(String[] args) {
@@ -12,7 +12,7 @@ public class Main {
             System.out.println(Codex.getCharacters());
 
             //CharacterContainer character = new CharacterContainer(10000094);
-            CharacterContainer character = new CharacterContainer(10000107, 80, 0, 5);
+            CharacterController character = new CharacterController(10000107, 80, 0, 5);
             //Database.getInstance().setLanguage("JP");
             System.out.printf("ID: %s\nName: %s\nTitle: %s\nRarity: %s\n",
                     character.getId(), character.getName(), character.getTitle(), character.getRarity());
@@ -53,7 +53,7 @@ public class Main {
 
             System.out.println(Codex.getWeapons());
 
-            WeaponContainer weapon = new WeaponContainer(12514, 80, 0, 5, 5);
+            WeaponController weapon = new WeaponController(12514, 80, 0, 5, 5);
             //Database.getInstance().setLanguage("JP");
             System.out.printf("ID: %s\nName: %s\nTitle: %s\nRarity: %s\n",
                     weapon.getId(), weapon.getName(), weapon.getWeaponType(), weapon.getRarity());
@@ -67,7 +67,7 @@ public class Main {
 
             System.out.println(Codex.getArtifactSets());
 
-            ArtifactContainer artifact = new ArtifactContainer(94543, 20, 0);
+            ArtifactController artifact = new ArtifactController(94543, 20, 0);
             System.out.printf("ID: %s\nSet Name: %s\nName: %s\nTitle: %s\nRarity: %s\n",
                     artifact.getId(), artifact.getSetName(), artifact.getName(), artifact.getArtifactType(), weapon.getRarity());
 

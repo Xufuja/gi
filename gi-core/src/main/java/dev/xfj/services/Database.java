@@ -1,4 +1,4 @@
-package dev.xfj.database;
+package dev.xfj.services;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

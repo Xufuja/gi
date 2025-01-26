@@ -2,7 +2,7 @@ package dev.xfj.codex;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import dev.xfj.database.Database;
+import dev.xfj.services.Database;
 import dev.xfj.jsonschema2pojo.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
 
 public class ItemCodex {

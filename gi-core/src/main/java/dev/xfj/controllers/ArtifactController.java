@@ -1,6 +1,6 @@
-package dev.xfj.container;
+package dev.xfj.controllers;
 
-import dev.xfj.database.Database;
+import dev.xfj.services.Database;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
@@ -15,16 +15,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ArtifactContainer implements Container{
+public class ArtifactController implements Container{
     private int id;
     private int currentLevel;
     private int currentExperience;
 
-    public ArtifactContainer(int id) {
+    public ArtifactController(int id) {
         this(id, 1, 0);
     }
 
-    public ArtifactContainer(int id, int currentLevel, int currentExperience) {
+    public ArtifactController(int id, int currentLevel, int currentExperience) {
         this.id = id;
         this.currentLevel = currentLevel;
         this.currentExperience = currentExperience;

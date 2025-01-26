@@ -1,7 +1,7 @@
-package dev.xfj.container;
+package dev.xfj.controllers;
 
 import dev.xfj.constants.CharacterRarity;
-import dev.xfj.database.Database;
+import dev.xfj.services.Database;
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
@@ -30,7 +30,7 @@ import java.util.stream.IntStream;
 
 import static java.lang.String.format;
 
-public class CharacterContainer implements Container, Ascendable {
+public class CharacterController implements Container, Ascendable {
     private static final String BASE_HP = "FIGHT_PROP_BASE_HP";
     private static final String BASE_DEF = "FIGHT_PROP_BASE_DEFENSE";
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
@@ -40,11 +40,11 @@ public class CharacterContainer implements Container, Ascendable {
     private int currentAscension;
     private Map<Integer, Integer> currentTalentLevels;
 
-    public CharacterContainer(int id) {
+    public CharacterController(int id) {
         this(id, 1, 0, 0);
     }
 
-    public CharacterContainer(int id, int currentLevel, int currentExperience, int currentAscension) {
+    public CharacterController(int id, int currentLevel, int currentExperience, int currentAscension) {
         this.id = id;
         this.currentLevel = currentLevel;
         this.currentExperience = currentExperience;
