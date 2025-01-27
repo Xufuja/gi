@@ -8,7 +8,15 @@
         <outputRelativeToContentRoot value="true" />
         <module name="gi-core" />
         <module name="gi-generator" />
+        <module name="gi-app" />
       </profile>
     </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="gi-app" options="-parameters" />
+      <module name="gi-core" options="-parameters" />
+      <module name="gi-generator" options="-parameters" />
+    </option>
   </component>
 </project>
