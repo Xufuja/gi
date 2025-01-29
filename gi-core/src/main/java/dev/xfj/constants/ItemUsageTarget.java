@@ -1,8 +1,0 @@
-package dev.xfj.constants;
-
-public enum ItemUsageTarget {
-    ITEM_USE_TARGET_CUR_TEAM,
-    ITEM_USE_TARGET_SPECIFY_ALIVE_AVATAR,
-    ITEM_USE_TARGET_PLAYER_AVATAR,
-    ITEM_USE_TARGET_SPECIFY_DEAD_AVATAR
-}
