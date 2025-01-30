@@ -9,8 +9,6 @@ import dev.xfj.core.services.DatabaseService;
 public class Main {
     public static void main(String[] args) {
         try {
-            System.out.println(Codex.getCharacters());
-
             //CharacterContainer character = new CharacterContainer(10000094);
             CharacterContainer character = new CharacterContainer(10000107, 80, 0, 5);
             //Database.getInstance().setLanguage("JP");
