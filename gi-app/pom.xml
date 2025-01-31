@@ -33,6 +33,7 @@
 		<dependency>
 			<groupId>dev.xfj</groupId>
 			<artifactId>gi-core</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
