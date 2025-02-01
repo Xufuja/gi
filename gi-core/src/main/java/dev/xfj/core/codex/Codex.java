@@ -14,13 +14,7 @@ import java.util.stream.Collectors;
 public class Codex {
 
 
-    public static List<WeaponCodex> getWeapons() {
-        return DatabaseService.getInstance().weaponConfig
-                .stream()
-                .sorted(Comparator.comparing(WeaponExcelConfigDataJson::getId))
-                .map(entry -> new WeaponCodex(entry.getId(), DatabaseService.getInstance().getTranslation(entry.getNameTextMapHash())))
-                .collect(Collectors.toList());
-    }
+
 
     public static List<ArtifactSetCodex> getArtifactSets() {
         return DatabaseService.getInstance().reliquaryCodexConfig

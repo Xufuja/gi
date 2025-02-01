@@ -49,8 +49,6 @@ public class Main {
             System.out.println(character.getStories());
             System.out.println(character.getQuotes());
 
-            System.out.println(Codex.getWeapons());
-
             WeaponContainer weapon = new WeaponContainer(12514, 80, 0, 5, 5);
             //Database.getInstance().setLanguage("JP");
             System.out.printf("ID: %s\nName: %s\nTitle: %s\nRarity: %s\n",
