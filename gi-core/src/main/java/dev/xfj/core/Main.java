@@ -75,7 +75,6 @@ public class Main {
             System.out.println(artifact.getArtifactsInSet());
 
             DatabaseService.getInstance().setLanguage("CHS");
-            System.out.println(Codex.getItems());
 
             DatabaseService.getInstance().setLanguage("EN");
             System.out.println(Codex.getBooks());

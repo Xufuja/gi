@@ -24,13 +24,7 @@ public class Codex {
                 .collect(Collectors.toList());
     }
 
-    public static List<ItemCodex> getItems() {
-        return DatabaseService.getInstance().materialCodexConfig
-                .stream()
-                .sorted(Comparator.comparing(MaterialCodexExcelConfigDataJson::getSortOrder))
-                .map(ItemCodex::new)
-                .collect(Collectors.toList());
-    }
+
 
     public static List<BookCodex> getBooks() {
         return DatabaseService.getInstance().booksCodexConfig
