@@ -16,13 +16,7 @@ public class Codex {
 
 
 
-    public static List<ArtifactSetCodex> getArtifactSets() {
-        return DatabaseService.getInstance().reliquaryCodexConfig
-                .stream()
-                .sorted(Comparator.comparing(ReliquaryCodexExcelConfigDataJson::getSortOrder))
-                .map(ArtifactSetCodex::new)
-                .collect(Collectors.toList());
-    }
+
 
 
 
