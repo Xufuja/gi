@@ -1,6 +1,5 @@
 package dev.xfj.core;
 
-import dev.xfj.core.codex.Codex;
 import dev.xfj.core.container.ArtifactContainer;
 import dev.xfj.core.container.CharacterContainer;
 import dev.xfj.core.container.WeaponContainer;
@@ -75,7 +74,6 @@ public class Main {
             DatabaseService.getInstance().setLanguage("CHS");
 
             DatabaseService.getInstance().setLanguage("EN");
-            System.out.println(Codex.getBooks());
 
         } catch (Exception e) {
             e.printStackTrace();
