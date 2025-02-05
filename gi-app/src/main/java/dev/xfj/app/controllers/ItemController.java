@@ -1,7 +1,6 @@
 package dev.xfj.app.controllers;
 
-import dev.xfj.core.dto.ItemCodexDTO;
-import dev.xfj.core.dto.WeaponCodexDTO;
+import dev.xfj.core.dto.codex.ItemCodexDTO;
 import dev.xfj.core.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

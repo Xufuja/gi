@@ -1,4 +1,4 @@
-package dev.xfj.core.dto;
+package dev.xfj.core.dto.codex;
 
 public record ArtifactSetCodexDTO(
         int id,

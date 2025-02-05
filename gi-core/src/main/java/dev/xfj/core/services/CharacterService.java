@@ -1,7 +1,11 @@
 package dev.xfj.core.services;
 
 import dev.xfj.core.codex.CharacterCodex;
-import dev.xfj.core.dto.CharacterCodexDTO;
+import dev.xfj.core.container.CharacterContainer;
+import dev.xfj.core.dto.character.CharacterProfileDTO;
+import dev.xfj.core.dto.character.VoiceActorDTO;
+import dev.xfj.core.dto.codex.CharacterCodexDTO;
+import dev.xfj.core.utils.KeyValue;
 import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +29,35 @@ public class CharacterService {
                         entry.getSortFactor())
                 )
                 .collect(Collectors.toList());
+    }
+
+    public CharacterProfileDTO getCharacter(int characterId, int level, int experience, int ascension) {
+        CharacterContainer character = new CharacterContainer(characterId, level, experience, ascension);
+
+        return new CharacterProfileDTO(
+                character.getId(),
+                character.getName(),
+                character.getTitle(),
+                character.getRarity(),
+                character.getBaseHealth(),
+                character.getBaseAttack(),
+                character.getBaseDefense(),
+                character.getAscensionStat().entrySet().stream()
+                        .findFirst()
+                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .orElse(new KeyValue("", null)),
+                character.getVision(),
+                character.getWeaponType(),
+                character.getConstellation(),
+                character.getNative(),
+                character.getBirthday(),
+                new VoiceActorDTO(
+                        character.getVA("EN"),
+                        character.getVA("CHS"),
+                        character.getVA("JP"),
+                        character.getVA("KR")
+                ),
+                character.getDescription()
+        );
     }
 }

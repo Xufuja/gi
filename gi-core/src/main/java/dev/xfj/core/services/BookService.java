@@ -1,10 +1,8 @@
 package dev.xfj.core.services;
 
 import dev.xfj.core.codex.BookCodex;
-import dev.xfj.core.codex.ItemCodex;
-import dev.xfj.core.dto.ItemCodexDTO;
+import dev.xfj.core.dto.codex.ItemCodexDTO;
 import dev.xfj.jsonschema2pojo.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;

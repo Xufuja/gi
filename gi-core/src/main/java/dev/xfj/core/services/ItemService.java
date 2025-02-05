@@ -1,11 +1,8 @@
 package dev.xfj.core.services;
 
 import dev.xfj.core.codex.ItemCodex;
-import dev.xfj.core.codex.WeaponCodex;
-import dev.xfj.core.dto.ItemCodexDTO;
-import dev.xfj.core.dto.WeaponCodexDTO;
+import dev.xfj.core.dto.codex.ItemCodexDTO;
 import dev.xfj.jsonschema2pojo.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;

@@ -1,7 +1,7 @@
 package dev.xfj.core.services;
 
 import dev.xfj.core.codex.WeaponCodex;
-import dev.xfj.core.dto.WeaponCodexDTO;
+import dev.xfj.core.dto.codex.WeaponCodexDTO;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 import org.springframework.stereotype.Service;
 
