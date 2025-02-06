@@ -2,6 +2,7 @@ package dev.xfj.core.services;
 
 import dev.xfj.core.codex.CharacterCodex;
 import dev.xfj.core.container.CharacterContainer;
+import dev.xfj.core.dto.character.AscensionDTO;
 import dev.xfj.core.dto.character.CharacterProfileDTO;
 import dev.xfj.core.dto.character.VoiceActorDTO;
 import dev.xfj.core.dto.codex.CharacterCodexDTO;
@@ -46,6 +47,17 @@ public class CharacterService {
                         .findFirst()
                         .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
                         .orElse(new KeyValue("", null)),
+                new AscensionDTO(character.getAscensionItems().entrySet()
+                        .stream()
+                        .filter(entry -> entry.getKey() != 0)
+                        .map(entry -> new KeyValue(
+                                DatabaseService.getInstance().getTranslation(
+                                        character.getItem(entry.getKey()).getNameTextMapHash()
+                                ),
+                                entry.getValue())
+                        )
+                        .collect(Collectors.toList()),
+                        character.getAscensionCost()),
                 character.getVision(),
                 character.getWeaponType(),
                 character.getConstellation(),

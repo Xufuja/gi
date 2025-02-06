@@ -16,13 +16,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 public class CharacterController {
-    private static final String PATH = "/v1/characters";
+    private static final String BASE_PATH = "/v1/characters";
 
     @Autowired
     private CharacterService characterService;
 
     @GetMapping(
-            path = PATH,
+            path = BASE_PATH,
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
@@ -30,7 +30,7 @@ public class CharacterController {
         return ResponseEntity.ok(characterService.getCharacters());
     }
     @GetMapping(
-            path = PATH + "/{characterId}",
+            path = BASE_PATH + "/{characterId}",
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
