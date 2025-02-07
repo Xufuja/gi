@@ -9,6 +9,7 @@ import dev.xfj.jsonschema2pojo.weaponlevelexcelconfigdata.WeaponLevelExcelConfig
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.AddProp;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.CostItem;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,6 +17,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WeaponContainer implements Container, Ascendable {
+    @Autowired
+    private DatabaseService databaseService;
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
     private int id;
     private int currentLevel;
@@ -42,7 +45,7 @@ public class WeaponContainer implements Container, Ascendable {
 
     @Override
     public String getName() {
-        return DatabaseService.getInstance().getTranslation(getWeapon().getNameTextMapHash());
+        return databaseService.getTranslation(getWeapon().getNameTextMapHash());
     }
 
     public String getWeaponType() {
@@ -88,13 +91,13 @@ public class WeaponContainer implements Container, Ascendable {
 
     public String getEffect() {
         EquipAffixExcelConfigDataJson details = getRefinementDetails(currentRefinement);
-        return String.format("%s\n%s", DatabaseService.getInstance().getTranslation(details.getNameTextMapHash()),
-                DatabaseService.getInstance().getTranslation(details.getDescTextMapHash()));
+        return String.format("%s\n%s", databaseService.getTranslation(details.getNameTextMapHash()),
+                databaseService.getTranslation(details.getDescTextMapHash()));
     }
 
     @Override
     public String getDescription() {
-        return DatabaseService.getInstance().getTranslation(getWeapon().getDescTextMapHash());
+        return databaseService.getTranslation(getWeapon().getDescTextMapHash());
     }
 
     @Override
@@ -145,7 +148,7 @@ public class WeaponContainer implements Container, Ascendable {
                 .stream()
                 .filter(id -> id.getKey() != 0)
                 .collect(Collectors.toMap(
-                        item -> DatabaseService.getInstance().getTranslation(getItem(item.getKey()).getNameTextMapHash()),
+                        item -> databaseService.getTranslation(getItem(item.getKey()).getNameTextMapHash()),
                         Map.Entry::getValue
                 ));
     }
@@ -157,7 +160,7 @@ public class WeaponContainer implements Container, Ascendable {
 
     @Override
     public Integer getMaxLevel() {
-        return DatabaseService.getInstance().weaponLevelConfig
+        return databaseService.weaponLevelConfig
                 .stream()
                 .max(Comparator.comparing(WeaponLevelExcelConfigDataJson::getLevel))
                 .stream()
@@ -190,7 +193,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private double getCurveMultiplier(String curveType) {
-        return DatabaseService.getInstance().weaponCurveConfig
+        return databaseService.weaponCurveConfig
                 .stream()
                 .filter(level -> level.getLevel() == currentLevel)
                 .flatMap(curves -> curves.getCurveInfos().stream())
@@ -210,7 +213,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private WeaponExcelConfigDataJson getWeapon() {
-        return DatabaseService.getInstance().weaponConfig
+        return databaseService.weaponConfig
                 .stream()
                 .filter(weapon -> weapon.getId() == id)
                 .findFirst()
@@ -218,7 +221,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private Map<Integer, WeaponPromoteExcelConfigDataJson> getAscensions(int promoteId) {
-        return DatabaseService.getInstance().weaponPromoteConfig
+        return databaseService.weaponPromoteConfig
                 .stream()
                 .filter(ascension -> ascension.getWeaponPromoteId() == promoteId)
                 .collect(Collectors.toMap(
@@ -228,7 +231,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private int getMaxAscensions(int promoteId) {
-        return DatabaseService.getInstance().weaponPromoteConfig
+        return databaseService.weaponPromoteConfig
                 .stream()
                 .filter(ascension -> ascension.getWeaponPromoteId() == promoteId)
                 .max(Comparator.comparing(WeaponPromoteExcelConfigDataJson::getPromoteLevel))
@@ -239,7 +242,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private Map<Integer, EquipAffixExcelConfigDataJson> getAffixes(int affixId) {
-        return DatabaseService.getInstance().equipAffixConfig
+        return databaseService.equipAffixConfig
                 .stream()
                 .filter(affix -> affix.getId() == affixId)
                 .collect(Collectors.toMap(
@@ -262,7 +265,7 @@ public class WeaponContainer implements Container, Ascendable {
     }
 
     private int getExpRequired(int rarity, int startingLevel, int targetLevel) {
-        return DatabaseService.getInstance().weaponLevelConfig
+        return databaseService.weaponLevelConfig
                 .stream()
                 .filter(level -> level.getLevel() >= startingLevel)
                 .filter(level -> level.getLevel() < targetLevel)

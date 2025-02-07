@@ -23,6 +23,9 @@ import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJs
 import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardItem;
 import dev.xfj.core.utils.Interpolator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,7 +33,10 @@ import java.util.stream.IntStream;
 
 import static java.lang.String.format;
 
+@Component
+@Scope("prototype")
 public class CharacterContainer implements Container, Ascendable {
+    private final DatabaseService databaseService;
     private static final String BASE_HP = "FIGHT_PROP_BASE_HP";
     private static final String BASE_DEF = "FIGHT_PROP_BASE_DEFENSE";
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
@@ -40,22 +46,10 @@ public class CharacterContainer implements Container, Ascendable {
     private int currentAscension;
     private Map<Integer, Integer> currentTalentLevels;
 
-    public CharacterContainer(int id) {
-        this(id, 1, 0, 0);
-    }
 
-    public CharacterContainer(int id, int currentLevel, int currentExperience, int currentAscension) {
-        this.id = id;
-        this.currentLevel = currentLevel;
-        this.currentExperience = currentExperience;
-        this.currentAscension = currentAscension;
-        this.currentTalentLevels = getTalents().keySet()
-                .stream()
-                .map(AvatarSkillExcelConfigDataJson::getId)
-                .collect(Collectors.toMap(
-                        skillId -> skillId,
-                        level -> 1
-                ));
+    @Autowired
+    public CharacterContainer(DatabaseService databaseService) {
+        this.databaseService = databaseService;
     }
 
     @Override
@@ -65,11 +59,11 @@ public class CharacterContainer implements Container, Ascendable {
 
     @Override
     public String getName() {
-        return DatabaseService.getInstance().getTranslation(getAvatar().getNameTextMapHash());
+        return databaseService.getTranslation(getAvatar().getNameTextMapHash());
     }
 
     public String getTitle() {
-        return DatabaseService.getInstance().getTranslation(getFetterInfo().getAvatarTitleTextMapHash());
+        return databaseService.getTranslation(getFetterInfo().getAvatarTitleTextMapHash());
     }
 
     @Override
@@ -157,7 +151,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     public String getVision() {
-        return DatabaseService.getInstance().getTranslation(getFetterInfo().getAvatarVisionBeforTextMapHash());
+        return databaseService.getTranslation(getFetterInfo().getAvatarVisionBeforTextMapHash());
     }
 
     public String getWeaponType() {
@@ -165,11 +159,11 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     public String getConstellation() {
-        return DatabaseService.getInstance().getTranslation(getFetterInfo().getAvatarConstellationBeforTextMapHash());
+        return databaseService.getTranslation(getFetterInfo().getAvatarConstellationBeforTextMapHash());
     }
 
     public String getNative() {
-        return DatabaseService.getInstance().getTranslation(getFetterInfo().getAvatarNativeTextMapHash());
+        return databaseService.getTranslation(getFetterInfo().getAvatarNativeTextMapHash());
     }
 
     public String getBirthday() {
@@ -179,17 +173,17 @@ public class CharacterContainer implements Container, Ascendable {
 
     public String getVA(String language) {
         return switch (language) {
-            case "EN" -> DatabaseService.getInstance().getTranslation(getFetterInfo().getCvEnglishTextMapHash());
-            case "JP" -> DatabaseService.getInstance().getTranslation(getFetterInfo().getCvJapaneseTextMapHash());
-            case "CHS" -> DatabaseService.getInstance().getTranslation(getFetterInfo().getCvChineseTextMapHash());
-            case "KR" -> DatabaseService.getInstance().getTranslation(getFetterInfo().getCvKoreanTextMapHash());
+            case "EN" -> databaseService.getTranslation(getFetterInfo().getCvEnglishTextMapHash());
+            case "JP" -> databaseService.getTranslation(getFetterInfo().getCvJapaneseTextMapHash());
+            case "CHS" -> databaseService.getTranslation(getFetterInfo().getCvChineseTextMapHash());
+            case "KR" -> databaseService.getTranslation(getFetterInfo().getCvKoreanTextMapHash());
             default -> "No VA available";
         };
     }
 
     @Override
     public String getDescription() {
-        return DatabaseService.getInstance().getTranslation(getFetterInfo().getAvatarDetailTextMapHash());
+        return databaseService.getTranslation(getFetterInfo().getAvatarDetailTextMapHash());
     }
 
     public Map<AvatarSkillExcelConfigDataJson, Map<Integer, ProudSkillExcelConfigDataJson>> getTalents() {
@@ -251,15 +245,15 @@ public class CharacterContainer implements Container, Ascendable {
                     .get(level);
 
             stringBuilder
-                    .append(DatabaseService.getInstance().getTranslation(skillDetails.getNameTextMapHash()))
+                    .append(databaseService.getTranslation(skillDetails.getNameTextMapHash()))
                     .append("\n")
-                    .append(DatabaseService.getInstance().getTranslation(skillDetails.getDescTextMapHash()))
+                    .append(databaseService.getTranslation(skillDetails.getDescTextMapHash()))
                     .append("\n")
                     .append(format("Level: %s\n", level));
 
             levelDetails.getParamDescList()
                     .forEach(parameter -> {
-                        String value = DatabaseService.getInstance().getTranslation(parameter);
+                        String value = databaseService.getTranslation(parameter);
                         if (value != null) {
                             stringBuilder
                                     .append(interpolator.interpolate(value, levelDetails.getParamList()))
@@ -282,14 +276,14 @@ public class CharacterContainer implements Container, Ascendable {
         Interpolator interpolator = new Interpolator();
 
         stringBuilder
-                .append(DatabaseService.getInstance().getTranslation(passive.getNameTextMapHash()))
+                .append(databaseService.getTranslation(passive.getNameTextMapHash()))
                 .append("\n")
-                .append(DatabaseService.getInstance().getTranslation(passive.getDescTextMapHash()))
+                .append(databaseService.getTranslation(passive.getDescTextMapHash()))
                 .append("\n");
 
         passive.getParamDescList()
                 .forEach(parameter -> {
-                    String value = DatabaseService.getInstance().getTranslation(parameter);
+                    String value = databaseService.getTranslation(parameter);
                     if (value != null) {
                         stringBuilder
                                 .append(interpolator.interpolate(value, passive.getParamList()))
@@ -315,8 +309,8 @@ public class CharacterContainer implements Container, Ascendable {
                             AvatarTalentExcelConfigDataJson current = constellations.get(i);
                             return String.format("%s. %s\n%s\n",
                                     i + 1,
-                                    DatabaseService.getInstance().getTranslation(current.getNameTextMapHash()),
-                                    DatabaseService.getInstance().getTranslation(current.getDescTextMapHash()));
+                                    databaseService.getTranslation(current.getNameTextMapHash()),
+                                    databaseService.getTranslation(current.getDescTextMapHash()));
                         },
                         (a, b) -> b, //There are no duplicates, but need to specify something to select LinkedHashMap
                         LinkedHashMap::new
@@ -329,7 +323,7 @@ public class CharacterContainer implements Container, Ascendable {
                 .stream()
                 .filter(id -> id.getKey() != 0)
                 .collect(Collectors.toMap(
-                        item -> DatabaseService.getInstance().getTranslation(getItem(item.getKey()).getNameTextMapHash()),
+                        item -> databaseService.getTranslation(getItem(item.getKey()).getNameTextMapHash()),
                         Map.Entry::getValue
                 ));
     }
@@ -346,7 +340,7 @@ public class CharacterContainer implements Container, Ascendable {
                 .flatMap(costs -> costs.getCostItems().stream())
                 .filter(id -> id.getId() != 0)
                 .collect(Collectors.toMap(
-                        item -> DatabaseService.getInstance().getTranslation(getItem(item.getId()).getNameTextMapHash()),
+                        item -> databaseService.getTranslation(getItem(item.getId()).getNameTextMapHash()),
                         dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.CostItem::getCount,
                         Integer::sum
                 ));
@@ -362,7 +356,7 @@ public class CharacterContainer implements Container, Ascendable {
 
     @Override
     public Integer getMaxLevel() {
-        return DatabaseService.getInstance().levelConfig
+        return databaseService.levelConfig
                 .stream()
                 .max(Comparator.comparing(AvatarLevelExcelConfigDataJson::getLevel))
                 .stream()
@@ -392,7 +386,7 @@ public class CharacterContainer implements Container, Ascendable {
                 .stream()
                 .map(this::getItem)
                 .collect(Collectors.toMap(
-                        book -> DatabaseService.getInstance().getTranslation(book.getNameTextMapHash()),
+                        book -> databaseService.getTranslation(book.getNameTextMapHash()),
                         MaterialExcelConfigDataJson::getId
                 ));
 
@@ -416,22 +410,22 @@ public class CharacterContainer implements Container, Ascendable {
     public String getNameCardDescription() {
         MaterialExcelConfigDataJson card = getCharacterCard();
         return format("%s\n%s",
-                DatabaseService.getInstance().getTranslation(card.getNameTextMapHash()),
-                DatabaseService.getInstance().getTranslation(card.getDescTextMapHash())
+                databaseService.getTranslation(card.getNameTextMapHash()),
+                databaseService.getTranslation(card.getDescTextMapHash())
         );
     }
 
     public String getSpecialtyFoodName() {
-        return DatabaseService.getInstance().getTranslation(getSpecialtyFood().getNameTextMapHash());
+        return databaseService.getTranslation(getSpecialtyFood().getNameTextMapHash());
     }
 
     public String getOutfits() {
         StringBuilder stringBuilder = new StringBuilder();
         getCostumes()
                 .forEach(costume -> {
-                    stringBuilder.append(DatabaseService.getInstance().getTranslation(costume.getNameTextMapHash()));
+                    stringBuilder.append(databaseService.getTranslation(costume.getNameTextMapHash()));
                     stringBuilder.append("\n");
-                    stringBuilder.append(DatabaseService.getInstance().getTranslation(costume.getDescTextMapHash()));
+                    stringBuilder.append(databaseService.getTranslation(costume.getDescTextMapHash()));
                     stringBuilder.append("\n");
                 });
         return stringBuilder.toString();
@@ -445,11 +439,11 @@ public class CharacterContainer implements Container, Ascendable {
         stringBuilder.append(format("Comfort: %s\n", furniture.getComfort()));
         stringBuilder.append(format("Load: %s\n", furniture.getCost()));
         stringBuilder.append(format("Rarity: %s\n", furniture.getRankLevel()));
-        stringBuilder.append(DatabaseService.getInstance().getTranslation(furniture.getDescTextMapHash())).append("\n");
+        stringBuilder.append(databaseService.getTranslation(furniture.getDescTextMapHash())).append("\n");
 
         getPreferredFurnitureSets()
                 .forEach(set -> stringBuilder
-                        .append(DatabaseService.getInstance().getTranslation(set.getSuiteNameTextMapHash()))
+                        .append(databaseService.getTranslation(set.getSuiteNameTextMapHash()))
                         .append("\n"));
 
         return stringBuilder.toString();
@@ -459,18 +453,18 @@ public class CharacterContainer implements Container, Ascendable {
         StringBuilder stringBuilder = new StringBuilder();
         getFetterStories()
                 .forEach(story -> {
-                    stringBuilder.append(DatabaseService.getInstance().getTranslation(story.getStoryTitleTextMapHash())).append("\n");
+                    stringBuilder.append(databaseService.getTranslation(story.getStoryTitleTextMapHash())).append("\n");
                     if (story.getOpenConds()
                             .stream()
                             .anyMatch(condition -> "FETTER_COND_FETTER_LEVEL".equals(condition.getCondType()))
                     ) {
-                        stringBuilder.append(DatabaseService.getInstance().getTranslation(story.getTips()
+                        stringBuilder.append(databaseService.getTranslation(story.getTips()
                                 .stream()
                                 .findFirst()
                                 .orElse(null))).append("\n");
                     }
 
-                    stringBuilder.append(DatabaseService.getInstance().getTranslation(story.getStoryContextTextMapHash())).append("\n");
+                    stringBuilder.append(databaseService.getTranslation(story.getStoryContextTextMapHash())).append("\n");
                 });
 
         return stringBuilder.toString();
@@ -480,18 +474,18 @@ public class CharacterContainer implements Container, Ascendable {
         StringBuilder stringBuilder = new StringBuilder();
         getFetters()
                 .forEach(story -> {
-                    stringBuilder.append(DatabaseService.getInstance().getTranslation(story.getVoiceTitleTextMapHash())).append("\n");
+                    stringBuilder.append(databaseService.getTranslation(story.getVoiceTitleTextMapHash())).append("\n");
                     if (story.getOpenConds()
                             .stream()
                             .anyMatch(condition -> "FETTER_COND_FETTER_LEVEL".equals(condition.getCondType()))
                     ) {
-                        stringBuilder.append(DatabaseService.getInstance().getTranslation(story.getTips()
+                        stringBuilder.append(databaseService.getTranslation(story.getTips()
                                 .stream()
                                 .findFirst()
                                 .orElse(null))).append("\n");
                     }
 
-                    stringBuilder.append(DatabaseService.getInstance().getTranslation(story.getVoiceFileTextTextMapHash())).append("\n");
+                    stringBuilder.append(databaseService.getTranslation(story.getVoiceFileTextTextMapHash())).append("\n");
                 });
 
         return stringBuilder.toString();
@@ -513,7 +507,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private double getCurveMultiplier(String curveType) {
-        return DatabaseService.getInstance().avatarCurveConfig
+        return databaseService.avatarCurveConfig
                 .stream()
                 .filter(level -> level.getLevel() == currentLevel)
                 .flatMap(curves -> curves.getCurveInfos().stream())
@@ -533,7 +527,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private AvatarExcelConfigDataJson getAvatar() {
-        return DatabaseService.getInstance().avatarConfig
+        return databaseService.avatarConfig
                 .stream()
                 .filter(character -> character.getId() == id)
                 .findFirst()
@@ -541,7 +535,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private FetterInfoExcelConfigDataJson getFetterInfo() {
-        return DatabaseService.getInstance().fetterInfoConfig
+        return databaseService.fetterInfoConfig
                 .stream()
                 .filter(character -> character.getAvatarId() == id)
                 .findFirst()
@@ -549,7 +543,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private Map<Integer, AvatarPromoteExcelConfigDataJson> getAscensions(int promoteId) {
-        return DatabaseService.getInstance().avatarPromoteConfig
+        return databaseService.avatarPromoteConfig
                 .stream()
                 .filter(ascension -> ascension.getAvatarPromoteId() == promoteId)
                 .collect(Collectors.toMap(
@@ -559,7 +553,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private int getMaxAscensions(int promoteId) {
-        return DatabaseService.getInstance().avatarPromoteConfig
+        return databaseService.avatarPromoteConfig
                 .stream()
                 .filter(ascension -> ascension.getAvatarPromoteId() == promoteId)
                 .max(Comparator.comparing(AvatarPromoteExcelConfigDataJson::getPromoteLevel))
@@ -570,7 +564,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private AvatarSkillDepotExcelConfigDataJson getSkillDepot() {
-        return DatabaseService.getInstance().skillDepotConfig
+        return databaseService.skillDepotConfig
                 .stream()
                 .filter(depot -> depot.getId() == getAvatar().getSkillDepotId())
                 .findFirst()
@@ -578,7 +572,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private AvatarSkillExcelConfigDataJson getSkill(int id) {
-        return DatabaseService.getInstance().skillConfig
+        return databaseService.skillConfig
                 .stream()
                 .filter(skill -> skill.getId() == id)
                 .findFirst()
@@ -586,7 +580,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private ProudSkillExcelConfigDataJson getPassive(int id) {
-        return DatabaseService.getInstance().proudSkillConfig
+        return databaseService.proudSkillConfig
                 .stream()
                 .filter(passive -> passive.getProudSkillGroupId() == id)
                 .findFirst()
@@ -594,7 +588,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private Map<Integer, ProudSkillExcelConfigDataJson> getTalentLevels(int proudSkillGroupId) {
-        return DatabaseService.getInstance().proudSkillConfig
+        return databaseService.proudSkillConfig
                 .stream()
                 .filter(talent -> talent.getProudSkillGroupId() == proudSkillGroupId)
                 .collect(Collectors.toMap(
@@ -604,7 +598,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private AvatarTalentExcelConfigDataJson getConstellation(int id) {
-        return DatabaseService.getInstance().avatarTalentConfig
+        return databaseService.avatarTalentConfig
                 .stream()
                 .filter(constellation -> constellation.getTalentId() == id)
                 .findFirst()
@@ -612,7 +606,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private Map<Integer, Integer> getExpBooks() {
-        return DatabaseService.getInstance().materialConfig
+        return databaseService.materialConfig
                 .stream()
                 .filter(item -> "MATERIAL_EXP_FRUIT".equals(item.getMaterialType()))
                 .collect(Collectors.toMap(
@@ -628,7 +622,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private int getExpRequired(int startingLevel, int targetLevel) {
-        return DatabaseService.getInstance().levelConfig
+        return databaseService.levelConfig
                 .stream()
                 .filter(level -> level.getLevel() >= startingLevel)
                 .filter(level -> level.getLevel() < targetLevel)
@@ -666,7 +660,7 @@ public class CharacterContainer implements Container, Ascendable {
                 booksNeeded++;
             }
 
-            result.put(DatabaseService.getInstance().getTranslation(getItem(entry.getKey()).getNameTextMapHash()), booksNeeded);
+            result.put(databaseService.getTranslation(getItem(entry.getKey()).getNameTextMapHash()), booksNeeded);
             expRemaining -= booksNeeded * expProvided;
         }
 
@@ -683,8 +677,8 @@ public class CharacterContainer implements Container, Ascendable {
                 .toList();
 
         for (int i = 0; i < expBookIds.size() - 1; i++) {
-            String current = DatabaseService.getInstance().getTranslation(getItem(expBookIds.get(i)).getNameTextMapHash());
-            String next = DatabaseService.getInstance().getTranslation(getItem(expBookIds.get(i + 1)).getNameTextMapHash());
+            String current = databaseService.getTranslation(getItem(expBookIds.get(i)).getNameTextMapHash());
+            String next = databaseService.getTranslation(getItem(expBookIds.get(i + 1)).getNameTextMapHash());
 
             if (getCostForExpItem(expBookIds.get(i)) * input.get(current) >= getCostForExpItem(expBookIds.get(i + 1))) {
                 input.put(current, 0);
@@ -705,9 +699,9 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private MaterialExcelConfigDataJson getCharacterCard() {
-        return getItem(DatabaseService.getInstance().rewardConfig
+        return getItem(databaseService.rewardConfig
                 .stream()
-                .filter(reward -> reward.getRewardId() == DatabaseService.getInstance().fetterCharacterCardConfig
+                .filter(reward -> reward.getRewardId() == databaseService.fetterCharacterCardConfig
                         .stream()
                         .filter(character -> character.getAvatarId() == getAvatar().getId())
                         .mapToInt(FetterCharacterCardExcelConfigDataJson::getRewardId)
@@ -724,7 +718,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private MaterialExcelConfigDataJson getSpecialtyFood() {
-        return getItem(DatabaseService.getInstance().cookBonusConfig
+        return getItem(databaseService.cookBonusConfig
                 .stream()
                 .filter(id -> id.getAvatarId() == getAvatar().getId())
                 .flatMap(entry -> entry.getParamVec().stream())
@@ -734,14 +728,14 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private List<AvatarCostumeExcelConfigDataJson> getCostumes() {
-        return DatabaseService.getInstance().avatarCostumeConfig
+        return databaseService.avatarCostumeConfig
                 .stream()
                 .filter(id -> id.getCharacterId() == getAvatar().getId())
                 .collect(Collectors.toList());
     }
 
     private int getFurnitureId() {
-        return DatabaseService.getInstance().homeWorldNPCConfig
+        return databaseService.homeWorldNPCConfig
                 .stream()
                 .filter(id -> id.getAvatarID() == getAvatar().getId())
                 .mapToInt(HomeWorldNPCExcelConfigDataJson::getFurnitureID)
@@ -750,7 +744,7 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private HomeWorldFurnitureExcelConfigDataJson getFurnitureDetails() {
-        return DatabaseService.getInstance().homeWorldFurnitureConfig
+        return databaseService.homeWorldFurnitureConfig
                 .stream()
                 .filter(id -> id.getId() == getFurnitureId())
                 .findFirst()
@@ -758,30 +752,30 @@ public class CharacterContainer implements Container, Ascendable {
     }
 
     private String getFurnitureType(int id) {
-        return DatabaseService.getInstance().homeWorldFurnitureTypeConfig
+        return databaseService.homeWorldFurnitureTypeConfig
                 .stream()
                 .filter(type -> type.getTypeID() == id)
-                .map(name -> DatabaseService.getInstance().getTranslation(name.getTypeNameTextMapHash()))
+                .map(name -> databaseService.getTranslation(name.getTypeNameTextMapHash()))
                 .findFirst()
                 .orElse(null);
     }
 
     private List<FurnitureSuiteExcelConfigDataJson> getPreferredFurnitureSets() {
-        return DatabaseService.getInstance().furnitureSuiteConfig
+        return databaseService.furnitureSuiteConfig
                 .stream()
                 .filter(furniture -> furniture.getFavoriteNpcExcelIdVec().contains(getAvatar().getId()))
                 .collect(Collectors.toList());
     }
 
     private List<FetterStoryExcelConfigDataJson> getFetterStories() {
-        return DatabaseService.getInstance().fetterStoryConfig
+        return databaseService.fetterStoryConfig
                 .stream()
                 .filter(id -> id.getAvatarId() == getAvatar().getId())
                 .collect(Collectors.toList());
     }
 
     private List<FettersExcelConfigDataJson> getFetters() {
-        return DatabaseService.getInstance().fettersConfig
+        return databaseService.fettersConfig
                 .stream()
                 .filter(id -> id.getAvatarId() == getAvatar().getId())
                 .collect(Collectors.toList());
@@ -825,5 +819,15 @@ public class CharacterContainer implements Container, Ascendable {
 
     public void setCurrentTalentLevel(int skillIndex, int skillLevel) {
         currentTalentLevels.put(getLevelableSkills().get(skillIndex), skillLevel);
+    }
+
+    public void resetCurrentTalentLevels() {
+        currentTalentLevels = getTalents().keySet()
+                .stream()
+                .map(AvatarSkillExcelConfigDataJson::getId)
+                .collect(Collectors.toMap(
+                        skillId -> skillId,
+                        level -> 1
+                ));
     }
 }

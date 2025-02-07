@@ -47,6 +47,7 @@ import dev.xfj.jsonschema2pojo.weaponcurveexcelconfigdata.WeaponCurveExcelConfig
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponlevelexcelconfigdata.WeaponLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
+import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -60,8 +61,8 @@ import java.util.stream.Collectors;
 import static dev.xfj.core.constants.DataPath.EXCEL_BIN_OUTPUT;
 import static dev.xfj.core.constants.DataPath.TEXT_MAP;
 
+@Service
 public class DatabaseService {
-    public static DatabaseService instance;
     public Map<String, String> languageMap;
     public final List<ManualTextMapConfigDataJson> manualTextMapConfig;
     public final List<AvatarExcelConfigDataJson> avatarConfig;
@@ -151,19 +152,6 @@ public class DatabaseService {
             throw new RuntimeException(e.getMessage());
         }
     }
-
-    public static DatabaseService getInstance() {
-        if (instance == null) {
-            try {
-                instance = new DatabaseService();
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-
-        return instance;
-    }
-
 
     public void setLanguage(String language) {
         try {

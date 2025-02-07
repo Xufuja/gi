@@ -3,6 +3,7 @@ package dev.xfj.core.services;
 import dev.xfj.core.codex.BookCodex;
 import dev.xfj.core.dto.codex.ItemCodexDTO;
 import dev.xfj.jsonschema2pojo.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -11,8 +12,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookService {
+    private final DatabaseService databaseService;
+
+    @Autowired
+    public BookService(DatabaseService databaseService) {
+        this.databaseService = databaseService;
+    }
+
     public List<ItemCodexDTO> getBooks() {
-        return DatabaseService.getInstance().booksCodexConfig
+        return databaseService.booksCodexConfig
                 .stream()
                 .sorted(Comparator.comparing(BooksCodexExcelConfigDataJson::getSortOrder))
                 .map(BookCodex::new)

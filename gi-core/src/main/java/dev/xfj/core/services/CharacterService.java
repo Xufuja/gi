@@ -8,6 +8,8 @@ import dev.xfj.core.dto.character.VoiceActorDTO;
 import dev.xfj.core.dto.codex.CharacterCodexDTO;
 import dev.xfj.core.utils.KeyValue;
 import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -16,8 +18,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class CharacterService {
+    private final DatabaseService databaseService;
+    private final ObjectProvider<CharacterContainer> characterProvider;
+
+    @Autowired
+    public CharacterService(DatabaseService databaseService, ObjectProvider<CharacterContainer> characterProvider) {
+        this.databaseService = databaseService;
+        this.characterProvider = characterProvider;
+    }
+
+
     public List<CharacterCodexDTO> getCharacters() {
-        return DatabaseService.getInstance().avatarCodexConfig
+        return databaseService.avatarCodexConfig
                 .stream()
                 .sorted(Comparator.comparing(AvatarCodexExcelConfigDataJson::getSortFactor))
                 .map(CharacterCodex::new)
@@ -33,7 +45,12 @@ public class CharacterService {
     }
 
     public CharacterProfileDTO getCharacter(int characterId, int level, int experience, int ascension) {
-        CharacterContainer character = new CharacterContainer(characterId, level, experience, ascension);
+        CharacterContainer character = characterProvider.getObject();
+        character.setId(characterId);
+        character.setCurrentLevel(level);
+        character.setCurrentExperience(experience);
+        character.setCurrentAscension(ascension);
+        character.resetCurrentTalentLevels();
 
         return new CharacterProfileDTO(
                 character.getId(),
@@ -51,7 +68,7 @@ public class CharacterService {
                         .stream()
                         .filter(entry -> entry.getKey() != 0)
                         .map(entry -> new KeyValue(
-                                DatabaseService.getInstance().getTranslation(
+                                databaseService.getTranslation(
                                         character.getItem(entry.getKey()).getNameTextMapHash()
                                 ),
                                 entry.getValue())

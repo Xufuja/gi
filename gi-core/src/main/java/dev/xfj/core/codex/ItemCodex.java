@@ -4,8 +4,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dev.xfj.core.services.DatabaseService;
 import dev.xfj.jsonschema2pojo.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ItemCodex {
+    @Autowired
+    private DatabaseService databaseService;
     private final MaterialCodexExcelConfigDataJson data;
 
     public ItemCodex(MaterialCodexExcelConfigDataJson data) {
@@ -17,11 +20,11 @@ public class ItemCodex {
     }
 
     public String getName() {
-        return DatabaseService.getInstance().getTranslation(data.getNameTextMapHash());
+        return databaseService.getTranslation(data.getNameTextMapHash());
     }
 
     public String getDescription() {
-        return DatabaseService.getInstance().getTranslation(data.getDescTextMapHash());
+        return databaseService.getTranslation(data.getDescTextMapHash());
     }
 
     public int getSortFactor() {

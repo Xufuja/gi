@@ -5,8 +5,11 @@ import com.google.gson.JsonObject;
 import dev.xfj.core.services.DatabaseService;
 import dev.xfj.jsonschema2pojo.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class BookCodex {
+    @Autowired
+    private DatabaseService databaseService;
     private final BooksCodexExcelConfigDataJson data;
 
     public BookCodex(BooksCodexExcelConfigDataJson data) {
@@ -18,11 +21,11 @@ public class BookCodex {
     }
 
     public String getName() {
-        return DatabaseService.getInstance().getTranslation(getItem().getNameTextMapHash());
+        return databaseService.getTranslation(getItem().getNameTextMapHash());
     }
 
     public String getDescription() {
-        return DatabaseService.getInstance().getTranslation(getItem().getDescTextMapHash());
+        return databaseService.getTranslation(getItem().getDescTextMapHash());
     }
 
     public int getSortFactor() {
@@ -41,7 +44,7 @@ public class BookCodex {
     }
 
     private MaterialExcelConfigDataJson getItem() {
-        return DatabaseService.getInstance().materialConfig
+        return databaseService.materialConfig
                 .stream()
                 .filter(item -> item.getId() == data.getMaterialId())
                 .findFirst()

@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 public record WeaponCodex(int id, String name) {
-
     public int getSortFactor() {
         return id;
     }

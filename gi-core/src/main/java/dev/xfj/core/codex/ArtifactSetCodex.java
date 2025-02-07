@@ -7,10 +7,13 @@ import com.google.gson.JsonObject;
 import dev.xfj.core.services.DatabaseService;
 import dev.xfj.jsonschema2pojo.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 
 public class ArtifactSetCodex {
+    @Autowired
+    private DatabaseService databaseService;
     private final ReliquaryCodexExcelConfigDataJson data;
 
     public ArtifactSetCodex(ReliquaryCodexExcelConfigDataJson data) {
@@ -65,7 +68,7 @@ public class ArtifactSetCodex {
     }
 
     private ReliquaryExcelConfigDataJson getArtifact(int id) {
-        return DatabaseService.getInstance().reliquaryConfig
+        return databaseService.reliquaryConfig
                 .stream()
                 .filter(artifact -> artifact.getId() == id)
                 .findFirst()
@@ -74,7 +77,7 @@ public class ArtifactSetCodex {
 
     private String getName(ReliquaryExcelConfigDataJson artifact) {
         if (artifact != null) {
-            return DatabaseService.getInstance().getTranslation(artifact.getNameTextMapHash());
+            return databaseService.getTranslation(artifact.getNameTextMapHash());
         } else {
             return "";
         }

@@ -8,6 +8,7 @@ import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.AddProp;
 import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarymainpropexcelconfigdata.ReliquaryMainPropExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Comparator;
 import java.util.List;
@@ -15,7 +16,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ArtifactContainer implements Container{
+public class ArtifactContainer implements Container {
+    @Autowired
+    private DatabaseService databaseService;
     private int id;
     private int currentLevel;
     private int currentExperience;
@@ -39,13 +42,13 @@ public class ArtifactContainer implements Container{
         return getAffixes(getArtifactSet().getEquipAffixId()).values()
                 .stream()
                 .findFirst()
-                .map(entry -> DatabaseService.getInstance().getTranslation(entry.getNameTextMapHash()))
+                .map(entry -> databaseService.getTranslation(entry.getNameTextMapHash()))
                 .orElse(null);
     }
 
     @Override
     public String getName() {
-        return DatabaseService.getInstance().getTranslation(getArtifact().getNameTextMapHash());
+        return databaseService.getTranslation(getArtifact().getNameTextMapHash());
     }
 
     public String getArtifactType() {
@@ -62,7 +65,7 @@ public class ArtifactContainer implements Container{
 
         List<String> bonuses = getAffixes(set.getEquipAffixId()).values()
                 .stream()
-                .map(entry -> DatabaseService.getInstance().getTranslation(entry.getDescTextMapHash()))
+                .map(entry -> databaseService.getTranslation(entry.getDescTextMapHash()))
                 .toList();
 
         return IntStream.range(0, set.getSetNeedNum().size())
@@ -75,7 +78,7 @@ public class ArtifactContainer implements Container{
 
     @Override
     public String getDescription() {
-        return DatabaseService.getInstance().getTranslation(getArtifact().getDescTextMapHash());
+        return databaseService.getTranslation(getArtifact().getDescTextMapHash());
     }
 
     public Map<String, Map<Integer, Double>> getMainStats() {
@@ -115,7 +118,7 @@ public class ArtifactContainer implements Container{
     }
 
     private ReliquaryExcelConfigDataJson getArtifact() {
-        return DatabaseService.getInstance().reliquaryConfig
+        return databaseService.reliquaryConfig
                 .stream()
                 .filter(artifact -> artifact.getId() == id)
                 .findFirst()
@@ -123,7 +126,7 @@ public class ArtifactContainer implements Container{
     }
 
     private ReliquarySetExcelConfigDataJson getArtifactSet() {
-        return DatabaseService.getInstance().reliquarySetConfig
+        return databaseService.reliquarySetConfig
                 .stream()
                 .filter(set -> set.getSetId() == getArtifact().getSetId())
                 .findAny()
@@ -131,7 +134,7 @@ public class ArtifactContainer implements Container{
     }
 
     private Map<Integer, EquipAffixExcelConfigDataJson> getAffixes(int affixId) {
-        return DatabaseService.getInstance().equipAffixConfig
+        return databaseService.equipAffixConfig
                 .stream()
                 .filter(affix -> affix.getId() == affixId)
                 .collect(Collectors.toMap(
@@ -141,14 +144,14 @@ public class ArtifactContainer implements Container{
     }
 
     private List<ReliquaryMainPropExcelConfigDataJson> getPossibleMainStats() {
-        return DatabaseService.getInstance().reliquaryMainPropConfig
+        return databaseService.reliquaryMainPropConfig
                 .stream()
                 .filter(stat -> getArtifact().getMainPropDepotId() == stat.getPropDepotId())
                 .collect(Collectors.toList());
     }
 
     private Map<Integer, Double> getLevelData(int rarity, String stat) {
-        return DatabaseService.getInstance().reliquaryLevelConfig
+        return databaseService.reliquaryLevelConfig
                 .stream()
                 .filter(entry -> entry.getRank() == rarity)
                 .collect(Collectors.toMap(
@@ -164,14 +167,14 @@ public class ArtifactContainer implements Container{
     }
 
     private Map<Integer, List<ReliquaryAffixExcelConfigDataJson>> getPossibleSubStats() {
-        return DatabaseService.getInstance().reliquaryAffixConfig
+        return databaseService.reliquaryAffixConfig
                 .stream()
                 .filter(entry -> entry.getDepotId() == getArtifact().getAppendPropDepotId())
                 .collect(Collectors.groupingBy(ReliquaryAffixExcelConfigDataJson::getGroupId));
     }
 
     private int getMaxLevel(int rarity) {
-        return DatabaseService.getInstance().reliquaryLevelConfig
+        return databaseService.reliquaryLevelConfig
                 .stream()
                 .filter(entry -> entry.getRank() == rarity)
                 .max(Comparator.comparing(ReliquaryLevelExcelConfigDataJson::getLevel))
@@ -182,7 +185,7 @@ public class ArtifactContainer implements Container{
     }
 
     private int getExpRequired(int rarity, int startingLevel, int targetLevel) {
-        return DatabaseService.getInstance().reliquaryLevelConfig
+        return databaseService.reliquaryLevelConfig
                 .stream()
                 .filter(entry -> entry.getRank() == rarity)
                 .filter(level -> level.getLevel() >= startingLevel)

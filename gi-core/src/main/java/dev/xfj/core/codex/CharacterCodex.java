@@ -4,11 +4,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dev.xfj.core.services.DatabaseService;
 import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class CharacterCodex {
+    @Autowired
+    private DatabaseService databaseService;
     private final AvatarCodexExcelConfigDataJson data;
 
     public CharacterCodex(AvatarCodexExcelConfigDataJson data) {
@@ -20,11 +23,11 @@ public class CharacterCodex {
     }
 
     public String getName() {
-        return DatabaseService.getInstance().avatarConfig
+        return databaseService.avatarConfig
                 .stream()
                 .filter(character -> character.getId() == getId())
                 .findFirst()
-                .map(entry -> DatabaseService.getInstance().getTranslation(entry.getNameTextMapHash()))
+                .map(entry -> databaseService.getTranslation(entry.getNameTextMapHash()))
                 .orElse("");
     }
 
