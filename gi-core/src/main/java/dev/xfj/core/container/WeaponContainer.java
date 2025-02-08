@@ -10,15 +10,18 @@ import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.AddProp;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.CostItem;
 import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Component
+@Scope("prototype")
 public class WeaponContainer implements Container, Ascendable {
-    @Autowired
-    private DatabaseService databaseService;
+    private final DatabaseService databaseService;
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
     private int id;
     private int currentLevel;
@@ -26,16 +29,9 @@ public class WeaponContainer implements Container, Ascendable {
     private int currentAscension;
     private int currentRefinement;
 
-    public WeaponContainer(int id) {
-        this(id, 1, 0, 0, 1);
-    }
-
-    public WeaponContainer(int id, int currentLevel, int currentExperience, int currentAscension, int currentRefinement) {
-        this.id = id;
-        this.currentLevel = currentLevel;
-        this.currentExperience = currentExperience;
-        this.currentAscension = currentAscension;
-        this.currentRefinement = currentRefinement;
+    @Autowired
+    public WeaponContainer(DatabaseService databaseService) {
+        this.databaseService = databaseService;
     }
 
     @Override

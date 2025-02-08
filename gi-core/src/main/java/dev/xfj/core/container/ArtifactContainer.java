@@ -9,6 +9,8 @@ import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcel
 import dev.xfj.jsonschema2pojo.reliquarymainpropexcelconfigdata.ReliquaryMainPropExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
@@ -16,21 +18,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Component
+@Scope("prototype")
 public class ArtifactContainer implements Container {
-    @Autowired
-    private DatabaseService databaseService;
+    private final DatabaseService databaseService;
     private int id;
     private int currentLevel;
     private int currentExperience;
 
-    public ArtifactContainer(int id) {
-        this(id, 1, 0);
-    }
-
-    public ArtifactContainer(int id, int currentLevel, int currentExperience) {
-        this.id = id;
-        this.currentLevel = currentLevel;
-        this.currentExperience = currentExperience;
+    @Autowired
+    public ArtifactContainer(DatabaseService databaseService) {
+        this.databaseService = databaseService;
     }
 
     @Override
