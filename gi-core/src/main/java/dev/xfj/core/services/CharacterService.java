@@ -4,6 +4,7 @@ import dev.xfj.core.codex.CharacterCodex;
 import dev.xfj.core.container.CharacterContainer;
 import dev.xfj.core.dto.character.AscensionDTO;
 import dev.xfj.core.dto.character.CharacterProfileDTO;
+import dev.xfj.core.dto.character.TalentsDTO;
 import dev.xfj.core.dto.character.VoiceActorDTO;
 import dev.xfj.core.dto.codex.CharacterCodexDTO;
 import dev.xfj.core.utils.KeyValue;
@@ -50,7 +51,6 @@ public class CharacterService {
         character.setCurrentLevel(level);
         character.setCurrentExperience(experience);
         character.setCurrentAscension(ascension);
-        character.resetCurrentTalentLevels();
 
         return new CharacterProfileDTO(
                 character.getId(),
@@ -88,5 +88,13 @@ public class CharacterService {
                 ),
                 character.getDescription()
         );
+    }
+
+    public TalentsDTO getTalents(int characterId, int level) {
+        CharacterContainer character = characterProvider.getObject();
+        character.setId(characterId);
+        character.setCurrentTalentLevels(level);
+
+        return new TalentsDTO(character.getSkillDetails());
     }
 }

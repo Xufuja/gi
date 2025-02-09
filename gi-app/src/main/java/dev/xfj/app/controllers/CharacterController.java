@@ -1,6 +1,7 @@
 package dev.xfj.app.controllers;
 
 import dev.xfj.core.dto.character.CharacterProfileDTO;
+import dev.xfj.core.dto.character.TalentsDTO;
 import dev.xfj.core.dto.codex.CharacterCodexDTO;
 import dev.xfj.core.services.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class CharacterController {
     public ResponseEntity<List<CharacterCodexDTO>> characters() {
         return ResponseEntity.ok(characterService.getCharacters());
     }
+
     @GetMapping(
             path = BASE_PATH + "/{characterId}",
             consumes = APPLICATION_JSON_VALUE,
@@ -41,5 +43,17 @@ public class CharacterController {
             @RequestParam(defaultValue = "0") int ascension
     ) {
         return ResponseEntity.ok(characterService.getCharacter(characterId, level, experience, ascension));
+    }
+
+    @GetMapping(
+            path = BASE_PATH + "/{characterId}/talents",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<TalentsDTO> talents(
+            @PathVariable int characterId,
+            @RequestParam(defaultValue = "1") int level
+    ) {
+        return ResponseEntity.ok(characterService.getTalents(characterId, level));
     }
 }

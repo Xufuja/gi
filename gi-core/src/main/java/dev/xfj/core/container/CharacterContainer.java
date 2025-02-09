@@ -1,7 +1,9 @@
 package dev.xfj.core.container;
 
 import dev.xfj.core.constants.CharacterRarity;
+import dev.xfj.core.dto.character.TalentDTO;
 import dev.xfj.core.services.DatabaseService;
+import dev.xfj.core.utils.KeyValue;
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
 import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
@@ -194,7 +196,9 @@ public class CharacterContainer implements Container, Ascendable {
                         .map(this::getSkill)
                         .collect(Collectors.toMap(
                                 data -> data,
-                                data -> getTalentLevels(data.getProudSkillGroupId())
+                                data -> getTalentLevels(data.getProudSkillGroupId()),
+                                (a, b) -> b,
+                                LinkedHashMap::new
                         ));
 
         talents.put(
@@ -221,22 +225,15 @@ public class CharacterContainer implements Container, Ascendable {
                 .collect(Collectors.toList());
     }
 
-    public String getSkillDetails() {
-        StringBuilder stringBuilder = new StringBuilder();
-        getLevelableSkills().forEach(skill -> {
-            String details = getSkillDetail(skill);
-
-            if (!details.isBlank()) {
-                stringBuilder.append(details);
-            }
-        });
-        return stringBuilder.toString();
+    public List<TalentDTO> getSkillDetails() {
+        return getLevelableSkills()
+                .stream()
+                .map(this::getSkillDetail)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
-    public String getSkillDetail(int skill) {
-        StringBuilder stringBuilder = new StringBuilder();
-        Interpolator interpolator = new Interpolator();
-
+    public TalentDTO getSkillDetail(int skill) {
         int level = currentTalentLevels.get(skill);
         AvatarSkillExcelConfigDataJson skillDetails = getSkill(skill);
 
@@ -244,25 +241,25 @@ public class CharacterContainer implements Container, Ascendable {
             ProudSkillExcelConfigDataJson levelDetails = getTalentLevels(skillDetails.getProudSkillGroupId())
                     .get(level);
 
-            stringBuilder
-                    .append(databaseService.getTranslation(skillDetails.getNameTextMapHash()))
-                    .append("\n")
-                    .append(databaseService.getTranslation(skillDetails.getDescTextMapHash()))
-                    .append("\n")
-                    .append(format("Level: %s\n", level));
-
-            levelDetails.getParamDescList()
-                    .forEach(parameter -> {
-                        String value = databaseService.getTranslation(parameter);
-                        if (value != null) {
-                            stringBuilder
-                                    .append(interpolator.interpolate(value, levelDetails.getParamList()))
-                                    .append("\n");
-                        }
-                    });
+            return new TalentDTO(
+                    skillDetails.getId(),
+                    databaseService.getTranslation(skillDetails.getNameTextMapHash()),
+                    databaseService.getTranslation(skillDetails.getDescTextMapHash()),
+                    level,
+                    levelDetails.getParamDescList()
+                            .stream()
+                            .map(databaseService::getTranslation)
+                            .filter(Objects::nonNull)
+                            .map(value -> {
+                                String[] entry = new Interpolator().interpolate(value, levelDetails.getParamList())
+                                        .split("\\|");
+                                return new KeyValue(entry[0], entry[1]);
+                            })
+                            .collect(Collectors.toList())
+            );
         }
 
-        return stringBuilder.toString();
+        return null;
     }
 
     public String getPassiveDetail() {
@@ -821,13 +818,13 @@ public class CharacterContainer implements Container, Ascendable {
         currentTalentLevels.put(getLevelableSkills().get(skillIndex), skillLevel);
     }
 
-    public void resetCurrentTalentLevels() {
+    public void setCurrentTalentLevels(int skillLevel) {
         currentTalentLevels = getTalents().keySet()
                 .stream()
                 .map(AvatarSkillExcelConfigDataJson::getId)
                 .collect(Collectors.toMap(
                         skillId -> skillId,
-                        level -> 1
+                        level -> skillLevel
                 ));
     }
 }
