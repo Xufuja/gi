@@ -93,8 +93,13 @@ public class CharacterService {
     public TalentsDTO getTalents(int characterId, int level) {
         CharacterContainer character = characterProvider.getObject();
         character.setId(characterId);
+        character.setCurrentLevel(character.getMaxLevel());
+        character.setCurrentAscension(character.getMaxAscensions());
         character.setCurrentTalentLevels(level);
 
-        return new TalentsDTO(character.getSkillDetails());
+        return new TalentsDTO(
+                character.getSkillDetails(),
+                character.getPassiveDetails()
+        );
     }
 }

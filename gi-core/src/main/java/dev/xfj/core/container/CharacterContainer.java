@@ -1,6 +1,7 @@
 package dev.xfj.core.container;
 
 import dev.xfj.core.constants.CharacterRarity;
+import dev.xfj.core.dto.character.PassiveDTO;
 import dev.xfj.core.dto.character.TalentDTO;
 import dev.xfj.core.services.DatabaseService;
 import dev.xfj.core.utils.KeyValue;
@@ -262,33 +263,30 @@ public class CharacterContainer implements Container, Ascendable {
         return null;
     }
 
-    public String getPassiveDetail() {
-        StringBuilder stringBuilder = new StringBuilder();
-        getPassives().forEach(passive -> stringBuilder.append(getPassiveDetail(passive)));
-        return stringBuilder.toString();
+    public List<PassiveDTO> getPassiveDetails() {
+        return getPassives()
+                .stream()
+                .map(this::getPassiveDetails)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
-    public String getPassiveDetail(ProudSkillExcelConfigDataJson passive) {
-        StringBuilder stringBuilder = new StringBuilder();
-        Interpolator interpolator = new Interpolator();
-
-        stringBuilder
-                .append(databaseService.getTranslation(passive.getNameTextMapHash()))
-                .append("\n")
-                .append(databaseService.getTranslation(passive.getDescTextMapHash()))
-                .append("\n");
-
-        passive.getParamDescList()
-                .forEach(parameter -> {
-                    String value = databaseService.getTranslation(parameter);
-                    if (value != null) {
-                        stringBuilder
-                                .append(interpolator.interpolate(value, passive.getParamList()))
-                                .append("\n");
-                    }
-                });
-
-        return stringBuilder.toString();
+    public PassiveDTO getPassiveDetails(ProudSkillExcelConfigDataJson passive) {
+        return new PassiveDTO(
+                passive.getProudSkillId(),
+                databaseService.getTranslation(passive.getNameTextMapHash()),
+                databaseService.getTranslation(passive.getDescTextMapHash()),
+                passive.getParamDescList()
+                        .stream()
+                        .map(databaseService::getTranslation)
+                        .filter(Objects::nonNull)
+                        .map(value -> {
+                            String[] entry = new Interpolator().interpolate(value, passive.getParamList())
+                                    .split("\\|");
+                            return new KeyValue(entry[0], entry[1]);
+                        })
+                        .collect(Collectors.toList())
+        );
     }
 
     public Map<Integer, String> getConstellations() {
@@ -547,6 +545,10 @@ public class CharacterContainer implements Container, Ascendable {
                         AvatarPromoteExcelConfigDataJson::getPromoteLevel,
                         data -> data
                 ));
+    }
+
+    public int getMaxAscensions() {
+        return getMaxAscensions(getAvatar().getAvatarPromoteId());
     }
 
     private int getMaxAscensions(int promoteId) {
