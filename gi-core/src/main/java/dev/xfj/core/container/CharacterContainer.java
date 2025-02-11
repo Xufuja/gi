@@ -1,6 +1,7 @@
 package dev.xfj.core.container;
 
 import dev.xfj.core.constants.CharacterRarity;
+import dev.xfj.core.dto.character.ConstellationDTO;
 import dev.xfj.core.dto.character.PassiveDTO;
 import dev.xfj.core.dto.character.TalentDTO;
 import dev.xfj.core.services.DatabaseService;
@@ -289,7 +290,7 @@ public class CharacterContainer implements Container, Ascendable {
         );
     }
 
-    public Map<Integer, String> getConstellations() {
+    public List<ConstellationDTO> getConstellations() {
         List<AvatarTalentExcelConfigDataJson> constellations = getSkillDepot().getTalents()
                 .stream()
                 .filter(id -> id != 0)
@@ -298,18 +299,15 @@ public class CharacterContainer implements Container, Ascendable {
 
         return IntStream.range(0, constellations.size())
                 .boxed()
-                .collect(Collectors.toMap(
-                        i -> i + 1,
-                        i -> {
-                            AvatarTalentExcelConfigDataJson current = constellations.get(i);
-                            return String.format("%s. %s\n%s\n",
-                                    i + 1,
-                                    databaseService.getTranslation(current.getNameTextMapHash()),
-                                    databaseService.getTranslation(current.getDescTextMapHash()));
-                        },
-                        (a, b) -> b, //There are no duplicates, but need to specify something to select LinkedHashMap
-                        LinkedHashMap::new
-                ));
+                .map(i -> {
+                    AvatarTalentExcelConfigDataJson current = constellations.get(i);
+                    return new ConstellationDTO(
+                            i + 1,
+                            databaseService.getTranslation(current.getNameTextMapHash()),
+                            databaseService.getTranslation(current.getDescTextMapHash())
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
     @Override

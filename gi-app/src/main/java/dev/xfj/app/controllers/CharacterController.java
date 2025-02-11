@@ -1,6 +1,7 @@
 package dev.xfj.app.controllers;
 
 import dev.xfj.core.dto.character.CharacterProfileDTO;
+import dev.xfj.core.dto.character.ConstellationDTO;
 import dev.xfj.core.dto.character.TalentsDTO;
 import dev.xfj.core.dto.codex.CharacterCodexDTO;
 import dev.xfj.core.services.CharacterService;
@@ -55,5 +56,16 @@ public class CharacterController {
             @RequestParam(defaultValue = "1") int level
     ) {
         return ResponseEntity.ok(characterService.getTalents(characterId, level));
+    }
+
+    @GetMapping(
+            path = BASE_PATH + "/{characterId}/constellations",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<ConstellationDTO>> constellations(
+            @PathVariable int characterId
+    ) {
+        return ResponseEntity.ok(characterService.getConstellations(characterId));
     }
 }

@@ -2,10 +2,7 @@ package dev.xfj.core.services;
 
 import dev.xfj.core.codex.CharacterCodex;
 import dev.xfj.core.container.CharacterContainer;
-import dev.xfj.core.dto.character.AscensionDTO;
-import dev.xfj.core.dto.character.CharacterProfileDTO;
-import dev.xfj.core.dto.character.TalentsDTO;
-import dev.xfj.core.dto.character.VoiceActorDTO;
+import dev.xfj.core.dto.character.*;
 import dev.xfj.core.dto.codex.CharacterCodexDTO;
 import dev.xfj.core.utils.KeyValue;
 import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
@@ -101,5 +98,12 @@ public class CharacterService {
                 character.getSkillDetails(),
                 character.getPassiveDetails()
         );
+    }
+
+    public List<ConstellationDTO> getConstellations(int characterId) {
+        CharacterContainer character = characterProvider.getObject();
+        character.setId(characterId);
+
+        return character.getConstellations();
     }
 }
