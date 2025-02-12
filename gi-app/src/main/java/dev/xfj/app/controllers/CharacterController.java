@@ -7,24 +7,19 @@ import dev.xfj.core.dto.codex.CharacterCodexDTO;
 import dev.xfj.core.services.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
+@RequestMapping("/characters")
 public class CharacterController {
-    private static final String BASE_PATH = "/v1/characters";
-
     @Autowired
     private CharacterService characterService;
 
     @GetMapping(
-            path = BASE_PATH,
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
@@ -33,7 +28,7 @@ public class CharacterController {
     }
 
     @GetMapping(
-            path = BASE_PATH + "/{characterId}",
+            path = "/{characterId}",
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
@@ -47,7 +42,7 @@ public class CharacterController {
     }
 
     @GetMapping(
-            path = BASE_PATH + "/{characterId}/talents",
+            path = "/{characterId}/talents",
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
@@ -59,7 +54,7 @@ public class CharacterController {
     }
 
     @GetMapping(
-            path = BASE_PATH + "/{characterId}/constellations",
+            path = "/{characterId}/constellations",
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )

@@ -1,6 +1,5 @@
 package dev.xfj.core.services;
 
-import dev.xfj.core.codex.CharacterCodex;
 import dev.xfj.core.container.CharacterContainer;
 import dev.xfj.core.dto.character.*;
 import dev.xfj.core.dto.codex.CharacterCodexDTO;
@@ -10,6 +9,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,18 +26,19 @@ public class CharacterService {
         this.characterProvider = characterProvider;
     }
 
-
     public List<CharacterCodexDTO> getCharacters() {
         return databaseService.avatarCodexConfig
                 .stream()
                 .sorted(Comparator.comparing(AvatarCodexExcelConfigDataJson::getSortFactor))
-                .map(CharacterCodex::new)
-                .toList()
-                .stream()
                 .map(entry -> new CharacterCodexDTO(
-                        entry.getId(),
-                        entry.getName(),
-                        entry.getReleaseTime(),
+                        entry.getAvatarId(),
+                        databaseService.avatarConfig
+                                .stream()
+                                .filter(character -> character.getId() == entry.getAvatarId())
+                                .findFirst()
+                                .map(hash -> databaseService.getTranslation(hash.getNameTextMapHash()))
+                                .orElse(""),
+                        LocalDateTime.parse(entry.getBeginTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                         entry.getSortFactor())
                 )
                 .collect(Collectors.toList());
