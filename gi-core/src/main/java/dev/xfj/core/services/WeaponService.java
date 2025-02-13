@@ -1,6 +1,5 @@
 package dev.xfj.core.services;
 
-import dev.xfj.core.codex.WeaponCodex;
 import dev.xfj.core.dto.codex.WeaponCodexDTO;
 import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +22,11 @@ public class WeaponService {
         return databaseService.weaponConfig
                 .stream()
                 .sorted(Comparator.comparing(WeaponExcelConfigDataJson::getId))
-                .map(entry -> new WeaponCodex(entry.getId(), databaseService.getTranslation(entry.getNameTextMapHash())))
-                .toList()
-                .stream()
-                .map(entry -> new WeaponCodexDTO(entry.id(), entry.name(), entry.getSortFactor()))
+                .map(entry -> new WeaponCodexDTO(
+                        entry.getId(),
+                        databaseService.getTranslation(entry.getNameTextMapHash()),
+                        entry.getId()
+                ))
                 .collect(Collectors.toList());
     }
 }
