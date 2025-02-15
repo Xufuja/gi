@@ -1,6 +1,5 @@
 package dev.xfj.core.services;
 
-import dev.xfj.core.codex.ItemCodex;
 import dev.xfj.core.dto.codex.ItemCodexDTO;
 import dev.xfj.jsonschema2pojo.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +22,12 @@ public class ItemService {
         return databaseService.materialCodexConfig
                 .stream()
                 .sorted(Comparator.comparing(MaterialCodexExcelConfigDataJson::getSortOrder))
-                .map(ItemCodex::new)
-                .toList()
-                .stream()
-                .map(entry -> new ItemCodexDTO(entry.getId(), entry.getName(), entry.getDescription(), entry.getSortFactor()))
+                .map(entry -> new ItemCodexDTO(
+                        entry.getMaterialId(),
+                        databaseService.getTranslation(entry.getNameTextMapHash()),
+                        databaseService.getTranslation(entry.getDescTextMapHash()),
+                        entry.getSortOrder()
+                ))
                 .collect(Collectors.toList());
     }
 }
