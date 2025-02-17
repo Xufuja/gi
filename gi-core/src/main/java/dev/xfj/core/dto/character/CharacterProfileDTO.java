@@ -11,7 +11,7 @@ public record CharacterProfileDTO(
         double baseAttack,
         double baseDefense,
         KeyValue ascensionStat,
-        AscensionDTO nextAscension,
+        RequirementsDTO nextAscension,
         String element,
         String weapon,
         String constellation,

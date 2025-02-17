@@ -4,7 +4,7 @@ import dev.xfj.core.utils.KeyValue;
 
 import java.util.List;
 
-public record AscensionDTO(
+public record RequirementsDTO(
         List<KeyValue> requiredItems,
         int requiredMora
 ) {}

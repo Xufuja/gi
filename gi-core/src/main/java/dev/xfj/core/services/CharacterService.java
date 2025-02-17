@@ -63,7 +63,7 @@ public class CharacterService {
                         .findFirst()
                         .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
                         .orElse(new KeyValue("", null)),
-                new AscensionDTO(character.getAscensionItems().entrySet()
+                new RequirementsDTO(character.getAscensionItems().entrySet()
                         .stream()
                         .filter(entry -> entry.getKey() != 0)
                         .map(entry -> new KeyValue(
@@ -107,5 +107,33 @@ public class CharacterService {
         character.setId(characterId);
 
         return character.getConstellations();
+    }
+
+    public MaterialsDTO getMaterials(int characterId) {
+        CharacterContainer character = characterProvider.getObject();
+        character.setId(characterId);
+
+        return new MaterialsDTO(
+                new RequirementsDTO(character.getAllAscensionItems().entrySet()
+                        .stream()
+                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList()),
+                        character.getAllAscensionCosts()),
+                new RequirementsDTO(character.getAllExpBooks().entrySet()
+                        .stream()
+                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList()),
+                        character.getAllExpCosts()),
+                new RequirementsDTO(character.getAllTalentItems().entrySet()
+                        .stream()
+                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList()),
+                        character.getAllTalentCosts()),
+                new RequirementsDTO(character.getAllItemRequirements().entrySet()
+                        .stream()
+                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList()),
+                        character.getAllItemCosts())
+        );
     }
 }
