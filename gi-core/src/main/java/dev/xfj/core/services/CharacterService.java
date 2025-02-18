@@ -85,7 +85,10 @@ public class CharacterService {
                         character.getVA("JP"),
                         character.getVA("KR")
                 ),
-                character.getDescription()
+                character.getDescription(),
+                character.getNamecardDescription(),
+                character.getSpecialtyFoodName(),
+                character.getOutfits()
         );
     }
 

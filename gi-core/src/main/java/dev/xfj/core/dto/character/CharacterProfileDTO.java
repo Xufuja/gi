@@ -2,6 +2,8 @@ package dev.xfj.core.dto.character;
 
 import dev.xfj.core.utils.KeyValue;
 
+import java.util.List;
+
 public record CharacterProfileDTO(
         int id,
         String name,
@@ -18,5 +20,8 @@ public record CharacterProfileDTO(
         String affiliation,
         String birthday,
         VoiceActorDTO voiceActor,
-        String description
+        String description,
+        NameDescriptionDTO namecard,
+        NameDescriptionDTO specialtyFood,
+        List<NameDescriptionDTO> costumes
 ) {}

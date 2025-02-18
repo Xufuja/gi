@@ -2,6 +2,7 @@ package dev.xfj.core.container;
 
 import dev.xfj.core.constants.CharacterRarity;
 import dev.xfj.core.dto.character.ConstellationDTO;
+import dev.xfj.core.dto.character.NameDescriptionDTO;
 import dev.xfj.core.dto.character.PassiveDTO;
 import dev.xfj.core.dto.character.TalentDTO;
 import dev.xfj.core.services.DatabaseService;
@@ -400,28 +401,27 @@ public class CharacterContainer implements Container, Ascendable {
         return getAllAscensionCosts() + getAllTalentCosts() + getAllExpCosts();
     }
 
-    public String getNameCardDescription() {
+    public NameDescriptionDTO getNamecardDescription() {
         MaterialExcelConfigDataJson card = getCharacterCard();
-        return format("%s\n%s",
+
+        return new NameDescriptionDTO(
                 databaseService.getTranslation(card.getNameTextMapHash()),
                 databaseService.getTranslation(card.getDescTextMapHash())
         );
     }
 
-    public String getSpecialtyFoodName() {
-        return databaseService.getTranslation(getSpecialtyFood().getNameTextMapHash());
+    public NameDescriptionDTO getSpecialtyFoodName() {
+        return new NameDescriptionDTO(
+                databaseService.getTranslation(getSpecialtyFood().getNameTextMapHash()),
+                databaseService.getTranslation(getSpecialtyFood().getDescTextMapHash())
+        );
     }
 
-    public String getOutfits() {
-        StringBuilder stringBuilder = new StringBuilder();
-        getCostumes()
-                .forEach(costume -> {
-                    stringBuilder.append(databaseService.getTranslation(costume.getNameTextMapHash()));
-                    stringBuilder.append("\n");
-                    stringBuilder.append(databaseService.getTranslation(costume.getDescTextMapHash()));
-                    stringBuilder.append("\n");
-                });
-        return stringBuilder.toString();
+    public List<NameDescriptionDTO> getOutfits() {
+        return getCostumes()
+                .stream()
+                .map(costume -> new NameDescriptionDTO(databaseService.getTranslation(costume.getNameTextMapHash()), databaseService.getTranslation(costume.getDescTextMapHash())))
+                .collect(Collectors.toList());
     }
 
     public String getTeaPotDetails() {
