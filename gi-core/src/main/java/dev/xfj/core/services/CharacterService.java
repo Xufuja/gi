@@ -139,4 +139,11 @@ public class CharacterService {
                         character.getAllItemCosts())
         );
     }
+
+    public TeaPotDTO getTeaPotDetails(int characterId) {
+        CharacterContainer character = characterProvider.getObject();
+        character.setId(characterId);
+
+        return character.getTeaPotDetails();
+    }
 }

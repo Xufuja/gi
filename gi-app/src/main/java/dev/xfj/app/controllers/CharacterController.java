@@ -1,9 +1,6 @@
 package dev.xfj.app.controllers;
 
-import dev.xfj.core.dto.character.CharacterProfileDTO;
-import dev.xfj.core.dto.character.ConstellationDTO;
-import dev.xfj.core.dto.character.MaterialsDTO;
-import dev.xfj.core.dto.character.TalentsDTO;
+import dev.xfj.core.dto.character.*;
 import dev.xfj.core.dto.codex.CharacterCodexDTO;
 import dev.xfj.core.services.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +71,16 @@ public class CharacterController {
             @PathVariable int characterId
     ) {
         return ResponseEntity.ok(characterService.getMaterials(characterId));
+    }
+
+    @GetMapping(
+            path = "/{characterId}/teapot",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<TeaPotDTO> teapot(
+            @PathVariable int characterId
+    ) {
+        return ResponseEntity.ok(characterService.getTeaPotDetails(characterId));
     }
 }

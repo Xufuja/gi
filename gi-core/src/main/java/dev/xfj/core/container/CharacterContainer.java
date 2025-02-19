@@ -1,10 +1,7 @@
 package dev.xfj.core.container;
 
 import dev.xfj.core.constants.CharacterRarity;
-import dev.xfj.core.dto.character.ConstellationDTO;
-import dev.xfj.core.dto.character.NameDescriptionDTO;
-import dev.xfj.core.dto.character.PassiveDTO;
-import dev.xfj.core.dto.character.TalentDTO;
+import dev.xfj.core.dto.character.*;
 import dev.xfj.core.services.DatabaseService;
 import dev.xfj.core.utils.KeyValue;
 import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
@@ -420,26 +417,30 @@ public class CharacterContainer implements Container, Ascendable {
     public List<NameDescriptionDTO> getOutfits() {
         return getCostumes()
                 .stream()
-                .map(costume -> new NameDescriptionDTO(databaseService.getTranslation(costume.getNameTextMapHash()), databaseService.getTranslation(costume.getDescTextMapHash())))
+                .map(costume -> new NameDescriptionDTO(
+                        databaseService.getTranslation(costume.getNameTextMapHash()),
+                        databaseService.getTranslation(costume.getDescTextMapHash()))
+                )
                 .collect(Collectors.toList());
     }
 
-    public String getTeaPotDetails() {
-        StringBuilder stringBuilder = new StringBuilder();
+    public TeaPotDTO getTeaPotDetails() {
         HomeWorldFurnitureExcelConfigDataJson furniture = getFurnitureDetails();
-
-        furniture.getFurnType().forEach(type -> stringBuilder.append(getFurnitureType(type)).append("\n"));
-        stringBuilder.append(format("Comfort: %s\n", furniture.getComfort()));
-        stringBuilder.append(format("Load: %s\n", furniture.getCost()));
-        stringBuilder.append(format("Rarity: %s\n", furniture.getRankLevel()));
-        stringBuilder.append(databaseService.getTranslation(furniture.getDescTextMapHash())).append("\n");
-
-        getPreferredFurnitureSets()
-                .forEach(set -> stringBuilder
-                        .append(databaseService.getTranslation(set.getSuiteNameTextMapHash()))
-                        .append("\n"));
-
-        return stringBuilder.toString();
+        
+        return new TeaPotDTO(
+                furniture.getFurnType()
+                        .stream()
+                        .map(this::getFurnitureType)
+                        .collect(Collectors.toList()),
+                furniture.getComfort(),
+                furniture.getCost(),
+                furniture.getRankLevel(),
+                databaseService.getTranslation(furniture.getDescTextMapHash()),
+                getPreferredFurnitureSets()
+                        .stream()
+                        .map(set -> new NameDescriptionDTO(databaseService.getTranslation(set.getSuiteNameTextMapHash()), databaseService.getTranslation(set.getSuiteDescTextMapHash())))
+                        .collect(Collectors.toList())
+        );
     }
 
     public String getStories() {
