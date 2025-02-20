@@ -83,4 +83,15 @@ public class CharacterController {
     ) {
         return ResponseEntity.ok(characterService.getTeaPotDetails(characterId));
     }
+
+    @GetMapping(
+            path = "/{characterId}/stories",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<StoryDTO>> stories(
+            @PathVariable int characterId
+    ) {
+        return ResponseEntity.ok(characterService.getStories(characterId));
+    }
 }

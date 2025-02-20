@@ -146,4 +146,11 @@ public class CharacterService {
 
         return character.getTeaPotDetails();
     }
+
+    public List<StoryDTO> getStories(int characterId) {
+        CharacterContainer character = characterProvider.getObject();
+        character.setId(characterId);
+
+        return character.getStories();
+    }
 }

@@ -426,7 +426,7 @@ public class CharacterContainer implements Container, Ascendable {
 
     public TeaPotDTO getTeaPotDetails() {
         HomeWorldFurnitureExcelConfigDataJson furniture = getFurnitureDetails();
-        
+
         return new TeaPotDTO(
                 furniture.getFurnType()
                         .stream()
@@ -443,25 +443,28 @@ public class CharacterContainer implements Container, Ascendable {
         );
     }
 
-    public String getStories() {
-        StringBuilder stringBuilder = new StringBuilder();
-        getFetterStories()
-                .forEach(story -> {
-                    stringBuilder.append(databaseService.getTranslation(story.getStoryTitleTextMapHash())).append("\n");
-                    if (story.getOpenConds()
+    public List<StoryDTO> getStories() {
+        return getFetterStories()
+                .stream()
+                .map(entry -> {
+                    String story = "";
+                    if (entry.getOpenConds()
                             .stream()
                             .anyMatch(condition -> "FETTER_COND_FETTER_LEVEL".equals(condition.getCondType()))
                     ) {
-                        stringBuilder.append(databaseService.getTranslation(story.getTips()
+                        story = databaseService.getTranslation(entry.getTips()
                                 .stream()
                                 .findFirst()
-                                .orElse(null))).append("\n");
+                                .orElse(""));
                     }
 
-                    stringBuilder.append(databaseService.getTranslation(story.getStoryContextTextMapHash())).append("\n");
-                });
-
-        return stringBuilder.toString();
+                    return new StoryDTO(
+                            databaseService.getTranslation(entry.getStoryTitleTextMapHash()),
+                            story,
+                            databaseService.getTranslation(entry.getStoryContextTextMapHash())
+                    );
+                })
+                .toList();
     }
 
     public String getQuotes() {
