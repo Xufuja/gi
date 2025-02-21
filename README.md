@@ -1,11 +1,18 @@
-# GI
+# Genshin Data API
 
 ## Description
 
-So [Dimbreath's](https://github.com/Dimbreath) StarRailData repository is gone but the AnimeGameData one still exists.
+As Spring practice, implementing an API that serves the data needed to mimic Project Amber.
 
-In other words, time for a GI version, the HSR version also showed me a few improvement points.
+## Supported
 
-Latest version of GI data tested: 5.4
+* Characters
 
-Heavily work in progress.
+## Notes
+
+Latest version of Genshin tested: 5.4
+
+## Credits
+
+* [Dimbreath](https://github.com/Dimbreath) for the AnimeGameData repository containing the source data
+* [Project Amber](https://gi.yatta.moe) for the inspiration
