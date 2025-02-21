@@ -467,25 +467,28 @@ public class CharacterContainer implements Container, Ascendable {
                 .toList();
     }
 
-    public String getQuotes() {
-        StringBuilder stringBuilder = new StringBuilder();
-        getFetters()
-                .forEach(story -> {
-                    stringBuilder.append(databaseService.getTranslation(story.getVoiceTitleTextMapHash())).append("\n");
-                    if (story.getOpenConds()
+    public List<StoryDTO> getQuotes() {
+        return getFetters()
+                .stream()
+                .map(entry -> {
+                    String story = "";
+                    if (entry.getOpenConds()
                             .stream()
                             .anyMatch(condition -> "FETTER_COND_FETTER_LEVEL".equals(condition.getCondType()))
                     ) {
-                        stringBuilder.append(databaseService.getTranslation(story.getTips()
+                        story = databaseService.getTranslation(entry.getTips()
                                 .stream()
                                 .findFirst()
-                                .orElse(null))).append("\n");
+                                .orElse(""));
                     }
 
-                    stringBuilder.append(databaseService.getTranslation(story.getVoiceFileTextTextMapHash())).append("\n");
-                });
-
-        return stringBuilder.toString();
+                    return new StoryDTO(
+                            databaseService.getTranslation(entry.getVoiceTitleTextMapHash()),
+                            story,
+                            databaseService.getTranslation(entry.getVoiceFileTextTextMapHash())
+                    );
+                })
+                .toList();
     }
 
     private double getBaseStat(double baseValue, String statType) {

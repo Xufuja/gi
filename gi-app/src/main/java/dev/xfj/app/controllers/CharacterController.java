@@ -94,4 +94,15 @@ public class CharacterController {
     ) {
         return ResponseEntity.ok(characterService.getStories(characterId));
     }
+
+    @GetMapping(
+            path = "/{characterId}/quotes",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<StoryDTO>> quotes(
+            @PathVariable int characterId
+    ) {
+        return ResponseEntity.ok(characterService.getQuotes(characterId));
+    }
 }

@@ -153,4 +153,11 @@ public class CharacterService {
 
         return character.getStories();
     }
+
+    public List<StoryDTO> getQuotes(int characterId) {
+        CharacterContainer character = characterProvider.getObject();
+        character.setId(characterId);
+
+        return character.getQuotes();
+    }
 }
