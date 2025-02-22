@@ -1,4 +1,4 @@
-package dev.xfj.core.container;
+package dev.xfj.core.logic;
 
 import dev.xfj.core.services.DatabaseService;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
@@ -18,9 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static dev.xfj.core.services.DatabaseWrapper.getItem;
+import static dev.xfj.core.services.DatabaseWrapper.getManualMappedText;
+
 @Component
 @Scope("prototype")
-public class WeaponContainer implements Container, Ascendable {
+public class WeaponLogic implements Ascendable {
     private final DatabaseService databaseService;
     private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
     private int id;
@@ -30,16 +33,14 @@ public class WeaponContainer implements Container, Ascendable {
     private int currentRefinement;
 
     @Autowired
-    public WeaponContainer(DatabaseService databaseService) {
+    public WeaponLogic(DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
 
-    @Override
     public Integer getId() {
         return id;
     }
 
-    @Override
     public String getName() {
         return databaseService.getTranslation(getWeapon().getNameTextMapHash());
     }
@@ -48,7 +49,6 @@ public class WeaponContainer implements Container, Ascendable {
         return getManualMappedText(getWeapon().getWeaponType());
     }
 
-    @Override
     public Integer getRarity() {
         return getWeapon().getRankLevel();
     }
@@ -91,7 +91,6 @@ public class WeaponContainer implements Container, Ascendable {
                 databaseService.getTranslation(details.getDescTextMapHash()));
     }
 
-    @Override
     public String getDescription() {
         return databaseService.getTranslation(getWeapon().getDescTextMapHash());
     }

@@ -1,6 +1,7 @@
-package dev.xfj.core.container;
+package dev.xfj.core.logic;
 
 import dev.xfj.core.services.DatabaseService;
+import dev.xfj.core.services.DatabaseWrapper;
 import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
 import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
@@ -18,20 +19,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static dev.xfj.core.services.DatabaseWrapper.getManualMappedText;
+
 @Component
 @Scope("prototype")
-public class ArtifactContainer implements Container {
+public class ArtifactLogic {
     private final DatabaseService databaseService;
     private int id;
     private int currentLevel;
     private int currentExperience;
 
     @Autowired
-    public ArtifactContainer(DatabaseService databaseService) {
+    public ArtifactLogic(DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
 
-    @Override
     public Integer getId() {
         return id;
     }
@@ -44,7 +46,6 @@ public class ArtifactContainer implements Container {
                 .orElse(null);
     }
 
-    @Override
     public String getName() {
         return databaseService.getTranslation(getArtifact().getNameTextMapHash());
     }
@@ -53,7 +54,6 @@ public class ArtifactContainer implements Container {
         return getManualMappedText(getArtifact().getEquipType());
     }
 
-    @Override
     public Integer getRarity() {
         return getArtifact().getRankLevel();
     }
@@ -74,7 +74,6 @@ public class ArtifactContainer implements Container {
                 ));
     }
 
-    @Override
     public String getDescription() {
         return databaseService.getTranslation(getArtifact().getDescTextMapHash());
     }
@@ -84,7 +83,7 @@ public class ArtifactContainer implements Container {
                 .stream()
                 .map(ReliquaryMainPropExcelConfigDataJson::getPropType)
                 .collect(Collectors.toMap(
-                                this::getManualMappedText,
+                                DatabaseWrapper::getManualMappedText,
                                 entry -> getLevelData(getRarity(), entry)
                         )
                 );
