@@ -1,14 +1,13 @@
 package dev.xfj.core.logic;
 
 import dev.xfj.core.services.DatabaseService;
-import dev.xfj.core.services.DatabaseWrapper;
-import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.AddProp;
-import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquarymainpropexcelconfigdata.ReliquaryMainPropExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
+import dev.xfj.generated.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
+import dev.xfj.generated.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
+import dev.xfj.generated.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
+import dev.xfj.generated.reliquarylevelexcelconfigdata.AddProp;
+import dev.xfj.generated.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
+import dev.xfj.generated.reliquarymainpropexcelconfigdata.ReliquaryMainPropExcelConfigDataJson;
+import dev.xfj.generated.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static dev.xfj.core.services.DatabaseWrapper.getManualMappedText;
 
 @Component
 @Scope("prototype")
@@ -51,7 +48,7 @@ public class ArtifactLogic {
     }
 
     public String getArtifactType() {
-        return getManualMappedText(getArtifact().getEquipType());
+        return databaseService.getManualMappedText(getArtifact().getEquipType());
     }
 
     public Integer getRarity() {
@@ -83,7 +80,7 @@ public class ArtifactLogic {
                 .stream()
                 .map(ReliquaryMainPropExcelConfigDataJson::getPropType)
                 .collect(Collectors.toMap(
-                                DatabaseWrapper::getManualMappedText,
+                                databaseService::getManualMappedText,
                                 entry -> getLevelData(getRarity(), entry)
                         )
                 );
@@ -94,7 +91,7 @@ public class ArtifactLogic {
                 .stream()
                 .flatMap(List::stream)
                 .collect(Collectors.groupingBy(
-                        entry -> getManualMappedText(entry.getPropType()),
+                        entry -> databaseService.getManualMappedText(entry.getPropType()),
                         Collectors.mapping(
                                 ReliquaryAffixExcelConfigDataJson::getPropValue,
                                 Collectors.toList()

@@ -7,46 +7,46 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import dev.xfj.core.constants.DataPath;
-import dev.xfj.jsonschema2pojo.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.AvatarCurveExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarfetterslevelexcelconfigdata.AvatarFettersLevelExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarflycloakexcelconfigdata.AvatarFlycloakExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.cookbonusexcelconfigdata.CookBonusExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.dungeonentryexcelconfigdata.DungeonEntryExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.dungeonexcelconfigdata.DungeonExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.fettercharactercardexcelconfigdata.FetterCharacterCardExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.fettersexcelconfigdata.FettersExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.fetterstoryexcelconfigdata.FetterStoryExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.homeworldfurnituretypeexcelconfigdata.HomeWorldFurnitureTypeExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.manualtextmapconfigdata.ManualTextMapConfigDataJson;
-import dev.xfj.jsonschema2pojo.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquarymainpropexcelconfigdata.ReliquaryMainPropExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.weaponcurveexcelconfigdata.WeaponCurveExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.weaponlevelexcelconfigdata.WeaponLevelExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
+import dev.xfj.generated.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
+import dev.xfj.generated.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
+import dev.xfj.generated.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
+import dev.xfj.generated.avatarcurveexcelconfigdata.AvatarCurveExcelConfigDataJson;
+import dev.xfj.generated.avatarexcelconfigdata.AvatarExcelConfigDataJson;
+import dev.xfj.generated.avatarfetterslevelexcelconfigdata.AvatarFettersLevelExcelConfigDataJson;
+import dev.xfj.generated.avatarflycloakexcelconfigdata.AvatarFlycloakExcelConfigDataJson;
+import dev.xfj.generated.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
+import dev.xfj.generated.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
+import dev.xfj.generated.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
+import dev.xfj.generated.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
+import dev.xfj.generated.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
+import dev.xfj.generated.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
+import dev.xfj.generated.cookbonusexcelconfigdata.CookBonusExcelConfigDataJson;
+import dev.xfj.generated.dungeonentryexcelconfigdata.DungeonEntryExcelConfigDataJson;
+import dev.xfj.generated.dungeonexcelconfigdata.DungeonExcelConfigDataJson;
+import dev.xfj.generated.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
+import dev.xfj.generated.fettercharactercardexcelconfigdata.FetterCharacterCardExcelConfigDataJson;
+import dev.xfj.generated.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
+import dev.xfj.generated.fettersexcelconfigdata.FettersExcelConfigDataJson;
+import dev.xfj.generated.fetterstoryexcelconfigdata.FetterStoryExcelConfigDataJson;
+import dev.xfj.generated.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
+import dev.xfj.generated.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
+import dev.xfj.generated.homeworldfurnituretypeexcelconfigdata.HomeWorldFurnitureTypeExcelConfigDataJson;
+import dev.xfj.generated.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
+import dev.xfj.generated.manualtextmapconfigdata.ManualTextMapConfigDataJson;
+import dev.xfj.generated.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
+import dev.xfj.generated.materialexcelconfigdata.MaterialExcelConfigDataJson;
+import dev.xfj.generated.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
+import dev.xfj.generated.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
+import dev.xfj.generated.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
+import dev.xfj.generated.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
+import dev.xfj.generated.reliquarylevelexcelconfigdata.ReliquaryLevelExcelConfigDataJson;
+import dev.xfj.generated.reliquarymainpropexcelconfigdata.ReliquaryMainPropExcelConfigDataJson;
+import dev.xfj.generated.reliquarysetexcelconfigdata.ReliquarySetExcelConfigDataJson;
+import dev.xfj.generated.rewardexcelconfigdata.RewardExcelConfigDataJson;
+import dev.xfj.generated.weaponcurveexcelconfigdata.WeaponCurveExcelConfigDataJson;
+import dev.xfj.generated.weaponexcelconfigdata.WeaponExcelConfigDataJson;
+import dev.xfj.generated.weaponlevelexcelconfigdata.WeaponLevelExcelConfigDataJson;
+import dev.xfj.generated.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -176,6 +176,23 @@ public class DatabaseService {
 
     public String getTranslation(String key) {
         return languageMap.get(key);
+    }
+
+    public String getManualMappedText(String id) {
+        return manualTextMapConfig
+                .stream()
+                .filter(text -> id.equals(text.getTextMapId()))
+                .map(map -> getTranslation(map.getTextMapContentTextMapHash()))
+                .findAny()
+                .orElse(null);
+    }
+
+    public MaterialExcelConfigDataJson getItem(int id) {
+        return materialConfig
+                .stream()
+                .filter(item -> item.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     private <T> List<T> loadJSONArray(Class<T> clazz) throws FileNotFoundException {

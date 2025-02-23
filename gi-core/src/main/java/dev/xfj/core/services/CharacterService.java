@@ -6,27 +6,27 @@ import dev.xfj.core.dto.codex.CharacterCodexDTO;
 import dev.xfj.core.logic.specification.CharacterSpecification;
 import dev.xfj.core.utils.Interpolator;
 import dev.xfj.core.utils.KeyValue;
-import dev.xfj.jsonschema2pojo.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarcurveexcelconfigdata.CurveInfo;
-import dev.xfj.jsonschema2pojo.avatarexcelconfigdata.AvatarExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AddProp;
-import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarpromoteexcelconfigdata.CostItem;
-import dev.xfj.jsonschema2pojo.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.fettercharactercardexcelconfigdata.FetterCharacterCardExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.fettersexcelconfigdata.FettersExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.fetterstoryexcelconfigdata.FetterStoryExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.materialexcelconfigdata.MaterialExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.rewardexcelconfigdata.RewardItem;
+import dev.xfj.generated.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
+import dev.xfj.generated.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
+import dev.xfj.generated.avatarcurveexcelconfigdata.CurveInfo;
+import dev.xfj.generated.avatarexcelconfigdata.AvatarExcelConfigDataJson;
+import dev.xfj.generated.avatarlevelexcelconfigdata.AvatarLevelExcelConfigDataJson;
+import dev.xfj.generated.avatarpromoteexcelconfigdata.AddProp;
+import dev.xfj.generated.avatarpromoteexcelconfigdata.AvatarPromoteExcelConfigDataJson;
+import dev.xfj.generated.avatarpromoteexcelconfigdata.CostItem;
+import dev.xfj.generated.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelConfigDataJson;
+import dev.xfj.generated.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
+import dev.xfj.generated.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
+import dev.xfj.generated.fettercharactercardexcelconfigdata.FetterCharacterCardExcelConfigDataJson;
+import dev.xfj.generated.fetterinfoexcelconfigdata.FetterInfoExcelConfigDataJson;
+import dev.xfj.generated.fettersexcelconfigdata.FettersExcelConfigDataJson;
+import dev.xfj.generated.fetterstoryexcelconfigdata.FetterStoryExcelConfigDataJson;
+import dev.xfj.generated.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfigDataJson;
+import dev.xfj.generated.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
+import dev.xfj.generated.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
+import dev.xfj.generated.materialexcelconfigdata.MaterialExcelConfigDataJson;
+import dev.xfj.generated.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
+import dev.xfj.generated.rewardexcelconfigdata.RewardItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +36,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static dev.xfj.core.services.DatabaseWrapper.getItem;
-import static dev.xfj.core.services.DatabaseWrapper.getManualMappedText;
 import static java.lang.String.format;
 
 @Service
@@ -94,7 +92,7 @@ public class CharacterService {
                         .filter(entry -> entry.getKey() != 0)
                         .map(entry -> new KeyValue(
                                 databaseService.getTranslation(
-                                        DatabaseWrapper.getItem(entry.getKey()).getNameTextMapHash()
+                                        databaseService.getItem(entry.getKey()).getNameTextMapHash()
                                 ),
                                 entry.getValue())
                         )
@@ -227,7 +225,7 @@ public class CharacterService {
                                 !prop.getPropType().equals(BASE_ATK)
                 )
                 .collect(Collectors.toMap(
-                        stat -> getManualMappedText(stat.getPropType()),
+                        stat -> databaseService.getManualMappedText(stat.getPropType()),
                         AddProp::getValue
                 ));
     }
@@ -275,7 +273,7 @@ public class CharacterService {
     }
 
     private String getWeaponType(CharacterSpecification characterSpecification) {
-        return getManualMappedText(getAvatar(characterSpecification).getWeaponType());
+        return databaseService.getManualMappedText(getAvatar(characterSpecification).getWeaponType());
     }
 
     private String getConstellation(CharacterSpecification characterSpecification) {
@@ -433,7 +431,7 @@ public class CharacterService {
                 .stream()
                 .filter(id -> id.getKey() != 0)
                 .collect(Collectors.toMap(
-                        item -> databaseService.getTranslation(getItem(item.getKey()).getNameTextMapHash()),
+                        item -> databaseService.getTranslation(databaseService.getItem(item.getKey()).getNameTextMapHash()),
                         Map.Entry::getValue
                 ));
     }
@@ -449,8 +447,8 @@ public class CharacterService {
                 .flatMap(costs -> costs.getCostItems().stream())
                 .filter(id -> id.getId() != 0)
                 .collect(Collectors.toMap(
-                        item -> databaseService.getTranslation(getItem(item.getId()).getNameTextMapHash()),
-                        dev.xfj.jsonschema2pojo.proudskillexcelconfigdata.CostItem::getCount,
+                        item -> databaseService.getTranslation(databaseService.getItem(item.getId()).getNameTextMapHash()),
+                        dev.xfj.generated.proudskillexcelconfigdata.CostItem::getCount,
                         Integer::sum
                 ));
     }
@@ -492,7 +490,7 @@ public class CharacterService {
     private Integer getAllExpCosts(CharacterSpecification characterSpecification) {
         Map<String, Integer> expBooks = getExpBooks().keySet()
                 .stream()
-                .map(DatabaseWrapper::getItem)
+                .map(databaseService::getItem)
                 .collect(Collectors.toMap(
                         book -> databaseService.getTranslation(book.getNameTextMapHash()),
                         MaterialExcelConfigDataJson::getId
@@ -781,7 +779,7 @@ public class CharacterService {
                 booksNeeded++;
             }
 
-            result.put(databaseService.getTranslation(getItem(entry.getKey()).getNameTextMapHash()), booksNeeded);
+            result.put(databaseService.getTranslation(databaseService.getItem(entry.getKey()).getNameTextMapHash()), booksNeeded);
             expRemaining -= booksNeeded * expProvided;
         }
 
@@ -798,8 +796,8 @@ public class CharacterService {
                 .toList();
 
         for (int i = 0; i < expBookIds.size() - 1; i++) {
-            String current = databaseService.getTranslation(getItem(expBookIds.get(i)).getNameTextMapHash());
-            String next = databaseService.getTranslation(getItem(expBookIds.get(i + 1)).getNameTextMapHash());
+            String current = databaseService.getTranslation(databaseService.getItem(expBookIds.get(i)).getNameTextMapHash());
+            String next = databaseService.getTranslation(databaseService.getItem(expBookIds.get(i + 1)).getNameTextMapHash());
 
             if (getCostForExpItem(expBookIds.get(i)) * input.get(current) >= getCostForExpItem(expBookIds.get(i + 1))) {
                 input.put(current, 0);
@@ -820,7 +818,7 @@ public class CharacterService {
     }
 
     private MaterialExcelConfigDataJson getCharacterCard(CharacterSpecification characterSpecification) {
-        return getItem(databaseService.rewardConfig
+        return databaseService.getItem(databaseService.rewardConfig
                 .stream()
                 .filter(reward -> reward.getRewardId() == databaseService.fetterCharacterCardConfig
                         .stream()
@@ -839,7 +837,7 @@ public class CharacterService {
     }
 
     private MaterialExcelConfigDataJson getSpecialtyFood(CharacterSpecification characterSpecification) {
-        return getItem(databaseService.cookBonusConfig
+        return databaseService.getItem(databaseService.cookBonusConfig
                 .stream()
                 .filter(id -> id.getAvatarId() == getAvatar(characterSpecification).getId())
                 .flatMap(entry -> entry.getParamVec().stream())

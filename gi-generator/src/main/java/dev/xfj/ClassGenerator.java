@@ -126,7 +126,7 @@ public class ClassGenerator {
                 createClass(
                         json,
                         new File(outputDirectory),
-                        "dev.xfj.jsonschema2pojo." + item.replace(".json", "").toLowerCase(),
+                        "dev.xfj.generated." + item.replace(".json", "").toLowerCase(),
                         item
                 );
             } else {

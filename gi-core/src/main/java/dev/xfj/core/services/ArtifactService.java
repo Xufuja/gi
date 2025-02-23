@@ -2,8 +2,8 @@ package dev.xfj.core.services;
 
 import dev.xfj.core.dto.codex.ArtifactEntryDTO;
 import dev.xfj.core.dto.codex.ArtifactSetCodexDTO;
-import dev.xfj.jsonschema2pojo.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
+import dev.xfj.generated.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
+import dev.xfj.generated.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

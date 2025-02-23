@@ -1,14 +1,14 @@
 package dev.xfj.core.logic;
 
 import dev.xfj.core.services.DatabaseService;
-import dev.xfj.jsonschema2pojo.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.weaponcurveexcelconfigdata.CurveInfo;
-import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.weaponexcelconfigdata.WeaponProp;
-import dev.xfj.jsonschema2pojo.weaponlevelexcelconfigdata.WeaponLevelExcelConfigDataJson;
-import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.AddProp;
-import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.CostItem;
-import dev.xfj.jsonschema2pojo.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
+import dev.xfj.generated.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
+import dev.xfj.generated.weaponcurveexcelconfigdata.CurveInfo;
+import dev.xfj.generated.weaponexcelconfigdata.WeaponExcelConfigDataJson;
+import dev.xfj.generated.weaponexcelconfigdata.WeaponProp;
+import dev.xfj.generated.weaponlevelexcelconfigdata.WeaponLevelExcelConfigDataJson;
+import dev.xfj.generated.weaponpromoteexcelconfigdata.AddProp;
+import dev.xfj.generated.weaponpromoteexcelconfigdata.CostItem;
+import dev.xfj.generated.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -17,9 +17,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static dev.xfj.core.services.DatabaseWrapper.getItem;
-import static dev.xfj.core.services.DatabaseWrapper.getManualMappedText;
 
 @Component
 @Scope("prototype")
@@ -46,7 +43,7 @@ public class WeaponLogic implements Ascendable {
     }
 
     public String getWeaponType() {
-        return getManualMappedText(getWeapon().getWeaponType());
+        return databaseService.getManualMappedText(getWeapon().getWeaponType());
     }
 
     public Integer getRarity() {
@@ -73,7 +70,7 @@ public class WeaponLogic implements Ascendable {
                 .orElse("");
 
         return Map.of(
-                getManualMappedText(ascensionStat),
+                databaseService.getManualMappedText(ascensionStat),
                 getBaseStat(
                         getWeapon().getWeaponProp()
                                 .stream()
@@ -143,7 +140,7 @@ public class WeaponLogic implements Ascendable {
                 .stream()
                 .filter(id -> id.getKey() != 0)
                 .collect(Collectors.toMap(
-                        item -> databaseService.getTranslation(getItem(item.getKey()).getNameTextMapHash()),
+                        item -> databaseService.getTranslation(databaseService.getItem(item.getKey()).getNameTextMapHash()),
                         Map.Entry::getValue
                 ));
     }
