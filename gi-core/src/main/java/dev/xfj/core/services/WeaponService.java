@@ -1,7 +1,9 @@
 package dev.xfj.core.services;
 
 import dev.xfj.core.dto.codex.WeaponCodexDTO;
+import dev.xfj.core.dto.weapon.WeaponProfileDTO;
 import dev.xfj.core.logic.specification.WeaponSpecification;
+import dev.xfj.core.utils.KeyValue;
 import dev.xfj.generated.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.generated.weaponcurveexcelconfigdata.CurveInfo;
 import dev.xfj.generated.weaponexcelconfigdata.WeaponExcelConfigDataJson;
@@ -39,6 +41,29 @@ public class WeaponService {
                         entry.getId()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public WeaponProfileDTO getWeapon(int weaponId, int level, int experience, int ascension, int refinement) {
+        WeaponSpecification weapon = new WeaponSpecification();
+        weapon.id = weaponId;
+        weapon.currentLevel = level;
+        weapon.currentExperience = experience;
+        weapon.currentAscension = ascension;
+        weapon.currentRefinement = refinement;
+
+        return new WeaponProfileDTO(
+                weapon.id,
+                getName(weapon),
+                getWeaponType(weapon),
+                getBaseAttack(weapon),
+                getAscensionStat(weapon).entrySet().stream()
+                        .findFirst()
+                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .orElse(new KeyValue("", null)),
+                getRarity(weapon),
+                getEffect(weapon),
+                getDescription(weapon)
+        );
     }
 
     private String getName(WeaponSpecification weaponSpecification) {

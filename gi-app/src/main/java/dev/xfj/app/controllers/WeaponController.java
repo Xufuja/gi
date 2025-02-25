@@ -1,12 +1,11 @@
 package dev.xfj.app.controllers;
 
 import dev.xfj.core.dto.codex.WeaponCodexDTO;
+import dev.xfj.core.dto.weapon.WeaponProfileDTO;
 import dev.xfj.core.services.WeaponService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,8 +21,22 @@ public class WeaponController {
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
-
     public ResponseEntity<List<WeaponCodexDTO>> weapons() {
         return ResponseEntity.ok(weaponService.getWeapons());
+    }
+
+    @GetMapping(
+            path = "/{weaponId}",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WeaponProfileDTO> weapon(
+            @PathVariable int weaponId,
+            @RequestParam(defaultValue = "1") int level,
+            @RequestParam(defaultValue = "0") int experience,
+            @RequestParam(defaultValue = "0") int ascension,
+            @RequestParam(defaultValue = "1") int refinement
+    ) {
+        return ResponseEntity.ok(weaponService.getWeapon(weaponId, level, experience, ascension, refinement));
     }
 }
