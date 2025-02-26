@@ -1,7 +1,10 @@
 package dev.xfj.core.services;
 
+import dev.xfj.core.dto.character.MaterialsDTO;
+import dev.xfj.core.dto.character.RequirementsDTO;
 import dev.xfj.core.dto.codex.WeaponCodexDTO;
 import dev.xfj.core.dto.weapon.WeaponProfileDTO;
+import dev.xfj.core.logic.specification.CharacterSpecification;
 import dev.xfj.core.logic.specification.WeaponSpecification;
 import dev.xfj.core.utils.KeyValue;
 import dev.xfj.generated.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
@@ -63,6 +66,22 @@ public class WeaponService {
                 getRarity(weapon),
                 getEffect(weapon),
                 getDescription(weapon)
+        );
+    }
+
+    public MaterialsDTO getMaterials(int weaponId) {
+        WeaponSpecification weapon = new WeaponSpecification();
+        weapon.id = weaponId;
+
+        return new MaterialsDTO(
+                null,
+                new RequirementsDTO(getAllAscensionItems(weapon).entrySet()
+                        .stream()
+                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList()),
+                        getAllAscensionCosts(weapon)),
+                null,
+                null
         );
     }
 

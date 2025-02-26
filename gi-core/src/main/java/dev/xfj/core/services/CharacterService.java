@@ -138,16 +138,16 @@ public class CharacterService {
         character.id = characterId;
 
         return new MaterialsDTO(
-                new RequirementsDTO(getAllAscensionItems(character).entrySet()
-                        .stream()
-                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
-                        .collect(Collectors.toList()),
-                        getAllAscensionCosts(character)),
                 new RequirementsDTO(getAllExpBooks(character).entrySet()
                         .stream()
                         .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
                         .collect(Collectors.toList()),
                         getAllExpCosts(character)),
+                new RequirementsDTO(getAllAscensionItems(character).entrySet()
+                        .stream()
+                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList()),
+                        getAllAscensionCosts(character)),
                 new RequirementsDTO(getAllTalentItems(character).entrySet()
                         .stream()
                         .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
