@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import dev.xfj.core.constants.DataPath;
+import dev.xfj.core.utils.KeyValue;
 import dev.xfj.generated.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
 import dev.xfj.generated.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
 import dev.xfj.generated.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
@@ -193,6 +194,30 @@ public class DatabaseService {
                 .filter(item -> item.getId() == id)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public WeaponExcelConfigDataJson getWeapon(int id) {
+        return weaponConfig
+                .stream()
+                .filter(item -> item.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public KeyValue getItemTextHash(int id) {
+        MaterialExcelConfigDataJson item = getItem(id);
+
+        if (item != null) {
+            return new KeyValue(item.getNameTextMapHash(), item.getId());
+        }
+
+        WeaponExcelConfigDataJson weapon = getWeapon(id);
+
+        if (weapon != null) {
+            return new KeyValue(weapon.getNameTextMapHash(), weapon.getId());
+        }
+
+        return null;
     }
 
     private <T> List<T> loadJSONArray(Class<T> clazz) throws FileNotFoundException {

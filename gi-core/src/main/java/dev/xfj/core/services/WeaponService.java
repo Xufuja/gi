@@ -4,10 +4,10 @@ import dev.xfj.core.dto.character.MaterialsDTO;
 import dev.xfj.core.dto.character.RequirementsDTO;
 import dev.xfj.core.dto.codex.WeaponCodexDTO;
 import dev.xfj.core.dto.weapon.WeaponProfileDTO;
-import dev.xfj.core.logic.specification.CharacterSpecification;
 import dev.xfj.core.logic.specification.WeaponSpecification;
 import dev.xfj.core.utils.KeyValue;
 import dev.xfj.generated.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
+import dev.xfj.generated.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.generated.weaponcurveexcelconfigdata.CurveInfo;
 import dev.xfj.generated.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 import dev.xfj.generated.weaponexcelconfigdata.WeaponProp;
@@ -18,10 +18,7 @@ import dev.xfj.generated.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDa
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,14 +71,22 @@ public class WeaponService {
         weapon.id = weaponId;
 
         return new MaterialsDTO(
-                null,
+                new RequirementsDTO(getAllExpBooks(weapon).entrySet()
+                        .stream()
+                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList()),
+                        getAllExpCosts(weapon)),
                 new RequirementsDTO(getAllAscensionItems(weapon).entrySet()
                         .stream()
                         .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
                         .collect(Collectors.toList()),
                         getAllAscensionCosts(weapon)),
                 null,
-                null
+                new RequirementsDTO(getAllItemRequirements(weapon).entrySet()
+                        .stream()
+                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList()),
+                        getAllItemCosts(weapon))
         );
     }
 
@@ -189,6 +194,46 @@ public class WeaponService {
 
     private Integer getAllAscensionCosts(WeaponSpecification weaponSpecification) {
         return getAscensionCost(weaponSpecification, 0, getMaxAscensions(getWeapon(weaponSpecification).getWeaponPromoteId()));
+    }
+
+    private Map<String, Integer> getAllExpBooks(WeaponSpecification weaponSpecification) {
+        Map<String, Integer> result = new LinkedHashMap<>();
+
+        Map<Integer, WeaponPromoteExcelConfigDataJson> ascensions = getAscensions(getWeapon(weaponSpecification).getWeaponPromoteId());
+        int nextStartingLevel = 1;
+
+        for (int i = 0; i < ascensions.size(); i++) {
+            WeaponPromoteExcelConfigDataJson current = ascensions.get(i);
+            int currentMaxLevel = current.getUnlockMaxLevel();
+            getExpBooksForLevel(weaponSpecification, nextStartingLevel, currentMaxLevel).forEach((id, count) -> result.merge(id, count, Integer::sum));
+            nextStartingLevel = currentMaxLevel;
+        }
+
+        return result;
+    }
+
+    private Integer getAllExpCosts(WeaponSpecification weaponSpecification) {
+        Map<String, Integer> expBooks = getExpBooks().keySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        book -> databaseService.getTranslation(databaseService.getItemTextHash(book).key()),
+                        book -> book
+                ));
+
+        return getAllExpBooks(weaponSpecification).entrySet()
+                .stream()
+                .mapToInt(cost -> getCostForExpItem(expBooks.get(cost.getKey())) * cost.getValue())
+                .sum();
+    }
+
+    private Map<String, Integer> getAllItemRequirements(WeaponSpecification weaponSpecification) {
+        Map<String, Integer> result = getAllAscensionItems(weaponSpecification);
+        getAllExpBooks(weaponSpecification).forEach((id, count) -> result.merge(id, count, Integer::sum));
+        return result;
+    }
+
+    private Integer getAllItemCosts(WeaponSpecification characterSpecification) {
+        return getAllAscensionCosts(characterSpecification) + getAllExpCosts(characterSpecification);
     }
 
     private Integer getMaxLevel() {
@@ -303,5 +348,104 @@ public class WeaponService {
                 .filter(level -> level.getLevel() < targetLevel)
                 .mapToInt(entry -> entry.getRequiredExps().get(rarity - 1))
                 .sum();
+    }
+
+    private Map<String, Integer> getExpBooksForLevel(WeaponSpecification weaponSpecification, int startingLevel, int targetLevel) {
+        int expRequired = getExpRequired(getRarity(weaponSpecification), startingLevel, targetLevel) - weaponSpecification.currentExperience;
+
+        Map<Integer, Integer> expBooks = getExpBooks().entrySet()
+                .stream()
+                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (entryA, entryB) -> entryA,
+                        LinkedHashMap::new));
+
+        Map<String, Integer> result = new LinkedHashMap<>();
+        int expRemaining = expRequired;
+
+        Iterator<Map.Entry<Integer, Integer>> iterator = expBooks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Integer> entry = iterator.next();
+
+            if (expRemaining <= 0) {
+                break;
+            }
+
+            int expProvided = entry.getValue();
+            int booksNeeded = expRemaining / expProvided;
+
+            if (!iterator.hasNext()) {
+                booksNeeded++;
+            }
+
+            result.put(databaseService.getTranslation(databaseService.getItemTextHash(entry.getKey()).key()), booksNeeded);
+            expRemaining -= booksNeeded * expProvided;
+        }
+
+        checkExpBookEfficiency(result);
+
+        return result;
+    }
+
+    private void checkExpBookEfficiency(Map<String, Integer> input) {
+        List<Integer> expBookIds = getExpBooks().entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .toList();
+
+        for (int i = 0; i < expBookIds.size() - 1; i++) {
+            String current = databaseService.getTranslation(databaseService.getItemTextHash(expBookIds.get(i)).key());
+            String next = databaseService.getTranslation(databaseService.getItemTextHash(expBookIds.get(i + 1)).key());
+
+            if (getCostForExpItem(expBookIds.get(i)) * input.get(current) >= getCostForExpItem(expBookIds.get(i + 1))) {
+                input.put(current, 0);
+                input.put(next, input.get(next) + 1);
+            }
+        }
+    }
+
+    private int getCostForExpItem(int id) {
+        Map<Integer, Integer> expBooks = getExpBooks();
+        expBooks.replaceAll((book, exp) -> exp / 10);
+
+        return expBooks.entrySet()
+                .stream()
+                .filter(item -> item.getKey() == id)
+                .mapToInt(Map.Entry::getValue)
+                .sum();
+    }
+
+    private Map<Integer, Integer> getExpBooks() {
+        Map<Integer, Integer> result = databaseService.materialConfig
+                .stream()
+                .filter(item -> "MATERIAL_WEAPON_EXP_STONE".equals(item.getMaterialType()))
+                .collect(Collectors.toMap(
+                        MaterialExcelConfigDataJson::getId,
+                        item -> item.getItemUse()
+                                .stream()
+                                .filter(use -> "ITEM_USE_ADD_WEAPON_EXP".equals(use.getUseOp()))
+                                .flatMap(use -> use.getUseParam().stream())
+                                .filter(param -> !param.isBlank())
+                                .mapToInt(Integer::parseInt)
+                                .sum()
+                ));
+
+        Set<Integer> baseExp = new HashSet<>();
+
+        databaseService.weaponConfig
+                .stream()
+                .filter(weapon -> weapon.getRankLevel() <= 3)
+                .filter(present -> baseExp.add(present.getWeaponBaseExp()))
+                .collect(Collectors.toMap(
+                        WeaponExcelConfigDataJson::getId,
+                        WeaponExcelConfigDataJson::getWeaponBaseExp,
+                        (a, b) -> b
+                ))
+                .forEach((key, value) -> result.merge(key, value, (a, b) -> b));
+
+        return result;
     }
 }
