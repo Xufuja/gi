@@ -363,6 +363,10 @@ public class WeaponService {
                         LinkedHashMap::new));
 
         Map<String, Integer> result = new LinkedHashMap<>();
+        expBooks.forEach((key, value) -> result.put(
+                databaseService.getTranslation(databaseService.getItemTextHash(key).key()),
+                0
+        ));
         int expRemaining = expRequired;
 
         Iterator<Map.Entry<Integer, Integer>> iterator = expBooks.entrySet().iterator();
@@ -374,7 +378,8 @@ public class WeaponService {
             }
 
             int expProvided = entry.getValue();
-            int booksNeeded = expRemaining / expProvided;
+            double fractionalBooksNeeded = (double) expRemaining / expProvided;
+            int booksNeeded = (int)fractionalBooksNeeded;
 
             if (!iterator.hasNext()) {
                 booksNeeded++;
@@ -384,17 +389,34 @@ public class WeaponService {
             expRemaining -= booksNeeded * expProvided;
         }
 
-        checkExpBookEfficiency(result);
+        checkExpBookEfficiency(result, expRemaining);
 
         return result;
     }
 
-    private void checkExpBookEfficiency(Map<String, Integer> input) {
+    private void checkExpBookEfficiency(Map<String, Integer> input, int expRemaining) {
         List<Integer> expBookIds = getExpBooks().entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .toList();
+
+        for (int i = expBookIds.size() - 1; i > 0; i--) {
+            String current = databaseService.getTranslation(databaseService.getItemTextHash(expBookIds.get(i)).key());
+            String next = databaseService.getTranslation(databaseService.getItemTextHash(expBookIds.get(i - 1)).key());
+
+            if (input.get(current) > 0 && expRemaining <= 0) {
+                int currentExp = getExpBooks().get(expBookIds.get(i));
+                int nextExp = getExpBooks().get(expBookIds.get(i - 1));
+                int newRemaining = expRemaining + currentExp - nextExp;
+
+                if (newRemaining > expRemaining && newRemaining <= 0) {
+                    input.put(current, input.get(current) - 1);
+                    input.put(next, input.get(next) + 1);
+                    expRemaining = newRemaining;
+                }
+            }
+        }
 
         for (int i = 0; i < expBookIds.size() - 1; i++) {
             String current = databaseService.getTranslation(databaseService.getItemTextHash(expBookIds.get(i)).key());
