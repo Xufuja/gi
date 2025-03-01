@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+
 @Service
 public class WeaponService {
     private final DatabaseService databaseService;
@@ -70,10 +72,20 @@ public class WeaponService {
         WeaponSpecification weapon = new WeaponSpecification();
         weapon.id = weaponId;
 
+        Map<String, Integer> idMap = getExpBooks().entrySet()
+                .stream()
+                .filter(entry -> databaseService.getWeapon(entry.getKey()) != null)
+                .collect(Collectors.toMap(
+                        entry -> databaseService.getTranslation(databaseService.getItemTextHash(entry.getKey()).key()),
+                        entry -> databaseService.getWeapon(entry.getKey()).getRankLevel()
+                ));
+
         return new MaterialsDTO(
                 new RequirementsDTO(getAllExpBooks(weapon).entrySet()
                         .stream()
-                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+                        .map(entry -> !idMap.containsKey(entry.getKey()) ?
+                                new KeyValue(entry.getKey(), entry.getValue()) :
+                                new KeyValue(format("%s★ Weapon", idMap.get(entry.getKey())), entry.getValue()))
                         .collect(Collectors.toList()),
                         getAllExpCosts(weapon)),
                 new RequirementsDTO(getAllAscensionItems(weapon).entrySet()
@@ -136,7 +148,7 @@ public class WeaponService {
 
     private String getEffect(WeaponSpecification weaponSpecification) {
         EquipAffixExcelConfigDataJson details = getRefinementDetails(weaponSpecification, weaponSpecification.currentRefinement);
-        return String.format("%s\n%s", databaseService.getTranslation(details.getNameTextMapHash()),
+        return format("%s\n%s", databaseService.getTranslation(details.getNameTextMapHash()),
                 databaseService.getTranslation(details.getDescTextMapHash()));
     }
 
@@ -362,9 +374,9 @@ public class WeaponService {
                         (entryA, entryB) -> entryA,
                         LinkedHashMap::new));
 
-        Map<String, Integer> result = new LinkedHashMap<>();
-        expBooks.forEach((key, value) -> result.put(
-                databaseService.getTranslation(databaseService.getItemTextHash(key).key()),
+        Map<Integer, Integer> count = new LinkedHashMap<>();
+        expBooks.forEach((key, value) -> count.put(
+                key,
                 0
         ));
         int expRemaining = expRequired;
@@ -379,18 +391,42 @@ public class WeaponService {
 
             int expProvided = entry.getValue();
             double fractionalBooksNeeded = (double) expRemaining / expProvided;
-            int booksNeeded = (int)fractionalBooksNeeded;
+            int booksNeeded = (int) fractionalBooksNeeded;
 
             if (!iterator.hasNext()) {
                 booksNeeded++;
             }
 
-            result.put(databaseService.getTranslation(databaseService.getItemTextHash(entry.getKey()).key()), booksNeeded);
+            count.put(entry.getKey(), booksNeeded);
             expRemaining -= booksNeeded * expProvided;
         }
 
-        checkExpBookEfficiency(result, expRemaining);
+        if (expRemaining <= -200) {
+            List<Integer> temp = count.entrySet()
+                    .stream()
+                    .map(entry -> entry.getKey())
+                    .toList();
 
+            for (int i = 0; i < temp.size(); i++) {
+                if (i + 1 < temp.size() && expBooks.get(temp.get(i)) > 0 && expBooks.get(temp.get(i)) - expBooks.get(temp.get(i + 1)) == 200) {
+                    count.put(temp.get(i), count.get(temp.get(i)) - 1);
+                    count.put(temp.get(i + 1), count.get(temp.get(i + 1)) + 1);
+                    expRemaining += 200;
+                    break;
+                }
+            }
+        }
+
+        LinkedHashMap<String, Integer> result = count.entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        entry -> databaseService.getTranslation(databaseService.getItemTextHash(entry.getKey()).key()),
+                        entry -> entry.getValue(),
+                        (a, b) -> b,
+                        LinkedHashMap::new
+                ));
+
+        checkExpBookEfficiency(result, expRemaining);
         return result;
     }
 
