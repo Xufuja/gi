@@ -401,23 +401,30 @@ public class WeaponService {
             expRemaining -= booksNeeded * expProvided;
         }
 
-        if (expRemaining <= -200) {
+        int totalBookExp = count.entrySet()
+                .stream()
+                .mapToInt(book -> expBooks.get(book.getKey()) * book.getValue())
+                .sum();
+
+        if (totalBookExp - expRequired >= 200 && totalBookExp - expRequired < 400) {
             List<Integer> temp = count.entrySet()
                     .stream()
                     .map(entry -> entry.getKey())
                     .toList();
 
             for (int i = 0; i < temp.size(); i++) {
-                if (i + 1 < temp.size() && expBooks.get(temp.get(i)) > 0 && expBooks.get(temp.get(i)) - expBooks.get(temp.get(i + 1)) == 200) {
+                if (i + 1 < temp.size() &&
+                        expBooks.get(temp.get(i)) > 0 &&
+                        expBooks.get(temp.get(i)) - expBooks.get(temp.get(i + 1)) == 200
+                ) {
                     count.put(temp.get(i), count.get(temp.get(i)) - 1);
                     count.put(temp.get(i + 1), count.get(temp.get(i + 1)) + 1);
-                    expRemaining += 200;
                     break;
                 }
             }
         }
 
-        LinkedHashMap<String, Integer> result = count.entrySet()
+        return count.entrySet()
                 .stream()
                 .collect(Collectors.toMap(
                         entry -> databaseService.getTranslation(databaseService.getItemTextHash(entry.getKey()).key()),
@@ -425,45 +432,8 @@ public class WeaponService {
                         (a, b) -> b,
                         LinkedHashMap::new
                 ));
-
-        checkExpBookEfficiency(result, expRemaining);
-        return result;
     }
 
-    private void checkExpBookEfficiency(Map<String, Integer> input, int expRemaining) {
-        List<Integer> expBookIds = getExpBooks().entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .toList();
-
-        for (int i = expBookIds.size() - 1; i > 0; i--) {
-            String current = databaseService.getTranslation(databaseService.getItemTextHash(expBookIds.get(i)).key());
-            String next = databaseService.getTranslation(databaseService.getItemTextHash(expBookIds.get(i - 1)).key());
-
-            if (input.get(current) > 0 && expRemaining <= 0) {
-                int currentExp = getExpBooks().get(expBookIds.get(i));
-                int nextExp = getExpBooks().get(expBookIds.get(i - 1));
-                int newRemaining = expRemaining + currentExp - nextExp;
-
-                if (newRemaining > expRemaining && newRemaining <= 0) {
-                    input.put(current, input.get(current) - 1);
-                    input.put(next, input.get(next) + 1);
-                    expRemaining = newRemaining;
-                }
-            }
-        }
-
-        for (int i = 0; i < expBookIds.size() - 1; i++) {
-            String current = databaseService.getTranslation(databaseService.getItemTextHash(expBookIds.get(i)).key());
-            String next = databaseService.getTranslation(databaseService.getItemTextHash(expBookIds.get(i + 1)).key());
-
-            if (getCostForExpItem(expBookIds.get(i)) * input.get(current) >= getCostForExpItem(expBookIds.get(i + 1))) {
-                input.put(current, 0);
-                input.put(next, input.get(next) + 1);
-            }
-        }
-    }
 
     private int getCostForExpItem(int id) {
         Map<Integer, Integer> expBooks = getExpBooks();
