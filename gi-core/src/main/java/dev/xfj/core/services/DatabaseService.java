@@ -50,21 +50,27 @@ import dev.xfj.generated.weaponlevelexcelconfigdata.WeaponLevelExcelConfigDataJs
 import dev.xfj.generated.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static dev.xfj.core.constants.DataPath.EXCEL_BIN_OUTPUT;
-import static dev.xfj.core.constants.DataPath.TEXT_MAP;
+import static dev.xfj.core.constants.DataPath.*;
 
 @Service
 public class DatabaseService {
     public Map<String, String> languageMap;
+    public Map<String, String> readableMap;
     public final List<ManualTextMapConfigDataJson> manualTextMapConfig;
     public final List<AvatarExcelConfigDataJson> avatarConfig;
     public final List<AvatarSkillExcelConfigDataJson> skillConfig;
@@ -108,7 +114,7 @@ public class DatabaseService {
 
     public DatabaseService() {
         try {
-            this.languageMap = loadLanguage("EN");
+            setLanguage("EN");
             this.manualTextMapConfig = loadJSONArray(ManualTextMapConfigDataJson.class);
             this.avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
             this.skillConfig = loadJSONArray(AvatarSkillExcelConfigDataJson.class);
@@ -157,22 +163,10 @@ public class DatabaseService {
     public void setLanguage(String language) {
         try {
             languageMap = loadLanguage(language);
+            readableMap = loadReadable(language);
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
         }
-    }
-
-    public Map<String, String> loadLanguage(String language) throws FileNotFoundException {
-        String file = String.format("TextMap%1$s.json", language);
-
-        JsonReader jsonReader = new JsonReader(new FileReader(TEXT_MAP.path + file));
-        JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
-        Type type = TypeToken.getParameterized(Map.class, String.class, String.class).getType();
-
-        Map<String, String> result = new Gson().fromJson(jsonObject, type);
-        System.out.printf("Loaded: %1$7d entries from %2$s%n", result.keySet().size(), file);
-
-        return result;
     }
 
     public String getTranslation(String key) {
@@ -218,6 +212,55 @@ public class DatabaseService {
         }
 
         return null;
+    }
+
+    private Map<String, String> loadLanguage(String language) throws FileNotFoundException {
+        String file = String.format("TextMap%1$s.json", language);
+
+        JsonReader jsonReader = new JsonReader(new FileReader(TEXT_MAP.path + file));
+        JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
+        Type type = TypeToken.getParameterized(Map.class, String.class, String.class).getType();
+
+        Map<String, String> result = new Gson().fromJson(jsonObject, type);
+        System.out.printf("Loaded: %1$7d entries from %2$s%n", result.keySet().size(), file);
+
+        return result;
+    }
+
+    private Map<String, String> loadReadable(String language) {
+        File readableLocation = new File( String.format("%1$s%2$s", READABLE.path, language));
+        List<Path> filePaths = findFiles(readableLocation.listFiles(), "txt");
+
+        Map<String, String> result = filePaths.stream()
+                .collect(Collectors.toMap(
+                        file -> file.getFileName().toString().split("\\.")[0],
+                        this::loadTextFile
+                ));
+
+        System.out.printf("Loaded: %1$7d entries from %2$s%n", result.keySet().size(), readableLocation);
+
+        return result;
+    }
+
+    private List<Path> findFiles(File[] files, String extension) {
+        return Arrays.stream(files)
+                .filter(file -> file.toString().endsWith(extension))
+                .map(File::toPath)
+                .collect(Collectors.toList());
+    }
+
+    private String loadTextFile(Path path) {
+        String text;
+
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            byte[] bytes = inputStream.readAllBytes();
+            text = new String(bytes, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            System.err.println("Failed to open file: " + path);
+            throw new RuntimeException(e);
+        }
+
+        return text;
     }
 
     private <T> List<T> loadJSONArray(Class<T> clazz) throws FileNotFoundException {

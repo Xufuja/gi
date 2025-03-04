@@ -1,6 +1,7 @@
 package dev.xfj.core.services;
 
 import dev.xfj.core.dto.character.MaterialsDTO;
+import dev.xfj.core.dto.character.NameDescriptionDTO;
 import dev.xfj.core.dto.character.RequirementsDTO;
 import dev.xfj.core.dto.codex.WeaponCodexDTO;
 import dev.xfj.core.dto.weapon.WeaponProfileDTO;
@@ -100,6 +101,20 @@ public class WeaponService {
                         .collect(Collectors.toList()),
                         getAllItemCosts(weapon))
         );
+    }
+
+    public List<NameDescriptionDTO> getStories(int weaponId) {
+        List<String> keys = databaseService.readableMap.keySet()
+                .stream()
+                .filter(key -> key.contains(String.valueOf(weaponId)))
+                .toList();
+
+        return databaseService.readableMap.entrySet()
+                .stream()
+                .filter(entry -> keys.contains(entry.getKey()))
+                .filter(entry -> !entry.getValue().isBlank())
+                .map(entry -> new NameDescriptionDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     private String getName(WeaponSpecification weaponSpecification) {

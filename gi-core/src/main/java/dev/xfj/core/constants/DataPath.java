@@ -6,7 +6,8 @@ public enum DataPath {
     EXCEL_BIN_OUTPUT("\\ExcelBinOutput\\"),
     TEXT_MAP("\\TextMap\\"),
     AVATAR("\\BinOutput\\Avatar\\"),
-    AVATAR_ABILITIES("\\BinOutput\\Ability\\Temp\\AvatarAbilities\\");
+    AVATAR_ABILITIES("\\BinOutput\\Ability\\Temp\\AvatarAbilities\\"),
+    READABLE("\\Readable\\");
 
     public final String path;
 

@@ -1,7 +1,9 @@
 package dev.xfj.app.controllers;
 
 import dev.xfj.core.dto.character.MaterialsDTO;
+import dev.xfj.core.dto.character.NameDescriptionDTO;
 import dev.xfj.core.dto.character.RequirementsDTO;
+import dev.xfj.core.dto.character.StoryDTO;
 import dev.xfj.core.dto.codex.WeaponCodexDTO;
 import dev.xfj.core.dto.weapon.WeaponProfileDTO;
 import dev.xfj.core.services.WeaponService;
@@ -51,5 +53,16 @@ public class WeaponController {
             @PathVariable int weaponId
     ) {
         return ResponseEntity.ok(weaponService.getMaterials(weaponId));
+    }
+
+    @GetMapping(
+            path = "/{weaponId}/stories",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<NameDescriptionDTO>> stories(
+            @PathVariable int weaponId
+    ) {
+        return ResponseEntity.ok(weaponService.getStories(weaponId));
     }
 }
