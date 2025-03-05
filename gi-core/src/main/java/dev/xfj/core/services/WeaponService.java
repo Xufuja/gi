@@ -1,8 +1,8 @@
 package dev.xfj.core.services;
 
-import dev.xfj.core.dto.character.MaterialsDTO;
-import dev.xfj.core.dto.character.NameDescriptionDTO;
-import dev.xfj.core.dto.character.RequirementsDTO;
+import dev.xfj.core.dto.common.MaterialsDTO;
+import dev.xfj.core.dto.common.RequirementsDTO;
+import dev.xfj.core.dto.common.StoryDTO;
 import dev.xfj.core.dto.codex.WeaponCodexDTO;
 import dev.xfj.core.dto.weapon.WeaponProfileDTO;
 import dev.xfj.core.logic.specification.WeaponSpecification;
@@ -103,7 +103,7 @@ public class WeaponService {
         );
     }
 
-    public List<NameDescriptionDTO> getStories(int weaponId) {
+    public List<StoryDTO> getStories(int weaponId) {
         List<String> keys = databaseService.readableMap.keySet()
                 .stream()
                 .filter(key -> key.contains(String.valueOf(weaponId)))
@@ -113,7 +113,7 @@ public class WeaponService {
                 .stream()
                 .filter(entry -> keys.contains(entry.getKey()))
                 .filter(entry -> !entry.getValue().isBlank())
-                .map(entry -> new NameDescriptionDTO(entry.getKey(), entry.getValue()))
+                .map(entry -> new StoryDTO(entry.getKey(), null, entry.getValue()))
                 .collect(Collectors.toList());
     }
 
