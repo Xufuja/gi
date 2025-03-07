@@ -1,4 +1,4 @@
-package dev.xfj.core.logic.specification;
+package dev.xfj.core.specification;
 
 public class WeaponSpecification {
     public int id;

@@ -6,7 +6,7 @@ import dev.xfj.core.dto.codex.CharacterCodexDTO;
 import dev.xfj.core.dto.common.MaterialsDTO;
 import dev.xfj.core.dto.common.RequirementsDTO;
 import dev.xfj.core.dto.common.StoryDTO;
-import dev.xfj.core.logic.specification.CharacterSpecification;
+import dev.xfj.core.specification.CharacterSpecification;
 import dev.xfj.core.utils.Interpolator;
 import dev.xfj.core.utils.KeyValue;
 import dev.xfj.generated.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
