@@ -1,4 +1,4 @@
-package dev.xfj.core.dto.codex;
+package dev.xfj.core.dto.character;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

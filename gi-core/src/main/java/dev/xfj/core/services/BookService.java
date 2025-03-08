@@ -1,6 +1,6 @@
 package dev.xfj.core.services;
 
-import dev.xfj.core.dto.codex.ItemCodexDTO;
+import dev.xfj.core.dto.item.ItemCodexDTO;
 import dev.xfj.generated.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
 import dev.xfj.generated.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;

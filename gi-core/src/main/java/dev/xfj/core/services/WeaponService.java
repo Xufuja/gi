@@ -3,7 +3,7 @@ package dev.xfj.core.services;
 import dev.xfj.core.dto.common.MaterialsDTO;
 import dev.xfj.core.dto.common.RequirementsDTO;
 import dev.xfj.core.dto.common.StoryDTO;
-import dev.xfj.core.dto.codex.WeaponCodexDTO;
+import dev.xfj.core.dto.weapon.WeaponCodexDTO;
 import dev.xfj.core.dto.weapon.WeaponProfileDTO;
 import dev.xfj.core.specification.WeaponSpecification;
 import dev.xfj.core.utils.KeyValue;

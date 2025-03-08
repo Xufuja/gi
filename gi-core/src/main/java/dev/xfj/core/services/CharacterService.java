@@ -2,7 +2,7 @@ package dev.xfj.core.services;
 
 import dev.xfj.core.constants.CharacterRarity;
 import dev.xfj.core.dto.character.*;
-import dev.xfj.core.dto.codex.CharacterCodexDTO;
+import dev.xfj.core.dto.character.CharacterCodexDTO;
 import dev.xfj.core.dto.common.MaterialsDTO;
 import dev.xfj.core.dto.common.RequirementsDTO;
 import dev.xfj.core.dto.common.StoryDTO;

@@ -1,10 +1,10 @@
-package dev.xfj.core.dto.codex;
+package dev.xfj.core.dto.weapon;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ArtifactEntryDTO(
+public record WeaponCodexDTO(
         int id,
-        String name
-) {
-}
+        String name,
+        int sortFactor
+) {}

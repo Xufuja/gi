@@ -1,6 +1,6 @@
 package dev.xfj.app.controllers;
 
-import dev.xfj.core.dto.codex.ItemCodexDTO;
+import dev.xfj.core.dto.item.ItemCodexDTO;
 import dev.xfj.core.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

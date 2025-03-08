@@ -2,8 +2,8 @@ package dev.xfj.core.services;
 
 import dev.xfj.core.dto.artifact.ArtifactProfileDTO;
 import dev.xfj.core.dto.character.NameDescriptionDTO;
-import dev.xfj.core.dto.codex.ArtifactEntryDTO;
-import dev.xfj.core.dto.codex.ArtifactSetCodexDTO;
+import dev.xfj.core.dto.artifact.ArtifactEntryDTO;
+import dev.xfj.core.dto.artifact.ArtifactSetCodexDTO;
 import dev.xfj.core.specification.ArtifactSpecification;
 import dev.xfj.generated.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.generated.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;

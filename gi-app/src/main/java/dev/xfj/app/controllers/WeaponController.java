@@ -2,7 +2,7 @@ package dev.xfj.app.controllers;
 
 import dev.xfj.core.dto.common.MaterialsDTO;
 import dev.xfj.core.dto.common.StoryDTO;
-import dev.xfj.core.dto.codex.WeaponCodexDTO;
+import dev.xfj.core.dto.weapon.WeaponCodexDTO;
 import dev.xfj.core.dto.weapon.WeaponProfileDTO;
 import dev.xfj.core.services.WeaponService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package dev.xfj.app.controllers;
 
 import dev.xfj.core.dto.artifact.ArtifactProfileDTO;
-import dev.xfj.core.dto.codex.ArtifactSetCodexDTO;
+import dev.xfj.core.dto.artifact.ArtifactSetCodexDTO;
 import dev.xfj.core.services.ArtifactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>gi-app</module>
         <module>gi-core</module>
         <module>gi-generator</module>
     </modules>
