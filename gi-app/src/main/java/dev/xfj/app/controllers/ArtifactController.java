@@ -2,6 +2,7 @@ package dev.xfj.app.controllers;
 
 import dev.xfj.core.dto.artifact.ArtifactProfileDTO;
 import dev.xfj.core.dto.artifact.ArtifactSetCodexDTO;
+import dev.xfj.core.dto.common.StoryDTO;
 import dev.xfj.core.services.ArtifactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +54,16 @@ public class ArtifactController {
         } else {
             return ResponseEntity.badRequest().body(null);
         }
+    }
 
+    @GetMapping(
+            path = "/{artifactSetId}/stories",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<StoryDTO>> stories(
+            @PathVariable int artifactSetId
+    ) {
+        return ResponseEntity.ok(artifactService.getStories(artifactSetId));
     }
 }

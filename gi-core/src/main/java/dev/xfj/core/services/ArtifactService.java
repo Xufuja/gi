@@ -4,6 +4,7 @@ import dev.xfj.core.dto.artifact.ArtifactProfileDTO;
 import dev.xfj.core.dto.character.NameDescriptionDTO;
 import dev.xfj.core.dto.artifact.ArtifactEntryDTO;
 import dev.xfj.core.dto.artifact.ArtifactSetCodexDTO;
+import dev.xfj.core.dto.common.StoryDTO;
 import dev.xfj.core.specification.ArtifactSpecification;
 import dev.xfj.generated.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
 import dev.xfj.generated.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
@@ -68,6 +69,20 @@ public class ArtifactService {
                         .collect(Collectors.toList()),
                 getDescription(artifact)
         );
+    }
+
+    public List<StoryDTO> getStories(int artifactSetId) {
+        List<String> keys = databaseService.readableMap.keySet()
+                .stream()
+                .filter(key -> key.contains(String.valueOf(artifactSetId)))
+                .toList();
+
+        return databaseService.readableMap.entrySet()
+                .stream()
+                .filter(entry -> keys.contains(entry.getKey()))
+                .filter(entry -> !entry.getValue().isBlank())
+                .map(entry -> new StoryDTO(entry.getKey(), null, entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     private ReliquaryExcelConfigDataJson getArtifact(int id) {
