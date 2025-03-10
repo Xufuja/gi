@@ -1,9 +1,7 @@
 package dev.xfj.core.services;
 
-import dev.xfj.core.dto.artifact.ArtifactProfileDTO;
+import dev.xfj.core.dto.artifact.*;
 import dev.xfj.core.dto.character.NameDescriptionDTO;
-import dev.xfj.core.dto.artifact.ArtifactEntryDTO;
-import dev.xfj.core.dto.artifact.ArtifactSetCodexDTO;
 import dev.xfj.core.dto.common.StoryDTO;
 import dev.xfj.core.specification.ArtifactSpecification;
 import dev.xfj.generated.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
@@ -17,6 +15,7 @@ import dev.xfj.generated.reliquarysetexcelconfigdata.ReliquarySetExcelConfigData
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +67,44 @@ public class ArtifactService {
                         .map(entry -> new NameDescriptionDTO(format("%s-Pieces", entry.getKey()), entry.getValue()))
                         .collect(Collectors.toList()),
                 getDescription(artifact)
+        );
+    }
+
+    public ArtifactStatsDTO getStats(int artifactId) {
+        ArtifactSpecification artifact = new ArtifactSpecification();
+        artifact.id = artifactId;
+
+        return new ArtifactStatsDTO(
+                getMainStats(artifact).entrySet()
+                        .stream()
+                        .map(entry -> new ArtifactStatEntryDTO(
+                                        entry.getKey(),
+                                        "Per Level",
+                                        IntStream.range(0, entry.getValue().size())
+                                                .boxed()
+                                                .collect(Collectors.toMap(
+                                                                i -> i,
+                                                                i -> entry.getValue().get(i)
+                                                        )
+                                                )
+                                )
+                        )
+                        .collect(Collectors.toList()),
+                getSubStats(artifact).entrySet()
+                        .stream()
+                        .map(entry -> new ArtifactStatEntryDTO(
+                                        entry.getKey(),
+                                        "Possible Rolls",
+                                        IntStream.range(0, entry.getValue().size())
+                                                .boxed()
+                                                .collect(Collectors.toMap(
+                                                                i -> i,
+                                                                i -> entry.getValue().get(i)
+                                                        )
+                                                )
+                                )
+                        )
+                        .collect(Collectors.toList())
         );
     }
 
@@ -153,13 +190,13 @@ public class ArtifactService {
         return databaseService.getTranslation(getArtifact(artifactSpecification).getDescTextMapHash());
     }
 
-    private Map<String, Map<Integer, Double>> getMainStats(ArtifactSpecification artifactSpecification) {
+    private Map<String, List<Double>> getMainStats(ArtifactSpecification artifactSpecification) {
         return getPossibleMainStats(artifactSpecification)
                 .stream()
                 .map(ReliquaryMainPropExcelConfigDataJson::getPropType)
                 .collect(Collectors.toMap(
-                                databaseService::getManualMappedText,
-                                entry -> getLevelData(getRarity(artifactSpecification), entry)
+                                entry -> entry.contains("PERCENT") ? databaseService.getManualMappedText(entry) + " %" : databaseService.getManualMappedText(entry),
+                                entry -> new ArrayList<>(getLevelData(getRarity(artifactSpecification), entry).values())
                         )
                 );
     }
@@ -169,7 +206,7 @@ public class ArtifactService {
                 .stream()
                 .flatMap(List::stream)
                 .collect(Collectors.groupingBy(
-                        entry -> databaseService.getManualMappedText(entry.getPropType()),
+                        entry -> entry.getPropType().contains("PERCENT") ? databaseService.getManualMappedText(entry.getPropType()) + " %" : databaseService.getManualMappedText(entry.getPropType()),
                         Collectors.mapping(
                                 ReliquaryAffixExcelConfigDataJson::getPropValue,
                                 Collectors.toList()
@@ -219,6 +256,9 @@ public class ArtifactService {
         return databaseService.reliquaryMainPropConfig
                 .stream()
                 .filter(stat -> getArtifact(artifactSpecification.id).getMainPropDepotId() == stat.getPropDepotId())
+                .filter(stat -> !getArtifact(artifactSpecification.id).getEquipType().equals("EQUIP_BRACER") && !stat.getPropType().equals("FIGHT_PROP_HP"))
+                .filter(stat -> !getArtifact(artifactSpecification.id).getEquipType().equals("EQUIP_NECKLACE") && !stat.getPropType().equals("FIGHT_PROP_ATTACK"))
+                .filter(stat -> !stat.getPropType().equals("FIGHT_PROP_DEFENSE"))
                 .collect(Collectors.toList());
     }
 
@@ -227,7 +267,7 @@ public class ArtifactService {
                 .stream()
                 .filter(entry -> entry.getRank() == rarity)
                 .collect(Collectors.toMap(
-                                ReliquaryLevelExcelConfigDataJson::getLevel,
+                                entry -> entry.getLevel() - 1,
                                 entry -> entry.getAddProps()
                                         .stream()
                                         .filter(prop -> prop.getPropType().equals(stat))

@@ -2,6 +2,7 @@ package dev.xfj.app.controllers;
 
 import dev.xfj.core.dto.artifact.ArtifactProfileDTO;
 import dev.xfj.core.dto.artifact.ArtifactSetCodexDTO;
+import dev.xfj.core.dto.artifact.ArtifactStatsDTO;
 import dev.xfj.core.dto.common.StoryDTO;
 import dev.xfj.core.services.ArtifactService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,33 @@ public class ArtifactController {
                         .anyMatch(artifact -> artifact.id() == artifactId))
         ) {
             return ResponseEntity.ok(artifactService.getArtifact(artifactId, level, experience));
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @GetMapping(
+            path = "/{artifactSetId}/{artifactId}/stats",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ArtifactStatsDTO> stats(
+            @PathVariable int artifactSetId,
+            @PathVariable int artifactId
+    ) {
+        if (artifactService.getArtifactSets()
+                .stream()
+                .filter(entry -> entry.id() == artifactSetId)
+                .anyMatch(entry -> Stream.of(
+                                entry.flower(),
+                                entry.feather(),
+                                entry.sands(),
+                                entry.goblet(),
+                                entry.circlet()
+                        )
+                        .anyMatch(artifact -> artifact.id() == artifactId))
+        ) {
+            return ResponseEntity.ok(artifactService.getStats(artifactId));
         } else {
             return ResponseEntity.badRequest().body(null);
         }
