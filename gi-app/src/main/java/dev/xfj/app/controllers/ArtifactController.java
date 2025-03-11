@@ -94,4 +94,31 @@ public class ArtifactController {
     ) {
         return ResponseEntity.ok(artifactService.getStories(artifactSetId));
     }
+
+    @GetMapping(
+            path = "/{artifactSetId}/{artifactId}/stories",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<StoryDTO>> story(
+            @PathVariable int artifactSetId,
+            @PathVariable int artifactId
+    ) {
+        if (artifactService.getArtifactSets()
+                .stream()
+                .filter(entry -> entry.id() == artifactSetId)
+                .anyMatch(entry -> Stream.of(
+                                entry.flower(),
+                                entry.feather(),
+                                entry.sands(),
+                                entry.goblet(),
+                                entry.circlet()
+                        )
+                        .anyMatch(artifact -> artifact.id() == artifactId))
+        ) {
+            return ResponseEntity.ok(artifactService.getStory(artifactId));
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 }

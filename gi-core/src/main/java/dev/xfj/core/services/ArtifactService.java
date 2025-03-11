@@ -5,6 +5,7 @@ import dev.xfj.core.dto.character.NameDescriptionDTO;
 import dev.xfj.core.dto.common.StoryDTO;
 import dev.xfj.core.specification.ArtifactSpecification;
 import dev.xfj.generated.equipaffixexcelconfigdata.EquipAffixExcelConfigDataJson;
+import dev.xfj.generated.localizationexcelconfigdata.LocalizationExcelConfigDataJson;
 import dev.xfj.generated.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
 import dev.xfj.generated.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
 import dev.xfj.generated.reliquaryexcelconfigdata.ReliquaryExcelConfigDataJson;
@@ -120,6 +121,45 @@ public class ArtifactService {
                 .filter(entry -> !entry.getValue().isBlank())
                 .map(entry -> new StoryDTO(entry.getKey(), null, entry.getValue()))
                 .collect(Collectors.toList());
+    }
+
+    public List<StoryDTO> getStory(int artifactId) {
+        ArtifactSpecification artifact = new ArtifactSpecification();
+        artifact.id = artifactId;
+
+        String name = databaseService.localizationConfig
+                .stream()
+                .filter(
+                        entry -> String.valueOf(entry.getId())
+                                .endsWith(String.valueOf(getArtifact(artifactId).getStoryId()).substring(1))
+                )
+                .map(this::pathMapper)
+                .map(entry -> entry.split(databaseService.language + "/")[1])
+                .findFirst()
+                .orElse(null);
+
+        return List.of(new StoryDTO(name, null, databaseService.readableMap.get(name)));
+    }
+
+    private String pathMapper(LocalizationExcelConfigDataJson locale) {
+        return switch (databaseService.language) {
+            case "EN" -> locale.getEnPath();
+            case "CHS" -> locale.getScPath();
+            case "CHT" -> locale.getTcPath();
+            case "KR" -> locale.getKrPath();
+            case "JP" -> locale.getJpPath();
+            case "ES" -> locale.getEsPath();
+            case "FR" -> locale.getFrPath();
+            case "ID" -> locale.getIdPath();
+            case "PT" -> locale.getPtPath();
+            case "RU" -> locale.getRuPath();
+            case "TH" -> locale.getThPath();
+            case "VI" -> locale.getViPath();
+            case "DE" -> locale.getDePath();
+            case "TR" -> locale.getTrPath();
+            case "IT" -> locale.getItPath();
+            default -> locale.getDefaultPath();
+        };
     }
 
     private ReliquaryExcelConfigDataJson getArtifact(int id) {

@@ -33,6 +33,7 @@ import dev.xfj.generated.furnituresuiteexcelconfigdata.FurnitureSuiteExcelConfig
 import dev.xfj.generated.homeworldfurnitureexcelconfigdata.HomeWorldFurnitureExcelConfigDataJson;
 import dev.xfj.generated.homeworldfurnituretypeexcelconfigdata.HomeWorldFurnitureTypeExcelConfigDataJson;
 import dev.xfj.generated.homeworldnpcexcelconfigdata.HomeWorldNPCExcelConfigDataJson;
+import dev.xfj.generated.localizationexcelconfigdata.LocalizationExcelConfigDataJson;
 import dev.xfj.generated.manualtextmapconfigdata.ManualTextMapConfigDataJson;
 import dev.xfj.generated.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
 import dev.xfj.generated.materialexcelconfigdata.MaterialExcelConfigDataJson;
@@ -69,6 +70,7 @@ import static dev.xfj.core.constants.DataPath.*;
 
 @Service
 public class DatabaseService {
+    public String language;
     public Map<String, String> languageMap;
     public Map<String, String> readableMap;
     public final List<ManualTextMapConfigDataJson> manualTextMapConfig;
@@ -111,10 +113,12 @@ public class DatabaseService {
     public final List<BooksCodexExcelConfigDataJson> booksCodexConfig;
     public final List<DungeonExcelConfigDataJson> dungeonConfig;
     public final List<DungeonEntryExcelConfigDataJson> dungeonEntryConfig;
+    public final List<LocalizationExcelConfigDataJson> localizationConfig;
 
     public DatabaseService() {
         try {
-            setLanguage("EN");
+            this.language = "EN";
+            setLanguage();
             this.manualTextMapConfig = loadJSONArray(ManualTextMapConfigDataJson.class);
             this.avatarConfig = loadJSONArray(AvatarExcelConfigDataJson.class);
             this.skillConfig = loadJSONArray(AvatarSkillExcelConfigDataJson.class);
@@ -155,12 +159,13 @@ public class DatabaseService {
             this.booksCodexConfig = loadJSONArray(BooksCodexExcelConfigDataJson.class);
             this.dungeonConfig = loadJSONArray(DungeonExcelConfigDataJson.class);
             this.dungeonEntryConfig = loadJSONArray(DungeonEntryExcelConfigDataJson.class);
+            this.localizationConfig = loadJSONArray(LocalizationExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage() {
         try {
             languageMap = loadLanguage(language);
             readableMap = loadReadable(language);
