@@ -143,22 +143,22 @@ public class ArtifactService {
 
     private String pathMapper(LocalizationExcelConfigDataJson locale) {
         return switch (databaseService.language) {
-            case "EN" -> locale.getEnPath();
             case "CHS" -> locale.getScPath();
             case "CHT" -> locale.getTcPath();
-            case "KR" -> locale.getKrPath();
-            case "JP" -> locale.getJpPath();
-            case "ES" -> locale.getEsPath();
-            case "FR" -> locale.getFrPath();
-            case "ID" -> locale.getIdPath();
-            case "PT" -> locale.getPtPath();
-            case "RU" -> locale.getRuPath();
-            case "TH" -> locale.getThPath();
-            case "VI" -> locale.getViPath();
-            case "DE" -> locale.getDePath();
-            case "TR" -> locale.getTrPath();
-            case "IT" -> locale.getItPath();
-            default -> locale.getDefaultPath();
+            default -> {
+                try {
+                    yield (String) LocalizationExcelConfigDataJson.class.getMethod(
+                                    format(
+                                            "get%s%sPath",
+                                            databaseService.language.charAt(0),
+                                            databaseService.language.substring(1).toLowerCase()
+                                    )
+                            )
+                            .invoke(locale);
+                } catch (Exception e) {
+                    yield locale.getDefaultPath();
+                }
+            }
         };
     }
 
