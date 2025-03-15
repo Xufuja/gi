@@ -38,6 +38,7 @@ import dev.xfj.generated.manualtextmapconfigdata.ManualTextMapConfigDataJson;
 import dev.xfj.generated.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
 import dev.xfj.generated.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.generated.materialsourcedataexcelconfigdata.MaterialSourceDataExcelConfigDataJson;
+import dev.xfj.generated.monsterdescribeexcelconfigdata.MonsterDescribeExcelConfigDataJson;
 import dev.xfj.generated.monsterexcelconfigdata.MonsterExcelConfigDataJson;
 import dev.xfj.generated.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 import dev.xfj.generated.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
@@ -118,6 +119,7 @@ public class DatabaseService {
     public final List<LocalizationExcelConfigDataJson> localizationConfig;
     public final List<MaterialSourceDataExcelConfigDataJson> materialSourceDataConfig;
     public final List<MonsterExcelConfigDataJson> monsterConfig;
+    public final List<MonsterDescribeExcelConfigDataJson> monsterDescribeConfig;
 
     public DatabaseService() {
         try {
@@ -166,6 +168,7 @@ public class DatabaseService {
             this.localizationConfig = loadJSONArray(LocalizationExcelConfigDataJson.class);
             this.materialSourceDataConfig = loadJSONArray(MaterialSourceDataExcelConfigDataJson.class);
             this.monsterConfig = loadJSONArray(MonsterExcelConfigDataJson.class);
+            this.monsterDescribeConfig = loadJSONArray(MonsterDescribeExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
