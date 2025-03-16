@@ -1,10 +1,12 @@
 package dev.xfj.app.controllers;
 
 import dev.xfj.core.dto.monster.MonsterCodexDTO;
+import dev.xfj.core.dto.monster.MonsterProfileDTO;
 import dev.xfj.core.services.MonsterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,5 +26,15 @@ public class MonsterController {
     )
     public ResponseEntity<List<MonsterCodexDTO>> items() {
         return ResponseEntity.ok(monsterService.getMonsters());
+    }
+
+    @GetMapping(
+            path = "/{monsterId}",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<MonsterProfileDTO> item(@PathVariable int monsterId) {
+
+        return ResponseEntity.ok(monsterService.getMonster(monsterId));
     }
 }

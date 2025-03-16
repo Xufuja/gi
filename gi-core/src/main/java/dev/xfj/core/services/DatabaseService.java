@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import dev.xfj.core.constants.DataPath;
 import dev.xfj.core.utils.KeyValue;
+import dev.xfj.generated.animalcodexexcelconfigdata.AnimalCodexExcelConfigDataJson;
 import dev.xfj.generated.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
 import dev.xfj.generated.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
 import dev.xfj.generated.avatarcostumeexcelconfigdata.AvatarCostumeExcelConfigDataJson;
@@ -40,6 +41,8 @@ import dev.xfj.generated.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.generated.materialsourcedataexcelconfigdata.MaterialSourceDataExcelConfigDataJson;
 import dev.xfj.generated.monsterdescribeexcelconfigdata.MonsterDescribeExcelConfigDataJson;
 import dev.xfj.generated.monsterexcelconfigdata.MonsterExcelConfigDataJson;
+import dev.xfj.generated.monsterspecialnameexcelconfigdata.MonsterSpecialNameExcelConfigDataJson;
+import dev.xfj.generated.monstertitleexcelconfigdata.MonsterTitleExcelConfigDataJson;
 import dev.xfj.generated.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
 import dev.xfj.generated.reliquaryaffixexcelconfigdata.ReliquaryAffixExcelConfigDataJson;
 import dev.xfj.generated.reliquarycodexexcelconfigdata.ReliquaryCodexExcelConfigDataJson;
@@ -120,6 +123,9 @@ public class DatabaseService {
     public final List<MaterialSourceDataExcelConfigDataJson> materialSourceDataConfig;
     public final List<MonsterExcelConfigDataJson> monsterConfig;
     public final List<MonsterDescribeExcelConfigDataJson> monsterDescribeConfig;
+    public final List<MonsterTitleExcelConfigDataJson> monsterTitleConfig;
+    public final List<MonsterSpecialNameExcelConfigDataJson> monsterSpecialNameConfig;
+    public final List<AnimalCodexExcelConfigDataJson> animalCodexConfig;
 
     public DatabaseService() {
         try {
@@ -169,6 +175,9 @@ public class DatabaseService {
             this.materialSourceDataConfig = loadJSONArray(MaterialSourceDataExcelConfigDataJson.class);
             this.monsterConfig = loadJSONArray(MonsterExcelConfigDataJson.class);
             this.monsterDescribeConfig = loadJSONArray(MonsterDescribeExcelConfigDataJson.class);
+            this.monsterTitleConfig = loadJSONArray(MonsterTitleExcelConfigDataJson.class);
+            this.monsterSpecialNameConfig = loadJSONArray(MonsterSpecialNameExcelConfigDataJson.class);
+            this.animalCodexConfig = loadJSONArray(AnimalCodexExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
