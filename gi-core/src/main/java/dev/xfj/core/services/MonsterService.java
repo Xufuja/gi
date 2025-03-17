@@ -2,8 +2,11 @@ package dev.xfj.core.services;
 
 import dev.xfj.core.dto.monster.MonsterCodexDTO;
 import dev.xfj.core.dto.monster.MonsterProfileDTO;
+import dev.xfj.core.dto.monster.MonsterStatsDTO;
 import dev.xfj.core.specification.MonsterSpecification;
 import dev.xfj.generated.animalcodexexcelconfigdata.AnimalCodexExcelConfigDataJson;
+import dev.xfj.generated.monstercurveexcelconfigdata.CurveInfo;
+import dev.xfj.generated.monstercurveexcelconfigdata.MonsterCurveExcelConfigDataJson;
 import dev.xfj.generated.monsterdescribeexcelconfigdata.MonsterDescribeExcelConfigDataJson;
 import dev.xfj.generated.monsterexcelconfigdata.MonsterExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +15,14 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class MonsterService {
     private final DatabaseService databaseService;
+    private static final String BASE_HP = "FIGHT_PROP_BASE_HP";
+    private static final String BASE_DEF = "FIGHT_PROP_BASE_DEFENSE";
+    private static final String BASE_ATK = "FIGHT_PROP_BASE_ATTACK";
 
     @Autowired
     public MonsterService(DatabaseService databaseService) {
@@ -48,6 +55,28 @@ public class MonsterService {
                 getSpecialName(monster),
                 getDescription(monster)
         );
+    }
+
+    public List<MonsterStatsDTO> getStats(int monsterId) {
+        MonsterSpecification monster = new MonsterSpecification();
+        monster.id = monsterId;
+
+        return IntStream.range(1, getMaxLevel() + 1)
+                .boxed()
+                .map(i -> {
+                            monster.currentLevel = i;
+                            return new MonsterStatsDTO(
+                                    i,
+                                    getBaseHealth(monster),
+                                    getMultiPlayerHealth(monster, getBaseHealth(monster), 0),
+                                    getMultiPlayerHealth(monster, getBaseHealth(monster), 1),
+                                    getMultiPlayerHealth(monster, getBaseHealth(monster), 2),
+                                    getBaseAttack(monster),
+                                    getBaseDefense(monster)
+                            );
+                        }
+                )
+                .collect(Collectors.toList());
     }
 
     private String getName(MonsterSpecification monsterSpecification) {
@@ -87,6 +116,67 @@ public class MonsterService {
                 .map(entry -> databaseService.getTranslation(entry.getDescTextMapHash()))
                 .findFirst()
                 .orElse("");
+    }
+
+    private double getBaseHealth(MonsterSpecification monsterSpecification) {
+        return getBaseStat(monsterSpecification, getMonster(monsterSpecification).getHpBase(), BASE_HP);
+    }
+
+    private double getBaseAttack(MonsterSpecification monsterSpecification) {
+        return getBaseStat(monsterSpecification, getMonster(monsterSpecification).getAttackBase(), BASE_ATK);
+    }
+
+    private double getBaseDefense(MonsterSpecification monsterSpecification) {
+        return getBaseStat(monsterSpecification, getMonster(monsterSpecification).getDefenseBase(), BASE_DEF);
+    }
+
+    private double getBaseStat(MonsterSpecification monsterSpecification, double baseValue, String statType) {
+        return (baseValue * getBaseStatMultiplier(monsterSpecification, statType));
+    }
+
+    private double getExtraBaseStats(MonsterSpecification monsterSpecification, String selected, int index) {
+        return databaseService.monsterMultiPlayerConfig
+                .stream()
+                .filter(entry -> entry.getId() == getMonster(monsterSpecification).getMpPropID())
+                .flatMap(entry -> entry.getPropPer().stream())
+                .filter(prop -> prop.getPropType().equals(selected))
+                .mapToDouble(prop -> prop.getPropValue().get(index))
+                .findFirst()
+                .orElse(-1.0);
+    }
+
+    private double getCurveMultiplier(MonsterSpecification monsterSpecification, String curveType) {
+        return databaseService.monsterCurveConfig
+                .stream()
+                .filter(level -> level.getLevel() == monsterSpecification.currentLevel)
+                .flatMap(curves -> curves.getCurveInfos().stream())
+                .filter(curve -> curve.getType().equals(curveType))
+                .map(CurveInfo::getValue)
+                .findFirst()
+                .orElse(-1.0);
+    }
+
+    private double getBaseStatMultiplier(MonsterSpecification monsterSpecification, String selected) {
+        return getMonster(monsterSpecification).getPropGrowCurves()
+                .stream()
+                .filter(curves -> curves.getType().equals(selected))
+                .map(curve -> getCurveMultiplier(monsterSpecification, curve.getGrowCurve()))
+                .findFirst()
+                .orElse(-1.0);
+    }
+
+    private Integer getMaxLevel() {
+        return databaseService.monsterCurveConfig
+                .stream()
+                .max(Comparator.comparing(MonsterCurveExcelConfigDataJson::getLevel))
+                .stream()
+                .mapToInt(MonsterCurveExcelConfigDataJson::getLevel)
+                .findFirst()
+                .orElse(-1);
+    }
+
+    private double getMultiPlayerHealth(MonsterSpecification monsterSpecification, double health, int index) {
+        return health + (health * getExtraBaseStats(monsterSpecification, "FIGHT_PROP_HP_MP_PERCENT", index));
     }
 
     private MonsterExcelConfigDataJson getMonster(MonsterSpecification monsterSpecification) {

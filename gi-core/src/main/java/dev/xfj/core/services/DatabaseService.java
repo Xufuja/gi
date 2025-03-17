@@ -39,8 +39,10 @@ import dev.xfj.generated.manualtextmapconfigdata.ManualTextMapConfigDataJson;
 import dev.xfj.generated.materialcodexexcelconfigdata.MaterialCodexExcelConfigDataJson;
 import dev.xfj.generated.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import dev.xfj.generated.materialsourcedataexcelconfigdata.MaterialSourceDataExcelConfigDataJson;
+import dev.xfj.generated.monstercurveexcelconfigdata.MonsterCurveExcelConfigDataJson;
 import dev.xfj.generated.monsterdescribeexcelconfigdata.MonsterDescribeExcelConfigDataJson;
 import dev.xfj.generated.monsterexcelconfigdata.MonsterExcelConfigDataJson;
+import dev.xfj.generated.monstermultiplayerexcelconfigdata.MonsterMultiPlayerExcelConfigDataJson;
 import dev.xfj.generated.monsterspecialnameexcelconfigdata.MonsterSpecialNameExcelConfigDataJson;
 import dev.xfj.generated.monstertitleexcelconfigdata.MonsterTitleExcelConfigDataJson;
 import dev.xfj.generated.proudskillexcelconfigdata.ProudSkillExcelConfigDataJson;
@@ -126,6 +128,8 @@ public class DatabaseService {
     public final List<MonsterTitleExcelConfigDataJson> monsterTitleConfig;
     public final List<MonsterSpecialNameExcelConfigDataJson> monsterSpecialNameConfig;
     public final List<AnimalCodexExcelConfigDataJson> animalCodexConfig;
+    public final List<MonsterCurveExcelConfigDataJson> monsterCurveConfig;
+    public final List<MonsterMultiPlayerExcelConfigDataJson> monsterMultiPlayerConfig;
 
     public DatabaseService() {
         try {
@@ -178,6 +182,8 @@ public class DatabaseService {
             this.monsterTitleConfig = loadJSONArray(MonsterTitleExcelConfigDataJson.class);
             this.monsterSpecialNameConfig = loadJSONArray(MonsterSpecialNameExcelConfigDataJson.class);
             this.animalCodexConfig = loadJSONArray(AnimalCodexExcelConfigDataJson.class);
+            this.monsterCurveConfig = loadJSONArray(MonsterCurveExcelConfigDataJson.class);
+            this.monsterMultiPlayerConfig = loadJSONArray(MonsterMultiPlayerExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
