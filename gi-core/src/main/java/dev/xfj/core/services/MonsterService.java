@@ -68,10 +68,13 @@ public class MonsterService {
                             return new MonsterStatsDTO(
                                     i,
                                     getBaseHealth(monster),
-                                    getMultiPlayerHealth(monster, getBaseHealth(monster), 0),
-                                    getMultiPlayerHealth(monster, getBaseHealth(monster), 1),
-                                    getMultiPlayerHealth(monster, getBaseHealth(monster), 2),
+                                    getMultiplayerHealth(monster, getBaseHealth(monster), 0),
+                                    getMultiplayerHealth(monster, getBaseHealth(monster), 1),
+                                    getMultiplayerHealth(monster, getBaseHealth(monster), 2),
                                     getBaseAttack(monster),
+                                    getMultiplayerAttack(monster, getBaseAttack(monster), 0),
+                                    getMultiplayerAttack(monster, getBaseAttack(monster), 1),
+                                    getMultiplayerAttack(monster, getBaseAttack(monster), 2),
                                     getBaseDefense(monster)
                             );
                         }
@@ -175,8 +178,12 @@ public class MonsterService {
                 .orElse(-1);
     }
 
-    private double getMultiPlayerHealth(MonsterSpecification monsterSpecification, double health, int index) {
-        return health + (health * getExtraBaseStats(monsterSpecification, "FIGHT_PROP_HP_MP_PERCENT", index));
+    private double getMultiplayerHealth(MonsterSpecification monsterSpecification, double health, int index) {
+        return health + health * getExtraBaseStats(monsterSpecification, "FIGHT_PROP_HP_MP_PERCENT", index);
+    }
+
+    private double getMultiplayerAttack(MonsterSpecification monsterSpecification, double attack, int index) {
+        return attack + attack * getExtraBaseStats(monsterSpecification, "FIGHT_PROP_ATTACK_MP_PERCENT", index);
     }
 
     private MonsterExcelConfigDataJson getMonster(MonsterSpecification monsterSpecification) {

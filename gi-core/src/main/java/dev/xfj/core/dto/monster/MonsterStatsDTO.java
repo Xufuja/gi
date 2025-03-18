@@ -12,5 +12,8 @@ public record MonsterStatsDTO(
         double baseHealth3Player,
         double baseHealth4Player,
         double baseAttack,
+        double baseAttack2Player,
+        double baseAttack3Player,
+        double baseAttack4Player,
         double baseDefense
 ) {}
