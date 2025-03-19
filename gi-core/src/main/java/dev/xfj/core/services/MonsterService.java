@@ -1,6 +1,8 @@
 package dev.xfj.core.services;
 
+import dev.xfj.core.constants.MultiplayerCount;
 import dev.xfj.core.dto.monster.MonsterCodexDTO;
+import dev.xfj.core.dto.monster.MonsterMultiplayerStatsDTO;
 import dev.xfj.core.dto.monster.MonsterProfileDTO;
 import dev.xfj.core.dto.monster.MonsterStatsDTO;
 import dev.xfj.core.specification.MonsterSpecification;
@@ -65,17 +67,20 @@ public class MonsterService {
                 .boxed()
                 .map(i -> {
                             monster.currentLevel = i;
+
                             return new MonsterStatsDTO(
                                     i,
                                     getBaseHealth(monster),
-                                    getMultiplayerHealth(monster, getBaseHealth(monster), 0),
-                                    getMultiplayerHealth(monster, getBaseHealth(monster), 1),
-                                    getMultiplayerHealth(monster, getBaseHealth(monster), 2),
                                     getBaseAttack(monster),
-                                    getMultiplayerAttack(monster, getBaseAttack(monster), 0),
-                                    getMultiplayerAttack(monster, getBaseAttack(monster), 1),
-                                    getMultiplayerAttack(monster, getBaseAttack(monster), 2),
-                                    getBaseDefense(monster)
+                                    getBaseDefense(monster),
+                                    IntStream.range(0, 3)
+                                            .boxed()
+                                            .map(j -> new MonsterMultiplayerStatsDTO(
+                                                    MultiplayerCount.values()[j],
+                                                    getMultiplayerHealth(monster, getBaseHealth(monster), j),
+                                                    getMultiplayerAttack(monster, getBaseAttack(monster), j))
+                                            )
+                                            .collect(Collectors.toList())
                             );
                         }
                 )
