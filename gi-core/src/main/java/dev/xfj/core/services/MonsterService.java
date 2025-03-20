@@ -10,6 +10,7 @@ import dev.xfj.generated.animalcodexexcelconfigdata.AnimalCodexExcelConfigDataJs
 import dev.xfj.generated.monstercurveexcelconfigdata.CurveInfo;
 import dev.xfj.generated.monstercurveexcelconfigdata.MonsterCurveExcelConfigDataJson;
 import dev.xfj.generated.monsterdescribeexcelconfigdata.MonsterDescribeExcelConfigDataJson;
+import dev.xfj.generated.monsterexcelconfigdata.HpDrop;
 import dev.xfj.generated.monsterexcelconfigdata.MonsterExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,6 +74,10 @@ public class MonsterService {
                                     getBaseHealth(monster),
                                     getBaseAttack(monster),
                                     getBaseDefense(monster),
+                                    getMonster(monster).getHpDrops()
+                                            .stream()
+                                            .map(HpDrop::getHpPercent)
+                                            .collect(Collectors.toList()),
                                     IntStream.range(0, 3)
                                             .boxed()
                                             .map(j -> new MonsterMultiplayerStatsDTO(
