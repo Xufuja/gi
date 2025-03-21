@@ -1,10 +1,7 @@
 package dev.xfj.core.services;
 
 import dev.xfj.core.constants.MultiplayerCount;
-import dev.xfj.core.dto.monster.MonsterCodexDTO;
-import dev.xfj.core.dto.monster.MonsterMultiplayerStatsDTO;
-import dev.xfj.core.dto.monster.MonsterProfileDTO;
-import dev.xfj.core.dto.monster.MonsterStatsDTO;
+import dev.xfj.core.dto.monster.*;
 import dev.xfj.core.specification.MonsterSpecification;
 import dev.xfj.generated.animalcodexexcelconfigdata.AnimalCodexExcelConfigDataJson;
 import dev.xfj.generated.monstercurveexcelconfigdata.CurveInfo;
@@ -74,6 +71,16 @@ public class MonsterService {
                                     getBaseHealth(monster),
                                     getBaseAttack(monster),
                                     getBaseDefense(monster),
+                                    new MonsterResistancesDTO(
+                                            getMonster(monster).getFireSubHurt(),
+                                            getMonster(monster).getGrassSubHurt(),
+                                            getMonster(monster).getWaterSubHurt(),
+                                            getMonster(monster).getElecSubHurt(),
+                                            getMonster(monster).getWindSubHurt(),
+                                            getMonster(monster).getIceSubHurt(),
+                                            getMonster(monster).getRockSubHurt(),
+                                            getMonster(monster).getPhysicalSubHurt()
+                                    ),
                                     getMonster(monster).getHpDrops()
                                             .stream()
                                             .map(HpDrop::getHpPercent)

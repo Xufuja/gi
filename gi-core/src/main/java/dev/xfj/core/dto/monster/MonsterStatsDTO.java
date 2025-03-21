@@ -11,6 +11,7 @@ public record MonsterStatsDTO(
         double baseHealth,
         double baseAttack,
         double baseDefense,
+        MonsterResistancesDTO resistances,
         List<Integer> hpEnergyThresholdPercentage,
         List<MonsterMultiplayerStatsDTO> coopStats
 ) {}
