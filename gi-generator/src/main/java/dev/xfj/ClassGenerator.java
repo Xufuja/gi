@@ -39,7 +39,8 @@ public class ClassGenerator {
 
             for (JsonNode node : jsonNode) {
                 if (node.isObject()) {
-                    mergeJsonNodes(result, (ObjectNode) node);
+                    String[] split = path.split("\\\\");
+                    mergeJsonNodes(result, (ObjectNode) node, split[split.length - 1]);
                 }
             }
 
@@ -49,20 +50,20 @@ public class ClassGenerator {
         }
     }
 
-    private static void mergeJsonNodes(ObjectNode target, ObjectNode source) {
+    private static void mergeJsonNodes(ObjectNode target, ObjectNode source, String file) {
         Iterator<String> fieldNames = source.fieldNames();
 
         while (fieldNames.hasNext()) {
             String fieldName = fieldNames.next();
-            JsonNode sourceValue = applyOverride(fieldName, source.get(fieldName));
+            JsonNode sourceValue = applyOverride(fieldName, source.get(fieldName), file);
 
             if (target.has(fieldName)) {
                 JsonNode targetValue = target.get(fieldName);
 
                 if (targetValue.isObject() && sourceValue.isObject()) {
-                    mergeJsonNodes((ObjectNode) targetValue, (ObjectNode) sourceValue);
+                    mergeJsonNodes((ObjectNode) targetValue, (ObjectNode) sourceValue, file);
                 } else if (targetValue.isArray() && sourceValue.isArray()) {
-                    mergeArrayNodes((ArrayNode) targetValue, (ArrayNode) sourceValue);
+                    mergeArrayNodes((ArrayNode) targetValue, (ArrayNode) sourceValue, file);
                 } else {
                     target.set(fieldName, sourceValue);
                 }
@@ -72,7 +73,7 @@ public class ClassGenerator {
         }
     }
 
-    private static JsonNode applyOverride(String fieldName, JsonNode node) {
+    private static JsonNode applyOverride(String fieldName, JsonNode node, String file) {
         ObjectMapper mapper = new ObjectMapper();
         //Since it merges all array items, the last item overrides these 3 as integers while prior ones are floats
         if (fieldName.equals("hpBase") || fieldName.equals("attackBase") || fieldName.equals("defenseBase")) {
@@ -88,14 +89,19 @@ public class ClassGenerator {
             ArrayNode arrayNode = mapper.createArrayNode();
             return arrayNode.add("a");
         } else if (fieldName.equals("paramList")) {
-            ArrayNode arrayNode = mapper.createArrayNode();
-            return arrayNode.add(1.1f);
+            if (file.equals("AchievementExcelConfigData.json")) {
+                ArrayNode arrayNode = mapper.createArrayNode();
+                return arrayNode.add("a");
+            } else {
+                ArrayNode arrayNode = mapper.createArrayNode();
+                return arrayNode.add(1.1f);
+            }
         }
 
         return node;
     }
 
-    private static void mergeArrayNodes(ArrayNode targetArray, ArrayNode sourceArray) {
+    private static void mergeArrayNodes(ArrayNode targetArray, ArrayNode sourceArray, String file) {
         int maxSize = Math.max(targetArray.size(), sourceArray.size());
 
         for (int i = 0; i < maxSize; i++) {
@@ -104,9 +110,9 @@ public class ClassGenerator {
 
             if (targetElement != null && sourceElement != null) {
                 if (targetElement.isObject() && sourceElement.isObject()) {
-                    mergeJsonNodes((ObjectNode) targetElement, (ObjectNode) sourceElement);
+                    mergeJsonNodes((ObjectNode) targetElement, (ObjectNode) sourceElement, file);
                 } else if (targetElement.isArray() && sourceElement.isArray()) {
-                    mergeArrayNodes((ArrayNode) targetElement, (ArrayNode) sourceElement);
+                    mergeArrayNodes((ArrayNode) targetElement, (ArrayNode) sourceElement, file);
                 } else {
                     targetArray.set(i, sourceElement);
                 }

@@ -1,6 +1,8 @@
 package dev.xfj.core.services;
 
 import dev.xfj.core.dto.achievement.AchievementCodexDTO;
+import dev.xfj.core.dto.achievement.AchievementDTO;
+import dev.xfj.generated.achievementexcelconfigdata.AchievementExcelConfigDataJson;
 import dev.xfj.generated.achievementgoalexcelconfigdata.AchievementGoalExcelConfigDataJson;
 import dev.xfj.generated.materialexcelconfigdata.MaterialExcelConfigDataJson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +28,24 @@ public class AchievementService {
                 .map(entry -> new AchievementCodexDTO(
                         entry.getId(),
                         databaseService.getTranslation(entry.getNameTextMapHash()),
+                        getAchievementsByCategory(entry.getId()),
                         entry.getOrderId()
                 ))
                 .collect(Collectors.toList());
     }
 
-    private MaterialExcelConfigDataJson getItem(int materialId) {
-        return databaseService.materialConfig
+    private List<AchievementDTO> getAchievementsByCategory(int category) {
+        return databaseService.achievementConfig
                 .stream()
-                .filter(item -> item.getId() == materialId)
-                .findFirst()
-                .orElse(null);
+                .filter(achievement -> achievement.getGoalId() == category)
+                .filter(entry -> entry.getOrderId() != 0)
+                .sorted(Comparator.comparing(AchievementExcelConfigDataJson::getOrderId))
+                .map(achievement -> new AchievementDTO(
+                        achievement.getId(),
+                        databaseService.getTranslation(achievement.getTitleTextMapHash()),
+                        databaseService.getTranslation(achievement.getDescTextMapHash()),
+                        achievement.getOrderId()
+                ))
+                .collect(Collectors.toList());
     }
 }

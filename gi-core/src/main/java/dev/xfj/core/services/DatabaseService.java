@@ -132,7 +132,7 @@ public class DatabaseService {
     public final List<AnimalCodexExcelConfigDataJson> animalCodexConfig;
     public final List<MonsterCurveExcelConfigDataJson> monsterCurveConfig;
     public final List<MonsterMultiPlayerExcelConfigDataJson> monsterMultiPlayerConfig;
-    //public final List<AchievementExcelConfigDataJson> achievementConfig;
+    public final List<AchievementExcelConfigDataJson> achievementConfig;
     public final List<AchievementGoalExcelConfigDataJson> achievementGoalConfig;
 
     public DatabaseService() {
@@ -188,7 +188,7 @@ public class DatabaseService {
             this.animalCodexConfig = loadJSONArray(AnimalCodexExcelConfigDataJson.class);
             this.monsterCurveConfig = loadJSONArray(MonsterCurveExcelConfigDataJson.class);
             this.monsterMultiPlayerConfig = loadJSONArray(MonsterMultiPlayerExcelConfigDataJson.class);
-            //this.achievementConfig = loadJSONArray(AchievementExcelConfigDataJson.class);
+            this.achievementConfig = loadJSONArray(AchievementExcelConfigDataJson.class);
             this.achievementGoalConfig = loadJSONArray(AchievementGoalExcelConfigDataJson.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
