@@ -10,7 +10,7 @@ As Spring practice, implementing an API that serves the data needed to mimic Pro
 
 ## Notes
 
-Latest version of Genshin tested: 5.4
+Latest version of Genshin tested: 5.4, upgrading to 5.5 is not possible due to the new obfuscation methods.
 
 ## Credits
 
