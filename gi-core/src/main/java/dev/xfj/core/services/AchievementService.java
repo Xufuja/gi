@@ -43,27 +43,31 @@ public class AchievementService {
                 .filter(achievement -> achievement.getGoalId() == category)
                 .filter(entry -> entry.getOrderId() != 0)
                 .sorted(Comparator.comparing(AchievementExcelConfigDataJson::getOrderId))
-                .map(achievement -> new AchievementDTO(
-                        achievement.getId(),
-                        databaseService.getTranslation(achievement.getTitleTextMapHash()),
-                        databaseService.getTranslation(achievement.getDescTextMapHash()),
-                        getAchievementReward(achievement.getFinishRewardId()).entrySet()
-                                .stream()
-                                .map(entry -> {
-                                            MaterialExcelConfigDataJson item = databaseService.getItem(entry.getKey());
-                                            return new KeyValue(
-                                                    !item.getNameTextMapHash().isEmpty() ?
-                                                            databaseService.getTranslation(
-                                                                    databaseService.getItem(
-                                                                            entry.getKey()).getNameTextMapHash()
-                                                            ) :
-                                                            "",
-                                                    entry.getValue());
-                                        }
-                                )
-                                .collect(Collectors.toList()),
-                        achievement.getOrderId()
-                ))
+                .map(achievement -> {
+                    String parameter = "{param0}";
+                    String description = databaseService.getTranslation(achievement.getDescTextMapHash());
+
+                    return new AchievementDTO(
+                            achievement.getId(),
+                            databaseService.getTranslation(achievement.getTitleTextMapHash()),
+                            description != null ?
+                                    description.contains(parameter) ?
+                                            description.replace(parameter, String.valueOf(achievement.getProgress())) :
+                                            description :
+                                    null,
+                            getAchievementReward(achievement.getFinishRewardId()).entrySet()
+                                    .stream()
+                                    .map(entry -> new KeyValue(
+                                            databaseService.getTranslation(
+                                                    databaseService.getItem(entry.getKey()).getNameTextMapHash()
+                                            ),
+                                            entry.getValue())
+                                    )
+                                    .collect(Collectors.toList()),
+                            achievement.getPreStageAchievementId() != 0 ? achievement.getPreStageAchievementId() : null,
+                            achievement.getOrderId()
+                    );
+                })
                 .collect(Collectors.toList());
     }
 

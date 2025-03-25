@@ -11,5 +11,6 @@ public record AchievementDTO(
         String name,
         String description,
         List<KeyValue> rewards,
+        Integer requires,
         int sortFactor
 ) {}
