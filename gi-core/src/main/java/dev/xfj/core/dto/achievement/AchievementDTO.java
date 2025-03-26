@@ -9,6 +9,7 @@ import java.util.List;
 public record AchievementDTO(
         int id,
         String name,
+        String trophyName,
         String description,
         List<KeyValue> rewards,
         Integer requires,

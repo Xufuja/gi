@@ -50,6 +50,7 @@ public class AchievementService {
                     return new AchievementDTO(
                             achievement.getId(),
                             databaseService.getTranslation(achievement.getTitleTextMapHash()),
+                            databaseService.getTranslation(achievement.getPs5TitleTextMapHash()),
                             description != null ?
                                     description.contains(parameter) ?
                                             description.replace(parameter, String.valueOf(achievement.getProgress())) :
