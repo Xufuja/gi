@@ -1,6 +1,5 @@
 package dev.xfj.app.filters;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +11,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
 
 public class AuthorizationFilter extends OncePerRequestFilter {
     @Override
@@ -20,27 +18,14 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
 
-        if (authorizationHeader == null || !authorizationHeader.equals("TOTALLY_LEGIT_TEST_KEY")) {
-            notAuthorized(response);
-            return;
-        }
-
-        Map<String, Object> body;
-        try {
-            body = new ObjectMapper().readValue(request.getInputStream(), Map.class);
-        } catch (IOException e) {
-            notAuthorized(response);
-            return;
-        }
-
-        if (!body.containsKey("userId")) {
+        if (authorizationHeader == null || !authorizationHeader.equals("REAL_TEST_PREFIX:REAL_TEST_KEY")) {
             notAuthorized(response);
             return;
         }
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                body.get("userId").toString(),
-                authorizationHeader,
+                authorizationHeader.split(":")[0],
+                authorizationHeader.split(":")[1],
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
         );
 
