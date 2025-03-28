@@ -12,6 +12,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 public class AuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -36,7 +38,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private void notAuthorized(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
+        response.setContentType(APPLICATION_JSON_VALUE);
         response.getWriter().write("{\"error\": \"Not Authorized!\"}");
     }
 }
