@@ -1,6 +1,6 @@
 package dev.xfj;
 
-public enum FileFilter {
+public enum PatternFilter {
     NONE,
     CHIORI_TEST,
     MORE_THAN_1_UNDERSCORE;

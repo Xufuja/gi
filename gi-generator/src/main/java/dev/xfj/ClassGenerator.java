@@ -17,8 +17,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.lang.String.format;
 
 public class ClassGenerator {
     private final String dataDirectory;
@@ -29,25 +33,138 @@ public class ClassGenerator {
         this.outputDirectory = outputDirectory;
     }
 
+    public void createClasses() throws IOException {
+        createClasses(PatternFilter.NONE, true);
+    }
+
+    public void createClasses(PatternFilter patternFilter, boolean array) throws IOException {
+        Set<String> set = getAllFiles(patternFilter);
+
+        for (String item : set) {
+            if (!Character.isDigit(item.charAt(0))) {
+                System.out.println("Generating for: " + item);
+                String json = prepare(dataDirectory + item, array);
+                System.out.println("Input JSON for generator:\r\n" + json);
+                createClass(
+                        json,
+                        new File(outputDirectory),
+                        "dev.xfj.generated." + item.replace(".json", "").toLowerCase(),
+                        item
+                );
+            } else {
+                System.out.println("Skipping generation for: " + item);
+            }
+        }
+    }
+
+    public void createClassesAvatarConfig() throws IOException {
+        createClassesFromMultipleObjects(
+                PatternFilter.MORE_THAN_1_UNDERSCORE,
+                name -> name.startsWith("ConfigAvatar"),
+                name -> name.split("_")[0] + ".json"
+        );
+    }
+
+    public void createClassesAvatarAbilities() throws IOException {
+        createClassesFromMultipleObjects(
+                PatternFilter.NONE,
+                name -> name.startsWith("ConfigAbility_Avatar"),
+                name -> {
+                    String[] split = name.split("_");
+                    return format("%s%s.json", split[0], split[1]);
+                }
+        );
+    }
+
+    public void createClassesFromMultipleObjects(
+            PatternFilter patternFilter,
+            Predicate<String> nameFilter,
+            Function<String, String> namePattern
+    ) throws IOException {
+        Set<String> set = getAllFiles(patternFilter);
+        String name = "";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode arrayNode = objectMapper.createArrayNode();
+
+        for (String item : set) {
+            if (nameFilter.test(item)) {
+                System.out.println("Adding to array: " + item);
+                if (name.isEmpty()) {
+                    name = namePattern.apply(item);
+                }
+
+                File file = new File(dataDirectory + item);
+                JsonNode jsonNode = objectMapper.readTree(file);
+
+                switch (jsonNode.getNodeType()) {
+                    case OBJECT -> arrayNode.add(objectMapper.readTree(file));
+                    case ARRAY -> {
+                        for (JsonNode node : jsonNode) {
+                            arrayNode.add(node);
+                        }
+                    }
+                    default -> System.err.println("Unhandled node: " + jsonNode.getNodeType());
+                }
+            } else {
+                System.out.println("Skipping generation for: " + item);
+            }
+        }
+
+        String json = prepare(objectMapper, arrayNode, name);
+        System.out.println("Input JSON for generator:\r\n" + json);
+        createClass(
+                json,
+                new File(outputDirectory),
+                "dev.xfj.generated." + name.replace(".json", "").toLowerCase(),
+                name.replace(".json", ""),
+                new DefaultGenerationConfig() {
+                    @Override
+                    public SourceType getSourceType() {
+                        return SourceType.JSON;
+                    }
+
+                    @Override
+                    public boolean isGenerateBuilders() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isUsePrimitives() {
+                        return true;
+                    }
+
+                    @Override
+                    public char[] getPropertyWordDelimiters() {
+                        return new char[]{'-', ' '};
+                    }
+                }
+        );
+    }
+
     private String prepare(String path, boolean array) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         File file = new File(path);
-        JsonNode jsonNode = objectMapper.readTree(file);
+        String[] split = path.split("\\\\");
+        String name = split[split.length - 1];
 
         if (array) {
-            ObjectNode result = objectMapper.createObjectNode();
-
-            for (JsonNode node : jsonNode) {
-                if (node.isObject()) {
-                    String[] split = path.split("\\\\");
-                    mergeJsonNodes(result, (ObjectNode) node, split[split.length - 1]);
-                }
-            }
-
-            return result.toPrettyString();
+            return prepare(objectMapper, objectMapper.readTree(file), name);
         } else {
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readTree(file));
         }
+    }
+
+    private String prepare(ObjectMapper objectMapper, JsonNode jsonNode, String name) {
+        ObjectNode result = objectMapper.createObjectNode();
+
+        for (JsonNode node : jsonNode) {
+            if (node.isObject()) {
+                mergeJsonNodes(result, (ObjectNode) node, name);
+            }
+        }
+
+        return result.toPrettyString();
     }
 
     private static void mergeJsonNodes(ObjectNode target, ObjectNode source, String file) {
@@ -122,53 +239,46 @@ public class ClassGenerator {
         }
     }
 
-    public void createClasses() throws IOException {
-        createClasses(FileFilter.NONE, true);
+    private void createClass(
+            String jsonString,
+            File outputDirectory,
+            String packageName,
+            String className
+    ) throws IOException {
+        createClass(
+                jsonString,
+                outputDirectory,
+                packageName,
+                className,
+                new DefaultGenerationConfig() {
+                    @Override
+                    public SourceType getSourceType() {
+                        return SourceType.JSON;
+                    }
+
+                    @Override
+                    public boolean isGenerateBuilders() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isUsePrimitives() {
+                        return true;
+                    }
+                });
     }
 
-    public void createClasses(FileFilter fileFilter, boolean array) throws IOException {
-        Set<String> set = getAllFiles(fileFilter);
-
-        for (String item : set) {
-            if (!Character.isDigit(item.charAt(0))) {
-                System.out.println("Generating for: " + item);
-                String json = prepare(dataDirectory + item, array);
-                System.out.println("Input JSON for generator:\r\n" + json);
-                createClass(
-                        json,
-                        new File(outputDirectory),
-                        "dev.xfj.generated." + item.replace(".json", "").toLowerCase(),
-                        item
-                );
-            } else {
-                System.out.println("Skipping generation for: " + item);
-            }
-        }
-    }
-
-    private void createClass(String jsonString, File outputDirectory, String packageName, String className)
-            throws IOException {
+    private void createClass(
+            String jsonString,
+            File outputDirectory,
+            String packageName,
+            String className,
+            GenerationConfig generationConfig
+    ) throws IOException {
         JCodeModel jCodeModel = new JCodeModel();
 
-        GenerationConfig config = new DefaultGenerationConfig() {
-            @Override
-            public SourceType getSourceType() {
-                return SourceType.JSON;
-            }
-
-            @Override
-            public boolean isGenerateBuilders() {
-                return true;
-            }
-
-            @Override
-            public boolean isUsePrimitives() {
-                return true;
-            }
-        };
-
         SchemaMapper mapper = new SchemaMapper(
-                new RuleFactory(config, new GsonAnnotator(config), new SchemaStore()),
+                new RuleFactory(generationConfig, new GsonAnnotator(generationConfig), new SchemaStore()),
                 new SchemaGenerator()
         );
 
@@ -177,13 +287,13 @@ public class ClassGenerator {
         jCodeModel.build(outputDirectory);
     }
 
-    private Set<String> getAllFiles(FileFilter fileFilter) throws IOException {
+    private Set<String> getAllFiles(PatternFilter patternFilter) throws IOException {
         try (Stream<Path> stream = Files.list(Paths.get(dataDirectory))) {
             return stream
                     .filter(file -> !Files.isDirectory(file))
                     .map(Path::getFileName)
                     .map(Path::toString)
-                    .filter(file -> !fileFilter.filterOut(file))
+                    .filter(file -> !patternFilter.filterOut(file))
                     .collect(Collectors.toSet());
         }
     }
