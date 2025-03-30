@@ -171,8 +171,9 @@ public class ClassGenerator {
         Iterator<String> fieldNames = source.fieldNames();
 
         while (fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            JsonNode sourceValue = applyOverride(fieldName, source.get(fieldName), file);
+            String originalFieldName = fieldNames.next();
+            String fieldName = applyKeyOverride(originalFieldName);
+            JsonNode sourceValue = applyValueOverride(fieldName, source.get(originalFieldName), file);
 
             if (target.has(fieldName)) {
                 JsonNode targetValue = target.get(fieldName);
@@ -190,7 +191,37 @@ public class ClassGenerator {
         }
     }
 
-    private static JsonNode applyOverride(String fieldName, JsonNode node, String file) {
+    private static String applyKeyOverride(String fieldName) {
+        String result = fieldName;
+
+        if (isAllUppercase(fieldName)) {
+            return result;
+        }
+
+        if (fieldName.contains("_")) {
+            return result;
+        }
+
+        //TODO: WIP
+        //if (Character.isUpperCase(fieldName.charAt(0))) {
+        //    System.out.println("Adjusting field: " + fieldName);
+        //    result = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
+        //}
+
+        return result;
+    }
+
+    private static boolean isAllUppercase(String value) {
+        for (char c : value.toCharArray()) {
+            if (!Character.isUpperCase(c)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static JsonNode applyValueOverride(String fieldName, JsonNode node, String file) {
         ObjectMapper mapper = new ObjectMapper();
         //Since it merges all array items, the last item overrides these 3 as integers while prior ones are floats
         if (fieldName.equals("hpBase") || fieldName.equals("attackBase") || fieldName.equals("defenseBase")) {

@@ -9,11 +9,11 @@ public class Main {
                 "C:\\Dev\\gi\\gi-core\\src\\generated\\"
         )
                 .createClasses();
-        new ClassGenerator(
-                "C:\\Dev\\AnimeGameData\\BinOutput\\Avatar\\",
-                "C:\\Dev\\gi\\gi-core\\src\\generated\\"
-        )
-                .createClassesAvatarConfig();
+        //new ClassGenerator(
+        //        "C:\\Dev\\AnimeGameData\\BinOutput\\Avatar\\",
+        //        "C:\\Dev\\gi\\gi-core\\src\\generated\\"
+        //)
+        //        .createClassesAvatarConfig();
         //new ClassGenerator(
         //        "C:\\Dev\\AnimeGameData\\BinOutput\\Ability\\Temp\\AvatarAbilities\\",
         //        "C:\\Dev\\gi\\gi-core\\src\\generated\\"
