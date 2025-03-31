@@ -186,6 +186,7 @@ public class ClassGenerator {
                     target.set(fieldName, sourceValue);
                 }
             } else {
+                target.remove(originalFieldName);
                 target.set(fieldName, sourceValue);
             }
         }
@@ -193,7 +194,7 @@ public class ClassGenerator {
 
     private static String applyKeyOverride(String fieldName) {
         String result = fieldName;
-
+        
         if (isAllUppercase(fieldName)) {
             return result;
         }
@@ -202,11 +203,10 @@ public class ClassGenerator {
             return result;
         }
 
-        //TODO: WIP
-        //if (Character.isUpperCase(fieldName.charAt(0))) {
-        //    System.out.println("Adjusting field: " + fieldName);
-        //    result = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
-        //}
+        if (Character.isUpperCase(fieldName.charAt(0))) {
+            System.out.println("Adjusting field: " + fieldName);
+            result = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
+        }
 
         return result;
     }
@@ -219,6 +219,30 @@ public class ClassGenerator {
         }
 
         return true;
+    }
+
+    private static boolean isAllLowercase(String value) {
+        for (char c : value.toCharArray()) {
+            if (!Character.isLowerCase(c)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static String removeDigitsAtEnd(String value) {
+        char[] chars = value.toCharArray();
+        int lastDigit = value.length() - 1;
+
+        for (int i = chars.length - 1; i >= 0; i--) {
+            if (Character.isDigit(chars[i])) {
+                lastDigit = i;
+                break;
+            }
+        }
+
+        return value.substring(0, lastDigit + 1);
     }
 
     private static JsonNode applyValueOverride(String fieldName, JsonNode node, String file) {
