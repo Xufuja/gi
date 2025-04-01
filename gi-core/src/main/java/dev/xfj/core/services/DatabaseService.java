@@ -1,15 +1,13 @@
 package dev.xfj.core.services;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import dev.xfj.core.constants.DataPath;
 import dev.xfj.core.utils.KeyValue;
 import dev.xfj.generated.achievementexcelconfigdata.AchievementExcelConfigDataJson;
 import dev.xfj.generated.achievementgoalexcelconfigdata.AchievementGoalExcelConfigDataJson;
+import dev.xfj.generated.activitysummertimeraceexcelconfigdata.ActivitySummerTimeRaceExcelConfigDataJson;
 import dev.xfj.generated.animalcodexexcelconfigdata.AnimalCodexExcelConfigDataJson;
 import dev.xfj.generated.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
 import dev.xfj.generated.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
@@ -263,7 +261,7 @@ public class DatabaseService {
     }
 
     private Map<String, String> loadReadable(String language) {
-        File readableLocation = new File( String.format("%1$s%2$s", READABLE.path, language));
+        File readableLocation = new File(String.format("%1$s%2$s", READABLE.path, language));
         List<Path> filePaths = findFiles(readableLocation.listFiles(), "txt");
 
         Map<String, String> result = filePaths.stream()
@@ -313,12 +311,74 @@ public class DatabaseService {
 
     private <T> List<T> loadJSONArray(Class<T> clazz, String baseDirectory, String file) throws FileNotFoundException {
         JsonReader jsonReader = new JsonReader(new FileReader(baseDirectory + file));
-        JsonArray jsonArray = JsonParser.parseReader(jsonReader).getAsJsonArray();
+        JsonElement jsonElement = JsonParser.parseReader(jsonReader).getAsJsonArray();
         Type type = TypeToken.getParameterized(List.class, clazz).getType();
+        JsonElement resultElement = convertFieldNames(jsonElement);
 
-        System.out.printf("Loaded: %1$7d entries from %2$s%n", jsonArray.size(), file);
+        System.out.printf("Loaded: %1$7d entries from %2$s%n", resultElement.getAsJsonArray().size(), file);
 
-        return new Gson().fromJson(jsonArray, type);
+        return new Gson().fromJson(resultElement, type);
+    }
+
+    private JsonElement convertFieldNames(JsonElement jsonElement) {
+        if (jsonElement.isJsonObject()) {
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            JsonObject resultObject = new JsonObject();
+
+            for (String fieldName : jsonObject.keySet()) {
+                String newFieldName = applyKeyOverride(fieldName);
+
+                if (!fieldName.equals(newFieldName)) {
+                    resultObject.add(newFieldName, jsonObject.get(fieldName));
+                } else {
+                    resultObject.add(fieldName, jsonObject.get(fieldName));
+                }
+            }
+
+            return resultObject;
+        }
+
+        if (jsonElement.isJsonArray()) {
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
+            JsonArray resultArray = new JsonArray();
+
+            for (JsonElement arrayElement : jsonArray) {
+                resultArray.add(convertFieldNames(arrayElement));
+            }
+
+            return resultArray;
+        }
+
+        return jsonElement;
+    }
+
+    private static String applyKeyOverride(String fieldName) {
+        String result = fieldName;
+
+        if (isAllUppercase(fieldName)) {
+            return result;
+        }
+
+        if (fieldName.contains("_")) {
+            return result;
+        }
+
+        if (Character.isUpperCase(fieldName.charAt(0))) {
+            System.out.println("Adjusting field: " + fieldName);
+            result = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
+        }
+
+        return result;
+    }
+
+    private static boolean isAllUppercase(String value) {
+        for (char c : value.toCharArray()) {
+            if (!Character.isUpperCase(c)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private <T> T loadJSON(DataPath dataPath, Class<T> clazz) throws FileNotFoundException {

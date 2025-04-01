@@ -194,7 +194,7 @@ public class ClassGenerator {
 
     private static String applyKeyOverride(String fieldName) {
         String result = fieldName;
-        
+
         if (isAllUppercase(fieldName)) {
             return result;
         }
