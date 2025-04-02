@@ -7,7 +7,6 @@ import dev.xfj.core.constants.DataPath;
 import dev.xfj.core.utils.KeyValue;
 import dev.xfj.generated.achievementexcelconfigdata.AchievementExcelConfigDataJson;
 import dev.xfj.generated.achievementgoalexcelconfigdata.AchievementGoalExcelConfigDataJson;
-import dev.xfj.generated.activitysummertimeraceexcelconfigdata.ActivitySummerTimeRaceExcelConfigDataJson;
 import dev.xfj.generated.animalcodexexcelconfigdata.AnimalCodexExcelConfigDataJson;
 import dev.xfj.generated.attackattenuationexcelconfigdata.AttackAttenuationExcelConfigDataJson;
 import dev.xfj.generated.avatarcodexexcelconfigdata.AvatarCodexExcelConfigDataJson;
@@ -313,11 +312,11 @@ public class DatabaseService {
         JsonReader jsonReader = new JsonReader(new FileReader(baseDirectory + file));
         JsonElement jsonElement = JsonParser.parseReader(jsonReader).getAsJsonArray();
         Type type = TypeToken.getParameterized(List.class, clazz).getType();
-        JsonElement resultElement = convertFieldNames(jsonElement);
+        JsonArray jsonArray = convertFieldNames(jsonElement).getAsJsonArray();
 
-        System.out.printf("Loaded: %1$7d entries from %2$s%n", resultElement.getAsJsonArray().size(), file);
+        System.out.printf("Loaded: %1$7d entries from %2$s%n", jsonArray.size(), file);
 
-        return new Gson().fromJson(resultElement, type);
+        return new Gson().fromJson(jsonArray, type);
     }
 
     private JsonElement convertFieldNames(JsonElement jsonElement) {
@@ -329,9 +328,9 @@ public class DatabaseService {
                 String newFieldName = applyKeyOverride(fieldName);
 
                 if (!fieldName.equals(newFieldName)) {
-                    resultObject.add(newFieldName, jsonObject.get(fieldName));
+                    resultObject.add(newFieldName, convertFieldNames(jsonObject.get(fieldName)));
                 } else {
-                    resultObject.add(fieldName, jsonObject.get(fieldName));
+                    resultObject.add(fieldName, convertFieldNames(jsonObject.get(fieldName)));
                 }
             }
 
