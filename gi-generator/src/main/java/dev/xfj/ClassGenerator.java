@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -61,7 +63,8 @@ public class ClassGenerator {
         createClassesFromMultipleObjects(
                 PatternFilter.MORE_THAN_1_UNDERSCORE,
                 name -> name.startsWith("ConfigAvatar"),
-                name -> name.split("_")[0] + ".json"
+                name -> name.split("_")[0] + ".json",
+                null
         );
     }
 
@@ -72,24 +75,34 @@ public class ClassGenerator {
                 name -> {
                     String[] split = name.split("_");
                     return format("%s%s.json", split[0], split[1]);
-                }
+                },
+                name -> name.split("_")[2].split("\\.")[0]
         );
     }
 
     public void createClassesFromMultipleObjects(
             PatternFilter patternFilter,
             Predicate<String> nameFilter,
-            Function<String, String> namePattern
+            Function<String, String> namePattern,
+            Function<String, String> special
     ) throws IOException {
         Set<String> set = getAllFiles(patternFilter);
         String name = "";
+        List<String> specialReplacement = new ArrayList<>();
 
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode arrayNode = objectMapper.createArrayNode();
 
         for (String item : set) {
             if (nameFilter.test(item)) {
+                String specialCheck = special.apply(item);
+
+                if (!specialCheck.equals("Weapon") && !specialCheck.equals("Common")) {
+                    specialReplacement.add(specialCheck);
+                }
+
                 System.out.println("Adding to array: " + item);
+
                 if (name.isEmpty()) {
                     name = namePattern.apply(item);
                 }
@@ -111,7 +124,7 @@ public class ClassGenerator {
             }
         }
 
-        String json = prepare(objectMapper, arrayNode, name);
+        String json = prepare(objectMapper, arrayNode, name, specialReplacement);
         System.out.println("Input JSON for generator:\r\n" + json);
         createClass(
                 json,
@@ -149,39 +162,39 @@ public class ClassGenerator {
         String name = split[split.length - 1];
 
         if (array) {
-            return prepare(objectMapper, objectMapper.readTree(file), name);
+            return prepare(objectMapper, objectMapper.readTree(file), name, null);
         } else {
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readTree(file));
         }
     }
 
-    private String prepare(ObjectMapper objectMapper, JsonNode jsonNode, String name) {
+    private String prepare(ObjectMapper objectMapper, JsonNode jsonNode, String name, List<String> special) {
         ObjectNode result = objectMapper.createObjectNode();
 
         for (JsonNode node : jsonNode) {
             if (node.isObject()) {
-                mergeJsonNodes(result, (ObjectNode) node, name);
+                mergeJsonNodes(result, (ObjectNode) node, name, special);
             }
         }
 
         return result.toPrettyString();
     }
 
-    private static void mergeJsonNodes(ObjectNode target, ObjectNode source, String file) {
+    private static void mergeJsonNodes(ObjectNode target, ObjectNode source, String file, List<String> special) {
         Iterator<String> fieldNames = source.fieldNames();
 
         while (fieldNames.hasNext()) {
             String originalFieldName = fieldNames.next();
-            String fieldName = applyKeyOverride(originalFieldName);
+            String fieldName = applyKeyOverride(originalFieldName, special);
             JsonNode sourceValue = applyValueOverride(fieldName, source.get(originalFieldName), file);
 
             if (target.has(fieldName)) {
                 JsonNode targetValue = target.get(fieldName);
 
                 if (targetValue.isObject() && sourceValue.isObject()) {
-                    mergeJsonNodes((ObjectNode) targetValue, (ObjectNode) sourceValue, file);
+                    mergeJsonNodes((ObjectNode) targetValue, (ObjectNode) sourceValue, file, special);
                 } else if (targetValue.isArray() && sourceValue.isArray()) {
-                    mergeArrayNodes((ArrayNode) targetValue, (ArrayNode) sourceValue, file);
+                    mergeArrayNodes((ArrayNode) targetValue, (ArrayNode) sourceValue, file, special);
                 } else {
                     target.set(fieldName, sourceValue);
                 }
@@ -192,20 +205,42 @@ public class ClassGenerator {
         }
     }
 
-    private static String applyKeyOverride(String fieldName) {
+    private static String applyKeyOverride(String fieldName, List<String> special) {
         String result = fieldName;
 
-        if (isAllUppercase(fieldName)) {
+        if (isAllUppercase(result)) {
             return result;
         }
 
-        if (fieldName.contains("_")) {
+        if (special != null) {
+            int index = -1;
+
+            for (int i = 0; i < special.size(); i++) {
+               if (result.contains(special.get(i))) {
+                   index = i;
+                   break;
+               }
+            }
+
+            if (index != -1) {
+                result = result.replace(special.get(index), "").replace("__", "_");
+            }
+        }
+
+        if (result.startsWith("_")) {
+            result = result.substring(1);
+        }
+
+        if (result.contains("_")) {
             return result;
         }
 
-        if (Character.isUpperCase(fieldName.charAt(0))) {
-            System.out.println("Adjusting field: " + fieldName);
-            result = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
+        if (Character.isUpperCase(result.charAt(0))) {
+            result = Character.toLowerCase(result.charAt(0)) + result.substring(1);
+        }
+
+        if (!fieldName.equals(result)) {
+            System.out.println(format("Adjusting field: %s to %s ", fieldName, result));
         }
 
         return result;
@@ -273,7 +308,12 @@ public class ClassGenerator {
         return node;
     }
 
-    private static void mergeArrayNodes(ArrayNode targetArray, ArrayNode sourceArray, String file) {
+    private static void mergeArrayNodes(
+            ArrayNode targetArray,
+            ArrayNode sourceArray,
+            String file,
+            List<String> special
+    ) {
         int maxSize = Math.max(targetArray.size(), sourceArray.size());
 
         for (int i = 0; i < maxSize; i++) {
@@ -282,9 +322,9 @@ public class ClassGenerator {
 
             if (targetElement != null && sourceElement != null) {
                 if (targetElement.isObject() && sourceElement.isObject()) {
-                    mergeJsonNodes((ObjectNode) targetElement, (ObjectNode) sourceElement, file);
+                    mergeJsonNodes((ObjectNode) targetElement, (ObjectNode) sourceElement, file, special);
                 } else if (targetElement.isArray() && sourceElement.isArray()) {
-                    mergeArrayNodes((ArrayNode) targetElement, (ArrayNode) sourceElement, file);
+                    mergeArrayNodes((ArrayNode) targetElement, (ArrayNode) sourceElement, file, special);
                 } else {
                     targetArray.set(i, sourceElement);
                 }

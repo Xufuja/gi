@@ -16,7 +16,7 @@ public class Main {
         //        .createClassesAvatarConfig();
         //new ClassGenerator(
         //        "C:\\Dev\\AnimeGameData\\BinOutput\\Ability\\Temp\\AvatarAbilities\\",
-       //         "C:\\Dev\\gi\\gi-core\\src\\generated\\"
+        //        "C:\\Dev\\gi\\gi-core\\src\\generated\\"
         //)
         //        .createClassesAvatarAbilities();
         System.out.println("Class generation done!");
