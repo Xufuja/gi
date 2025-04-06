@@ -21,7 +21,7 @@ import dev.xfj.generated.avatarskilldepotexcelconfigdata.AvatarSkillDepotExcelCo
 import dev.xfj.generated.avatarskillexcelconfigdata.AvatarSkillExcelConfigDataJson;
 import dev.xfj.generated.avatartalentexcelconfigdata.AvatarTalentExcelConfigDataJson;
 import dev.xfj.generated.bookscodexexcelconfigdata.BooksCodexExcelConfigDataJson;
-import dev.xfj.generated.configavatar.ConfigAvatar;
+//import dev.xfj.generated.configavatar.ConfigAvatar;
 import dev.xfj.generated.cookbonusexcelconfigdata.CookBonusExcelConfigDataJson;
 import dev.xfj.generated.dungeonentryexcelconfigdata.DungeonEntryExcelConfigDataJson;
 import dev.xfj.generated.dungeonexcelconfigdata.DungeonExcelConfigDataJson;
@@ -72,7 +72,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static dev.xfj.core.constants.DataPath.*;
@@ -133,7 +132,7 @@ public class DatabaseService {
     public final List<MonsterMultiPlayerExcelConfigDataJson> monsterMultiPlayerConfig;
     public final List<AchievementExcelConfigDataJson> achievementConfig;
     public final List<AchievementGoalExcelConfigDataJson> achievementGoalConfig;
-    public final List<ConfigAvatar> configAvatars;
+    //public final List<ConfigAvatar> configAvatars;
 
     public DatabaseService() {
         try {
@@ -190,7 +189,7 @@ public class DatabaseService {
             this.monsterMultiPlayerConfig = loadJSONArray(MonsterMultiPlayerExcelConfigDataJson.class);
             this.achievementConfig = loadJSONArray(AchievementExcelConfigDataJson.class);
             this.achievementGoalConfig = loadJSONArray(AchievementGoalExcelConfigDataJson.class);
-            this.configAvatars = loadAvatarDirectory();
+            //this.configAvatars = loadAvatarDirectory();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -299,25 +298,25 @@ public class DatabaseService {
         return text;
     }
 
-    private List<ConfigAvatar> loadAvatarDirectory() {
-        return findFiles(new File(AVATAR.path).listFiles(), "json")
-                .stream()
-                .filter(file -> !Files.isDirectory(file))
-                .map(Path::getFileName)
-                .map(Path::toString)
-                .filter(file -> file.startsWith("ConfigAvatar"))
-                .filter(file -> file.chars().filter(character -> character == '_').count() <= 1)
-                .collect(Collectors.toSet())
-                .stream()
-                .map(file -> {
-                    try {
-                        return loadJSON(ConfigAvatar.class, AVATAR.path, file);
-                    } catch (FileNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .collect(Collectors.toList());
-    }
+    //private List<ConfigAvatar> loadAvatarDirectory() {
+    //    return findFiles(new File(AVATAR.path).listFiles(), "json")
+    //            .stream()
+    //            .filter(file -> !Files.isDirectory(file))
+    //            .map(Path::getFileName)
+    //            .map(Path::toString)
+    //            .filter(file -> file.startsWith("ConfigAvatar"))
+    //            .filter(file -> file.chars().filter(character -> character == '_').count() <= 1)
+    //            .collect(Collectors.toSet())
+    //            .stream()
+    //            .map(file -> {
+    //                try {
+    //                    return loadJSON(ConfigAvatar.class, AVATAR.path, file);
+    //                } catch (FileNotFoundException e) {
+    //                    throw new RuntimeException(e);
+    //                }
+    //            })
+    //            .collect(Collectors.toList());
+    //}
 
     private <T> List<T> loadJSONArray(Class<T> clazz) throws FileNotFoundException {
         return loadJSONArray(EXCEL_BIN_OUTPUT, clazz);
