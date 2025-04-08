@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -305,14 +304,14 @@ public class OtherGenerator {
         try {
             JsonNode jsonNode = objectMapper.readTree(value);
 
-            traverseAll(jsonNode, null);
+            System.out.println(traverseAll(jsonNode, new HashSet<>(), null));
 
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    private static void traverseAll(JsonNode json, String node) {
+    private static Set<String> traverseAll(JsonNode json, Set<String> list, String node) {
         String currentNode = node != null ? node : ".";
 
         Iterator<String> fieldNames = json.fieldNames();
@@ -321,27 +320,25 @@ public class OtherGenerator {
             JsonNode sourceValue = json.get(fieldName);
 
             switch (sourceValue.getNodeType()) {
-                case OBJECT -> {
-                    traverseAll(sourceValue, format("%s%s.", currentNode, fieldName));
-                }
+                case OBJECT -> traverseAll(sourceValue, list, format("%s%s.", currentNode, fieldName));
                 case ARRAY -> {
                     if (sourceValue.size() == 0) {
-                        System.out.println(format("%s%s[i]=%s", currentNode, fieldName, sourceValue.getNodeType()));
+                        list.add(format("%s%s[i]=STRING", currentNode, fieldName));
                     }
                     for (int i = 0; i < sourceValue.size(); i++) {
                         JsonNode current = sourceValue.get(i);
                         if (current.isObject() || current.isArray()) {
-                            traverseAll(current, format("%s%s[i].", currentNode, fieldName));
+                            traverseAll(current, list, format("%s%s[i].", currentNode, fieldName));
                         } else {
-                            System.out.println(format("%s%s[i]=%s", currentNode, fieldName, current.getNodeType()));
+                            list.add(format("%s%s[i]=%s", currentNode, fieldName, current.getNodeType()));
                             break;
                         }
                     }
                 }
-                default -> {
-                    System.out.println(format("%s%s=%s", currentNode, fieldName, sourceValue.getNodeType()));
-                }
+                default -> list.add(format("%s%s=%s", currentNode, fieldName, sourceValue.getNodeType()));
             }
         }
+
+        return list;
     }
 }
