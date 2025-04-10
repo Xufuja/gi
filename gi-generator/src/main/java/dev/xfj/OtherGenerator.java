@@ -2,10 +2,7 @@ package dev.xfj;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.FloatNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.node.*;
 import com.sun.codemodel.JCodeModel;
 import org.jsonschema2pojo.*;
 import org.jsonschema2pojo.rules.RuleFactory;
@@ -56,7 +53,7 @@ public class OtherGenerator {
         }
     }
 
-    private static Set<String> traverseAll(JsonNode json, Set<String> list, String node) {
+    private static Set<Node> traverseAll(JsonNode json, Set<Node> list, String node) {
         String currentNode = node != null ? node : ".";
 
         Iterator<String> fieldNames = json.fieldNames();
@@ -68,19 +65,19 @@ public class OtherGenerator {
                 case OBJECT -> traverseAll(sourceValue, list, format("%s%s.", currentNode, fieldName));
                 case ARRAY -> {
                     if (sourceValue.size() == 0) {
-                        list.add(format("%s%s[i]=STRING", currentNode, fieldName));
+                        list.add(new Node(format("%s%s[i]", currentNode, fieldName), JsonNodeType.STRING));
                     }
                     for (int i = 0; i < sourceValue.size(); i++) {
                         JsonNode current = sourceValue.get(i);
                         if (current.isObject() || current.isArray()) {
                             traverseAll(current, list, format("%s%s[i].", currentNode, fieldName));
                         } else {
-                            list.add(format("%s%s[i]=%s", currentNode, fieldName, current.getNodeType()));
+                            list.add(new Node(format("%s%s[i]", currentNode, fieldName), current.getNodeType()));
                             break;
                         }
                     }
                 }
-                default -> list.add(format("%s%s=%s", currentNode, fieldName, sourceValue.getNodeType()));
+                default -> list.add(new Node(format("%s%s", currentNode, fieldName), sourceValue.getNodeType()));
             }
         }
 
