@@ -46,7 +46,21 @@ public class OtherGenerator {
         try {
             JsonNode jsonNode = objectMapper.readTree(value);
 
-            System.out.println(traverseAll(jsonNode, new HashSet<>(), null));
+            Set<Node> nodes = traverseAll(jsonNode, new HashSet<>(), null);
+            Map<String, Set<Node>> arrays = new HashMap<>();
+            nodes.forEach(entry -> {
+                if (entry.path().contains("[i].")) {
+                    String[] split = entry.path().split("\\[i\\]");
+                    String current = split[0];
+
+                    if (!arrays.containsKey(current)) {
+                        arrays.put(current, new HashSet<>());
+                    }
+
+                    arrays.get(current).add(new Node(split[1], entry.type()));
+                }
+            });
+            System.out.println(arrays);
 
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
