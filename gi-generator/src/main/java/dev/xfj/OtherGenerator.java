@@ -58,6 +58,16 @@ public class OtherGenerator {
                     }
 
                     arrays.get(current).add(new Node(split[1], entry.type()));
+                } else {
+                    String[] split = entry.path().split("\\.");
+
+                    if (split.length > 2) {
+                        for (int i = 0; i < split.length - 1; i++) {
+                            if (!split[i].isEmpty()) {
+                                System.out.println(format("%s=%s", split[i], JsonNodeType.OBJECT));
+                            }
+                        }
+                    }
                 }
             });
             System.out.println(arrays);
