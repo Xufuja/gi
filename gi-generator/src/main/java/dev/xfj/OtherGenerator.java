@@ -45,8 +45,8 @@ public class OtherGenerator {
 
         try {
             JsonNode jsonNode = objectMapper.readTree(value);
-
             Set<Node> nodes = traverseAll(jsonNode, new HashSet<>(), null);
+
             Map<String, Set<Node>> arrays = new HashMap<>();
             nodes.forEach(entry -> {
                 if (entry.path().contains("[i].")) {
@@ -64,12 +64,15 @@ public class OtherGenerator {
                     if (split.length > 2) {
                         for (int i = 0; i < split.length - 1; i++) {
                             if (!split[i].isEmpty()) {
-                                System.out.println(format("%s=%s", split[i], JsonNodeType.OBJECT));
+                                System.out.println(format(".%s=%s", split[i], JsonNodeType.OBJECT));
+                                System.out.println(split[split.length -1]);
+                                System.out.println(entry.type());
                             }
                         }
                     }
                 }
             });
+
             System.out.println(arrays);
 
         } catch (Exception e) {
