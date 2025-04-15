@@ -48,6 +48,7 @@ public class OtherGenerator {
             Set<Node> nodes = traverseAll(jsonNode, new HashSet<>(), null);
 
             Map<String, Set<Node>> arrays = new HashMap<>();
+            Map<String, Set<Node>> objects = new HashMap<>();
             nodes.forEach(entry -> {
                 if (entry.path().contains("[i].")) {
                     String[] split = entry.path().split("\\[i\\]");
@@ -64,9 +65,12 @@ public class OtherGenerator {
                     if (split.length > 2) {
                         for (int i = 0; i < split.length - 1; i++) {
                             if (!split[i].isEmpty()) {
-                                System.out.println(format(".%s=%s", split[i], JsonNodeType.OBJECT));
-                                System.out.println(split[split.length -1]);
-                                System.out.println(entry.type());
+                                String current = "." + split[i];
+                                if (!objects.containsKey(current)) {
+                                    objects.put(current, new HashSet<>());
+                                }
+
+                                objects.get(current).add(new Node("." + split[split.length - 1], entry.type()));
                             }
                         }
                     }
@@ -74,6 +78,7 @@ public class OtherGenerator {
             });
 
             System.out.println(arrays);
+            System.out.println(objects);
 
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
