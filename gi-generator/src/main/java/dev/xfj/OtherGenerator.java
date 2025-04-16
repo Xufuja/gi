@@ -50,7 +50,7 @@ public class OtherGenerator {
             Map<String, Set<Node>> arrays = new HashMap<>();
             Map<String, Set<Node>> objects = new HashMap<>();
             nodes.forEach(entry -> {
-                if (entry.path().contains("[i].")) {
+                if (entry.path().contains("[i]")) {
                     String[] split = entry.path().split("\\[i\\]");
                     String current = split[0];
 
@@ -58,7 +58,11 @@ public class OtherGenerator {
                         arrays.put(current, new HashSet<>());
                     }
 
-                    arrays.get(current).add(new Node(split[1], entry.type()));
+                    if (split.length > 1) {
+                        arrays.get(current).add(new Node(split[1], entry.type()));
+                    } else {
+                        arrays.get(current).add(new Node(".", entry.type()));
+                    }
                 } else {
                     String[] split = entry.path().split("\\.");
 
@@ -66,6 +70,7 @@ public class OtherGenerator {
                         for (int i = 0; i < split.length - 1; i++) {
                             if (!split[i].isEmpty()) {
                                 String current = "." + split[i];
+
                                 if (!objects.containsKey(current)) {
                                     objects.put(current, new HashSet<>());
                                 }
