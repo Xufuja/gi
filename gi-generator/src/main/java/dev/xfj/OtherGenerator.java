@@ -48,7 +48,7 @@ public class OtherGenerator {
             Set<Node> nodes = traverseAll(jsonNode, new HashSet<>(), null);
 
             Map<Node, Set<Node>> arrays = new HashMap<>();
-            Map<String, Set<Node>> objects = new HashMap<>();
+            Map<Node, Set<Node>> objects = new HashMap<>();
 
             nodes.forEach(entry -> {
                 if (entry.path().contains("[i]")) {
@@ -85,11 +85,21 @@ public class OtherGenerator {
                             if (!split[i].isEmpty()) {
                                 String current = "." + split[i];
 
-                                if (!objects.containsKey(current)) {
-                                    objects.put(current, new HashSet<>());
+                                Optional<Node> currentNode = objects.keySet()
+                                        .stream()
+                                        .filter(object -> object.path().contains(current))
+                                        .findFirst();
+
+                                if (currentNode.isPresent()) {
+                                    objects.get(currentNode.get())
+                                            .add(new Node("." + split[split.length - 1], entry.type()));
+                                } else {
+                                    Set<Node> set = new HashSet<>();
+                                    set.add(new Node("." + split[split.length - 1], entry.type()));
+
+                                    objects.put(new Node(current, JsonNodeType.OBJECT), set);
                                 }
 
-                                objects.get(current).add(new Node("." + split[split.length - 1], entry.type()));
                             }
                         }
                     }
