@@ -62,20 +62,20 @@ public class OtherGenerator {
 
                     if (currentNode.isPresent()) {
                         if (split.length > 1) {
-                            arrays.get(currentNode.get()).add(new Node(split[1], entry.type()));
+                            arrays.get(currentNode.get()).add(new Node(split[1], entry.type(), entry.numberType()));
                         } else {
-                            arrays.get(currentNode.get()).add(new Node(".", entry.type()));
+                            arrays.get(currentNode.get()).add(new Node(".", entry.type(), entry.numberType()));
                         }
                     } else {
                         Set<Node> set = new HashSet<>();
 
                         if (split.length > 1) {
-                            set.add(new Node(split[1], entry.type()));
+                            set.add(new Node(split[1], entry.type(), entry.numberType()));
                         } else {
-                            set.add(new Node(".", entry.type()));
+                            set.add(new Node(".", entry.type(), entry.numberType()));
                         }
 
-                        arrays.put(new Node(current, JsonNodeType.ARRAY), set);
+                        arrays.put(new Node(current, JsonNodeType.ARRAY, null), set);
                     }
                 } else {
                     String[] split = entry.path().split("\\.");
@@ -92,12 +92,12 @@ public class OtherGenerator {
 
                                 if (currentNode.isPresent()) {
                                     objects.get(currentNode.get())
-                                            .add(new Node("." + split[split.length - 1], entry.type()));
+                                            .add(new Node("." + split[split.length - 1], entry.type(), entry.numberType()));
                                 } else {
                                     Set<Node> set = new HashSet<>();
-                                    set.add(new Node("." + split[split.length - 1], entry.type()));
+                                    set.add(new Node("." + split[split.length - 1], entry.type(), entry.numberType()));
 
-                                    objects.put(new Node(current, JsonNodeType.OBJECT), set);
+                                    objects.put(new Node(current, JsonNodeType.OBJECT, null), set);
                                 }
 
                             }
@@ -126,19 +126,50 @@ public class OtherGenerator {
                 case OBJECT -> traverseAll(sourceValue, list, format("%s%s.", currentNode, fieldName));
                 case ARRAY -> {
                     if (sourceValue.size() == 0) {
-                        list.add(new Node(format("%s%s[i]", currentNode, fieldName), JsonNodeType.STRING));
+                        list.add(new Node(format("%s%s[i]", currentNode, fieldName), JsonNodeType.STRING, null));
                     }
                     for (int i = 0; i < sourceValue.size(); i++) {
                         JsonNode current = sourceValue.get(i);
                         if (current.isObject() || current.isArray()) {
                             traverseAll(current, list, format("%s%s[i].", currentNode, fieldName));
                         } else {
-                            list.add(new Node(format("%s%s[i]", currentNode, fieldName), current.getNodeType()));
+                            JsonNodeType nodeType = current.getNodeType();
+
+                            if (nodeType == JsonNodeType.NUMBER) {
+                                list.add(new Node(
+                                        format("%s%s[i]", currentNode, fieldName),
+                                        current.getNodeType(),
+                                        current.numberType()
+                                ));
+                            } else {
+                                list.add(new Node(
+                                        format("%s%s[i]", currentNode, fieldName),
+                                        current.getNodeType(),
+                                        null
+                                ));
+                            }
+
                             break;
                         }
                     }
                 }
-                default -> list.add(new Node(format("%s%s", currentNode, fieldName), sourceValue.getNodeType()));
+                default -> {
+                    JsonNodeType nodeType = sourceValue.getNodeType();
+
+                    if (nodeType == JsonNodeType.NUMBER) {
+                        list.add(new Node(
+                                format("%s%s", currentNode, fieldName),
+                                sourceValue.getNodeType(),
+                                sourceValue.numberType()
+                        ));
+                    } else {
+                        list.add(new Node(
+                                format("%s%s", currentNode, fieldName),
+                                sourceValue.getNodeType(),
+                                null
+                        ));
+                    }
+                }
             }
         }
 
