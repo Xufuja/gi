@@ -47,7 +47,6 @@ public class OtherGenerator {
             JsonNode jsonNode = objectMapper.readTree(value);
             Set<Node> nodes = traverseAll(jsonNode, new HashSet<>(), null);
 
-            Map<Node, Set<Node>> arrays = new HashMap<>();
             Map<Node, Set<Node>> objects = new HashMap<>();
 
             nodes.forEach(entry -> {
@@ -55,16 +54,16 @@ public class OtherGenerator {
                     String[] split = entry.path().split("\\[i\\]");
                     String current = split[0];
 
-                    Optional<Node> currentNode = arrays.keySet()
+                    Optional<Node> currentNode = objects.keySet()
                             .stream()
                             .filter(array -> array.path().contains(current))
                             .findFirst();
 
                     if (currentNode.isPresent()) {
                         if (split.length > 1) {
-                            arrays.get(currentNode.get()).add(new Node(split[1], entry.type(), entry.numberType()));
+                            objects.get(currentNode.get()).add(new Node(split[1], entry.type(), entry.numberType()));
                         } else {
-                            arrays.get(currentNode.get()).add(new Node(".", entry.type(), entry.numberType()));
+                            objects.get(currentNode.get()).add(new Node(".", entry.type(), entry.numberType()));
                         }
                     } else {
                         Set<Node> set = new HashSet<>();
@@ -75,7 +74,7 @@ public class OtherGenerator {
                             set.add(new Node(".", entry.type(), entry.numberType()));
                         }
 
-                        arrays.put(new Node(current, JsonNodeType.ARRAY, null), set);
+                        objects.put(new Node(current, JsonNodeType.ARRAY, null), set);
                     }
                 } else {
                     String[] split = entry.path().split("\\.");
@@ -106,9 +105,7 @@ public class OtherGenerator {
                 }
             });
 
-            System.out.println(arrays);
             System.out.println(objects);
-
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
