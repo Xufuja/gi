@@ -12,10 +12,12 @@ public record Node(
 ) {
     @Override
     public String toString() {
-        if (numberType == null) {
-            return format("%s=%s", path, type.toString());
-        } else {
-            return format("%s=%s(%s)", path, type.toString(), numberType);
+        String result = format("%s=%s", path, type.toString());
+
+        if (numberType != null) {
+            result += format("(%s)", numberType);
         }
+
+        return result;
     }
 }
