@@ -101,6 +101,8 @@ public class OtherGenerator {
 
                             }
                         }
+                    } else {
+                        objects.put(entry, null);
                     }
                 }
             });
