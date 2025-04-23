@@ -3,18 +3,12 @@ package dev.xfj;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.*;
-import com.sun.codemodel.JCodeModel;
-import org.jsonschema2pojo.*;
-import org.jsonschema2pojo.rules.RuleFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,66 +44,70 @@ public class OtherGenerator {
             Map<Node, Set<Node>> objects = new HashMap<>();
 
             nodes.forEach(entry -> {
-                if (entry.path().contains("[i]")) {
-                    String[] split = entry.path().split("\\[i\\]");
-                    String current = split[0];
-
-                    Optional<Node> currentNode = objects.keySet()
-                            .stream()
-                            .filter(array -> array.path().contains(current))
-                            .findFirst();
-
-                    if (currentNode.isPresent()) {
-                        if (split.length > 1) {
-                            objects.get(currentNode.get()).add(new Node(split[1], entry.type(), entry.numberType()));
-                        } else {
-                            objects.get(currentNode.get()).add(new Node(".", entry.type(), entry.numberType()));
-                        }
-                    } else {
-                        Set<Node> set = new HashSet<>();
-
-                        if (split.length > 1) {
-                            set.add(new Node(split[1], entry.type(), entry.numberType()));
-                        } else {
-                            set.add(new Node(".", entry.type(), entry.numberType()));
-                        }
-
-                        objects.put(new Node(current, JsonNodeType.ARRAY, null), set);
-                    }
-                } else {
-                    String[] split = entry.path().split("\\.");
-
-                    if (split.length > 2) {
-                        for (int i = 0; i < split.length - 1; i++) {
-                            if (!split[i].isEmpty()) {
-                                String current = "." + split[i];
-
-                                Optional<Node> currentNode = objects.keySet()
-                                        .stream()
-                                        .filter(object -> object.path().contains(current))
-                                        .findFirst();
-
-                                if (currentNode.isPresent()) {
-                                    objects.get(currentNode.get())
-                                            .add(new Node("." + split[split.length - 1], entry.type(), entry.numberType()));
-                                } else {
-                                    Set<Node> set = new HashSet<>();
-                                    set.add(new Node("." + split[split.length - 1], entry.type(), entry.numberType()));
-
-                                    objects.put(new Node(current, JsonNodeType.OBJECT, null), set);
-                                }
-
-                            }
-                        }
-                    } else {
-                        objects.put(entry, null);
-                    }
-                }
+                handleNode(entry, objects);
             });
 
             System.out.println(objects);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private void handleNode(Node entry, Map<Node, Set<Node>> objects) {
+        if (entry.path().contains("[i]")) {
+            String[] split = entry.path().split("\\[i\\]");
+            String current = split[0];
+
+            Optional<Node> currentNode = objects.keySet()
+                    .stream()
+                    .filter(array -> array.path().contains(current))
+                    .findFirst();
+
+            if (currentNode.isPresent()) {
+                if (split.length > 1) {
+                    objects.get(currentNode.get()).add(new Node(split[1], entry.type(), entry.numberType()));
+                } else {
+                    objects.get(currentNode.get()).add(new Node(".", entry.type(), entry.numberType()));
+                }
+            } else {
+                Set<Node> set = new HashSet<>();
+
+                if (split.length > 1) {
+                    set.add(new Node(split[1], entry.type(), entry.numberType()));
+                } else {
+                    set.add(new Node(".", entry.type(), entry.numberType()));
+                }
+
+                objects.put(new Node(current, JsonNodeType.ARRAY, null), set);
+            }
+        } else {
+            String[] split = entry.path().split("\\.");
+
+            if (split.length > 2) {
+                for (int i = 0; i < split.length - 1; i++) {
+                    if (!split[i].isEmpty()) {
+                        String current = "." + split[i];
+
+                        Optional<Node> currentNode = objects.keySet()
+                                .stream()
+                                .filter(object -> object.path().contains(current))
+                                .findFirst();
+
+                        if (currentNode.isPresent()) {
+                            objects.get(currentNode.get())
+                                    .add(new Node("." + split[split.length - 1], entry.type(), entry.numberType()));
+                        } else {
+                            Set<Node> set = new HashSet<>();
+                            set.add(new Node("." + split[split.length - 1], entry.type(), entry.numberType()));
+
+                            objects.put(new Node(current, JsonNodeType.OBJECT, null), set);
+                        }
+
+                    }
+                }
+            } else {
+                objects.put(entry, null);
+            }
         }
     }
 
