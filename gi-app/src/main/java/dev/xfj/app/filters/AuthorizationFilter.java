@@ -21,7 +21,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader == null || !authorizationHeader.equals("REAL_TEST_PREFIX:REAL_TEST_KEY")) {
-            notAuthorized(response);
             return;
         }
 
@@ -36,9 +35,9 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void notAuthorized(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType(APPLICATION_JSON_VALUE);
-        response.getWriter().write("{\"error\": \"Not Authorized!\"}");
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return !path.startsWith("/v1/");
     }
 }
