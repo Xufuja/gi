@@ -9,14 +9,42 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationService {
+    private static final String TEST_KEY = "REAL_TEST_KEY";
+    private static final String TEST_SECRET = "REAL_TEST_SECRET";
 
     public Authentication getAuthentication(HttpServletRequest request) {
-        String apiKey = request.getHeader("Authorization");
+        String authorization = request.getHeader("Authorization");
 
-        if (apiKey == null || !apiKey.equals("REAL_TEST_PREFIX:REAL_TEST_KEY")) {
-            throw new BadCredentialsException("{\"error\": \"Invalid Authorization!\"}");
+        if (!authorization.contains(":")) {
+            unauthorized();
         }
 
-        return new ApiKeyAuthentication(apiKey, AuthorityUtils.NO_AUTHORITIES);
+        String[] apiKey = authorization.split(":");
+
+        if (apiKey.length != 2) {
+            unauthorized();
+        }
+
+        if (getSecret(apiKey[0]).equals("")) {
+            unauthorized();
+        }
+
+        if (!getSecret(apiKey[0]).equals(apiKey[1])) {
+            unauthorized();
+        }
+
+        return new ApiKeyAuthentication(authorization, AuthorityUtils.NO_AUTHORITIES);
+    }
+
+    private void unauthorized() {
+        throw new BadCredentialsException("{\"error\": \"Invalid Authorization!\"}");
+    }
+
+    private String getSecret(String key) {
+        if (key.equals(TEST_KEY)) {
+            return TEST_SECRET;
+        }
+
+        return "";
     }
 }
