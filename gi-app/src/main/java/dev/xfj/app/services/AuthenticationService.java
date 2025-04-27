@@ -7,10 +7,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public class AuthenticationService {
-    private static final String TEST_KEY = "REAL_TEST_KEY";
-    private static final String TEST_SECRET = "REAL_TEST_SECRET";
+    private static final Map<String, String> TEST_KEYS = Map.of(
+            "REAL_TEST_KEY", "REAL_TEST_SECRET",
+            "SECOND_TEST_KEY", "SECOND_TEST_SECRET"
+    );
 
     public Authentication getAuthentication(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
@@ -22,10 +26,6 @@ public class AuthenticationService {
         String[] apiKey = authorization.split(":");
 
         if (apiKey.length != 2) {
-            unauthorized();
-        }
-
-        if (getSecret(apiKey[0]).equals("")) {
             unauthorized();
         }
 
@@ -41,10 +41,10 @@ public class AuthenticationService {
     }
 
     private String getSecret(String key) {
-        if (key.equals(TEST_KEY)) {
-            return TEST_SECRET;
+        if (!TEST_KEYS.containsKey(key)) {
+            unauthorized();
         }
 
-        return "";
+        return TEST_KEYS.get(key);
     }
 }
