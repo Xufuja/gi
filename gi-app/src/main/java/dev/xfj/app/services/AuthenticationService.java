@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.Map;
 
 @Service
@@ -45,6 +46,6 @@ public class AuthenticationService {
             unauthorized();
         }
 
-        return TEST_KEYS.get(key);
+        return Base64.getEncoder().encodeToString(TEST_KEYS.get(key).getBytes());
     }
 }
