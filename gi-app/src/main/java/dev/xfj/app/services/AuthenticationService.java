@@ -34,7 +34,7 @@ public class AuthenticationService {
             unauthorized();
         }
 
-        return new ApiKeyAuthentication(authorization, AuthorityUtils.NO_AUTHORITIES);
+        return new ApiKeyAuthentication(apiKey[0], AuthorityUtils.NO_AUTHORITIES);
     }
 
     private void unauthorized() {
