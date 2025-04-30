@@ -1,5 +1,7 @@
 package dev.xfj.app.services;
 
+import dev.xfj.app.entities.Keys;
+import dev.xfj.app.repositories.KeysRepository;
 import dev.xfj.app.security.ApiKeyAuthentication;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -8,14 +10,15 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AuthenticationService {
-    private static final Map<String, String> TEST_KEYS = Map.of(
-            "REAL_TEST_KEY", "REAL_TEST_SECRET",
-            "SECOND_TEST_KEY", "SECOND_TEST_SECRET"
-    );
+    private final KeysRepository keysRepository;
+
+    public AuthenticationService(KeysRepository keysRepository) {
+        this.keysRepository = keysRepository;
+    }
 
     public Authentication getAuthentication(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
@@ -41,11 +44,13 @@ public class AuthenticationService {
         throw new BadCredentialsException("{\"error\": \"Invalid Authorization!\"}");
     }
 
-    private String getSecret(String key) {
-        if (!TEST_KEYS.containsKey(key)) {
+    private String getSecret(String id) {
+        Optional<Keys> key = keysRepository.findById(id);
+
+        if (key.isEmpty()) {
             unauthorized();
         }
 
-        return Base64.getEncoder().encodeToString(TEST_KEYS.get(key).getBytes());
+        return Base64.getEncoder().encodeToString(key.get().getSecret().getBytes());
     }
 }
