@@ -51,6 +51,10 @@ public class AuthenticationService {
             unauthorized();
         }
 
-        return Base64.getEncoder().encodeToString(key.get().getSecret().getBytes());
+        return toBase64(key.get().getSecret());
+    }
+
+    private String toBase64(String value) {
+        return Base64.getEncoder().encodeToString(value.getBytes());
     }
 }
