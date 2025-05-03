@@ -57,6 +57,8 @@ import dev.xfj.generated.weaponcurveexcelconfigdata.WeaponCurveExcelConfigDataJs
 import dev.xfj.generated.weaponexcelconfigdata.WeaponExcelConfigDataJson;
 import dev.xfj.generated.weaponlevelexcelconfigdata.WeaponLevelExcelConfigDataJson;
 import dev.xfj.generated.weaponpromoteexcelconfigdata.WeaponPromoteExcelConfigDataJson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -78,6 +80,7 @@ import static dev.xfj.core.constants.DataPath.*;
 
 @Service
 public class DatabaseService {
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
     public String language;
     public Map<String, String> languageMap;
     public Map<String, String> readableMap;
@@ -257,7 +260,7 @@ public class DatabaseService {
         Type type = TypeToken.getParameterized(Map.class, String.class, String.class).getType();
 
         Map<String, String> result = new Gson().fromJson(jsonObject, type);
-        System.out.printf("Loaded: %1$7d entries from %2$s%n", result.keySet().size(), file);
+        logger.info(String.format("Loaded: %1$7d entries from %2$s", result.keySet().size(), file));
 
         return result;
     }
@@ -272,7 +275,7 @@ public class DatabaseService {
                         this::loadTextFile
                 ));
 
-        System.out.printf("Loaded: %1$7d entries from %2$s%n", result.keySet().size(), readableLocation);
+        logger.info(String.format("Loaded: %1$7d entries from %2$s", result.keySet().size(), readableLocation));
 
         return result;
     }
@@ -337,7 +340,7 @@ public class DatabaseService {
         Type type = TypeToken.getParameterized(List.class, clazz).getType();
         JsonArray jsonArray = convertFieldNames(jsonElement).getAsJsonArray();
 
-        System.out.printf("Loaded: %1$7d entries from %2$s%n", jsonArray.size(), file);
+        logger.info(String.format("Loaded: %1$7d entries from %2$s", jsonArray.size(), file));
 
         return new Gson().fromJson(jsonArray, type);
     }
@@ -417,7 +420,7 @@ public class DatabaseService {
         JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
         //Type type = TypeToken.getParameterized(Map.class, String.class, clazz).getType();
 
-        System.out.printf("Loaded: %1$7d entries from %2$s%n", jsonObject.keySet().size(), file);
+        logger.info(String.format("Loaded: %1$7d entries from %2$s", jsonObject.keySet().size(), file));
 
         return new Gson().fromJson(jsonObject, clazz);
     }
