@@ -80,7 +80,7 @@ import static dev.xfj.core.constants.DataPath.*;
 
 @Service
 public class DatabaseService {
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
+    private static final Logger log = LoggerFactory.getLogger(DatabaseService.class);
     public String language;
     public Map<String, String> languageMap;
     public Map<String, String> readableMap;
@@ -203,7 +203,7 @@ public class DatabaseService {
             languageMap = loadLanguage(language);
             readableMap = loadReadable(language);
         } catch (FileNotFoundException e) {
-            System.err.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -260,7 +260,7 @@ public class DatabaseService {
         Type type = TypeToken.getParameterized(Map.class, String.class, String.class).getType();
 
         Map<String, String> result = new Gson().fromJson(jsonObject, type);
-        logger.info(String.format("Loaded: %1$7d entries from %2$s", result.keySet().size(), file));
+        log.info(String.format("Loaded: %1$7d entries from %2$s", result.keySet().size(), file));
 
         return result;
     }
@@ -275,7 +275,7 @@ public class DatabaseService {
                         this::loadTextFile
                 ));
 
-        logger.info(String.format("Loaded: %1$7d entries from %2$s", result.keySet().size(), readableLocation));
+        log.info(String.format("Loaded: %1$7d entries from %2$s", result.keySet().size(), readableLocation));
 
         return result;
     }
@@ -294,7 +294,7 @@ public class DatabaseService {
             byte[] bytes = inputStream.readAllBytes();
             text = new String(bytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            System.err.println("Failed to open file: " + path);
+            log.error("Failed to open file: " + path);
             throw new RuntimeException(e);
         }
 
@@ -340,7 +340,7 @@ public class DatabaseService {
         Type type = TypeToken.getParameterized(List.class, clazz).getType();
         JsonArray jsonArray = convertFieldNames(jsonElement).getAsJsonArray();
 
-        logger.info(String.format("Loaded: %1$7d entries from %2$s", jsonArray.size(), file));
+        log.info(String.format("Loaded: %1$7d entries from %2$s", jsonArray.size(), file));
 
         return new Gson().fromJson(jsonArray, type);
     }
@@ -420,7 +420,7 @@ public class DatabaseService {
         JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
         //Type type = TypeToken.getParameterized(Map.class, String.class, clazz).getType();
 
-        logger.info(String.format("Loaded: %1$7d entries from %2$s", jsonObject.keySet().size(), file));
+        log.info(String.format("Loaded: %1$7d entries from %2$s", jsonObject.keySet().size(), file));
 
         return new Gson().fromJson(jsonObject, clazz);
     }
