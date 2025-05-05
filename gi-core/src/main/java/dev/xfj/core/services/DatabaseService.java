@@ -389,7 +389,7 @@ public class DatabaseService {
         }
 
         if (Character.isUpperCase(fieldName.charAt(0))) {
-            System.out.println("Adjusting field: " + fieldName);
+            log.debug("Adjusting field: " + fieldName);
             result = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
         }
 
