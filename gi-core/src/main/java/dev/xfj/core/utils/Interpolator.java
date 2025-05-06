@@ -1,5 +1,9 @@
 package dev.xfj.core.utils;
 
+import dev.xfj.core.services.DatabaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -9,6 +13,7 @@ import java.util.regex.Pattern;
 import static java.lang.String.format;
 
 public class Interpolator {
+    private static final Logger log = LoggerFactory.getLogger(Interpolator.class);
     private static final Pattern PARAMETER_PATTERN = Pattern.compile("\\{(\\w+):(\\w+)\\}");
     private final Map<String, Function<Object, String>> typeHandlers;
 
@@ -33,21 +38,21 @@ public class Interpolator {
                 int index = parseIndex(parameter);
 
                 if (index < 0 || index >= data.size()) {
-                    System.err.println(format("Invalid index for: %s (%s)", inputString, type));
+                    log.error(format("Invalid index for: %s (%s)", inputString, type));
                     return "";
                 }
 
                 Object value = data.get(index);
 
                 if (value == null) {
-                    System.err.println(format("No value found for: %s (%s)", inputString, type));
+                    log.error(format("No value found for: %s (%s)", inputString, type));
                     return "";
                 }
 
                 Function<Object, String> handler = typeHandlers.get(type);
 
                 if (handler == null) {
-                    System.err.println(format("No type handler for: %s (%s) (%s)", type, value, inputString));
+                    log.error(format("No type handler for: %s (%s) (%s)", type, value, inputString));
                     return "";
                 }
 
@@ -58,7 +63,7 @@ public class Interpolator {
 
             return result.toString();
         } catch (Exception e) {
-            System.err.println("Failed for: " + inputString);
+            log.error("Failed for: " + inputString);
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -83,7 +88,7 @@ public class Interpolator {
             };
         }
 
-        System.err.println("Not a number!");
+        log.error("Not a number!");
         return "";
     }
 }
