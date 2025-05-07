@@ -47,7 +47,9 @@ public class OtherGenerator {
                 handleNode(entry, objects);
             });
 
-            System.out.println(objects);
+            objects.entrySet().stream()
+                    .filter(entry -> entry.getKey().type() == JsonNodeType.ARRAY)
+                    .forEach(System.out::println);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
