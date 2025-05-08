@@ -49,6 +49,7 @@ public class OtherGenerator {
 
             objects.entrySet().stream()
                     .filter(entry -> entry.getKey().type() == JsonNodeType.ARRAY)
+                    .filter(entry -> entry.getValue().size() > 1)
                     .forEach(System.out::println);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
